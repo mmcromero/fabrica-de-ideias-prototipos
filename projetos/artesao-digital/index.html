@@ -645,11 +645,14 @@ function feedback(message){
  $('feedback').textContent=message;clearTimeout(feedbackTimer);
  feedbackTimer=setTimeout(()=>{$('feedback').textContent='';},1800);
 }
+function moduleHeading(symbol,label,description){
+ return `<section class="entry-heading"><h1 class="screen-title" tabindex="-1">${icon(symbol)}${esc(label)}</h1><p class="muted">${esc(description)}</p></section>`;
+}
 function entryView(){
  const current=openEvent(),recent=data.sessions.slice().reverse().slice(0,2);
  const action=(symbol,label,description,command,variant,disabled=false)=>`<button type="button" class="entry-action ${variant}" data-action="${command}"${disabled?' disabled':''}><span class="entry-action-icon">${icon(symbol)}</span><span class="entry-action-copy"><strong>${label}</strong><small>${description}</small></span><span class="entry-chevron" aria-hidden="true">›</span></button>`;
  const recentRows=recent.length?recent.map(event=>`<button type="button" class="recent-event" data-action="event-history" data-id="${event.id}"><span class="recent-icon">${icon('store')}</span><span class="recent-event-info"><strong>${esc(eventName(event))}</strong><span class="recent-meta">${icon('calendar')}${dateText(event.date)} <span class="event-badge ${event.open?'open':'closed'}">${event.open?'Aberto':'Encerrado'}</span></span></span><span class="entry-chevron" aria-hidden="true">›</span></button>`).join(''):'<p class="muted entry-empty">Nenhum evento registrado.</p>';
- return {body:`<section class="entry-heading"><h1 class="screen-title" tabindex="-1">${icon('store')}PDV – Ponto de Venda</h1><p class="muted">Inicie um novo evento, retome um evento existente ou faça uma venda avulsa.</p></section>`+
+ return {body:moduleHeading('store','PDV – Ponto de Venda','Inicie um novo evento, retome um evento existente ou faça uma venda avulsa.')+
   '<section class="entry-actions">'+
   (current?action('rotate','Retomar evento',esc(eventName(current))+' · '+dateText(current.date),'pick-session','featured'):action('play','Novo evento','Iniciar um evento de vendas','new-session','featured'))+
   (current?action('play','Novo evento','Encerre o evento atual para abrir outro.','new-session','disabled-action',true):action('rotate','Retomar evento','Continuar um evento em andamento','pick-session','secondary',true))+
