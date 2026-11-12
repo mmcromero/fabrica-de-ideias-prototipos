@@ -10,6 +10,15 @@
       "ordem": 10,
       "icone": "calendar-days",
       "caminho": "projetos/pode-vir/"
+    },
+    {
+      "id": "artesao-digital",
+      "nome": "Artesão Digital",
+      "descricao": "Entrada, inscrição no piloto e fluxos navegáveis de produtos e PDV.",
+      "status": "prototipo",
+      "publicado": true,
+      "ordem": 20,
+      "caminho": "projetos/artesao-digital/"
     }
   ]
 }
