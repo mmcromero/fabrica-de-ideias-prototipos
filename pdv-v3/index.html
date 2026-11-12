@@ -449,7 +449,7 @@ const active=()=>data.sessions.find(s=>s.open&&s.id===activeId);
 const accessState=localStorage.getItem('pdv-v3-mock-logged-out');
 const publicModes=['landing','signup','login','invite'];
 const entryMode=publicModes.includes(location.hash.slice(1))?location.hash.slice(1):null;
-let screen=entryMode||(accessState==='admin'?'admin-home':accessState==='no'?'entry':'login'); // Sem fragmento: login, salvo sessão já simulada.
+let screen=entryMode||'landing'; // O endereço base do protótipo sempre abre a landing simulada; #login e #signup selecionam telas específicas.
 let receiptId=active()?.lastSale??null;
 let cart=[],payments=[],saleDiscount={kind:'none',value:0},coupon='',mode='full';
 let sessionDraft,stockDraft,settingsDraft,settingsId,settingsBack,stockBack,stockSearch='',search='',category='',availability='available';
