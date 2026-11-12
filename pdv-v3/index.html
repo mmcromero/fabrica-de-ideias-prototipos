@@ -580,7 +580,7 @@ function go(next){
 addEventListener('popstate',()=>{
  const mode=location.hash.slice(1);
  if(publicModes.includes(mode)){screen=mode;render();main.scrollTop=0;}
- else if(publicModes.includes(screen)){screen=localStorage.getItem('pdv-v3-mock-logged-out')==='no'?'entry':'login';render();main.scrollTop=0;}
+ else if(publicModes.includes(screen)){screen='landing';render();main.scrollTop=0;}
 });
 addEventListener('hashchange',()=>{
  const mode=location.hash.slice(1);
