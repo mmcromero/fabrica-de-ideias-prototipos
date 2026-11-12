@@ -1,0 +1,15 @@
+{
+  "versao": 1,
+  "projetos": [
+    {
+      "id": "pode-vir",
+      "nome": "Pode Vir",
+      "descricao": "Agendamento e gestão de serviços. Página comercial e login demonstrativo.",
+      "status": "prototipo",
+      "publicado": true,
+      "ordem": 10,
+      "icone": "calendar-days",
+      "caminho": "projetos/pode-vir/"
+    }
+  ]
+}
