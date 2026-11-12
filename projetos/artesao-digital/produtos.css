@@ -80,3 +80,15 @@
  .ap-color-row{grid-template-columns:minmax(0,1fr) 95px 35px;gap:6px;padding:8px}
  .ap-buttons-end .ap-btn{flex:1 1 auto}
 }
+
+/* UX-PDV: menu de módulos horizontal no desktop, abaixo do cabeçalho. */
+.ap-module-nav[hidden]{display:none!important}
+.ap-module-nav{display:none}
+@media(min-width:768px){
+  .top .header-menu{display:none!important}
+  .ap-module-nav{display:flex;align-items:stretch;gap:6px;padding:0 max(20px,calc((100vw - 1120px)/2));background:#F5F5EF;border-bottom:1px solid #d9dfd7;box-shadow:0 2px 5px #173b2620;min-height:58px}
+  .ap-module-nav button{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:58px;padding:10px 20px;border:0;border-bottom:3px solid transparent;background:transparent;color:#1E4D3B;font:500 15px Arial,Helvetica,sans-serif;cursor:pointer}
+  .ap-module-nav button .icon{width:19px;height:19px}
+  .ap-module-nav button[aria-current="page"]{font-weight:700;border-bottom-color:#1E4D3B;background:#ffffff80}
+  .ap-module-nav button:focus-visible{outline:2px solid #1E4D3B;outline-offset:-4px}
+}
