@@ -6,6 +6,7 @@ Repositório **público** de visualização de protótipos. Os projetos de desen
 
 - `index.html`: vitrine do laboratório.
 - `pode-vir/index.html`: demonstração inicial do Pode Vir (marca provisória).
+- `pdv-v3/index.html`: protótipo navegável Artesão Digital (acesso, landing simulada, PDV e fluxos auxiliares).
 
 ## Regras de publicação
 - Publicar somente arquivos estáticos revisados (HTML, CSS, JavaScript e imagens sem informações confidenciais).
