@@ -40,8 +40,8 @@
   function listView(){
     const total=products.reduce((n,p)=>n+ownQty(p),0),zeros=products.filter(p=>!ownQty(p)).length;
     return {body:`<section class="ap-root">
-      <div class="ap-page-heading"><div><p class="ap-overline">Seu negócio</p><h1 tabindex="-1">Produtos</h1>
-       <p class="ap-muted">Organize o catálogo, os preços e as quantidades em um só lugar.</p></div>
+      <div class="ap-page-heading"><div class="ap-heading-copy entry-heading"><h1 class="screen-title" tabindex="-1">${icon('box')}Produtos</h1>
+       <p class="muted">Organize o catálogo, os preços e as quantidades em um só lugar.</p></div>
        <div class="ap-primary-actions">${button('+ Novo produto','new','','primary')}</div></div>
       <div class="ap-stats"><div><strong>${products.length}</strong><span>Produtos cadastrados</span></div>
        <div><strong>${total}</strong><span>Unidades próprias na base</span></div><div><strong>${zeros}</strong><span>Sem estoque próprio</span></div></div>

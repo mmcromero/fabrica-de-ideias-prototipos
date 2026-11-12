@@ -92,3 +92,10 @@
   .ap-module-nav button[aria-current="page"]{font-weight:700;border-bottom-color:#1E4D3B;background:#ffffff80}
   .ap-module-nav button:focus-visible{outline:2px solid #1E4D3B;outline-offset:-4px}
 }
+
+/* UX-Produtos: cabeçalho igual ao título do PDV, sem tipografia serifada. */
+.ap-root .ap-page-heading{margin:3px 0 8px;align-items:flex-start}
+.ap-root .ap-heading-copy{display:grid;gap:7px;min-width:0;margin:0}
+.ap-root .ap-heading-copy .screen-title{display:flex;align-items:center;gap:8px;margin:0;font:700 23px/1.3 Arial,Helvetica,sans-serif;color:var(--deep);letter-spacing:normal}
+.ap-root .ap-heading-copy .screen-title>.icon{width:23px;height:23px;color:var(--green);flex-shrink:0}
+.ap-root .ap-heading-copy .muted{margin:0}
