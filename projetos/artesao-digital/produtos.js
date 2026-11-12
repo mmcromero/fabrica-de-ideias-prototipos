@@ -21,7 +21,7 @@
     return `<article class="ap-card">
       <div class="ap-thumbnail" aria-hidden="true">${icon('box')}</div>
       <div class="ap-card-body"><div class="ap-card-header"><div><h3>${esc(p.name)}</h3><p>${esc(p.sku)} · ${esc(p.category||'Sem categoria')}</p></div>
-      <span class="ap-tag ${qty===0?'ap-tag--zero':''}">${qty?'Disponível':'Sem estoque'}</span></div>
+      <span class="ap-tag ${qty===0?'ap-tag--zero':''}">${qty?'Em estoque':'Sem estoque próprio'}</span></div>
       <div class="ap-card-facts"><div><strong>${money(p.prices.retail)}</strong><small>Varejo</small></div><div><strong>${qty}</strong><small>Unidades próprias</small></div></div>
       <p class="ap-subtle">${v.length>1?v.length+' cores / variações':v[0]?.color==='Padrão'?'Sem variações':esc(v[0]?.color||'Sem variações')}</p>
       <div class="ap-card-actions">${button('Ver detalhes','show',p.id)}${button('Editar','edit',p.id,'soft')}</div>
