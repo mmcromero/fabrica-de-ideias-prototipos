@@ -176,9 +176,26 @@
     if(next==='entry'&&(screen==='login'||screen==='invite'))return originalGo('global-products');
     return originalGo(next);
   };
+  // Módulos aprovados: barra abaixo do header no desktop; hambúrguer só no mobile.
+  const moduleNav=document.createElement('nav');
+  moduleNav.className='ap-module-nav';
+  moduleNav.setAttribute('aria-label','Módulos do Artesão Digital');
+  moduleNav.innerHTML=`<button type="button" data-product-action="module-products">${icon('box')}<span>Produtos</span></button><button type="button" data-product-action="pdv">${icon('store')}<span>PDV</span></button>`;
+  document.querySelector('.top').insertAdjacentElement('afterend',moduleNav);
+  function syncModuleNav(){
+    const publicScreens=['landing','signup','login','invite','admin-login','admin-home'];
+    moduleNav.hidden=publicScreens.includes(screen);
+    const current=['global-products','ap-detail','ap-editor'].includes(screen)?'module-products':'pdv';
+    moduleNav.querySelectorAll('button').forEach(button=>{
+      if(button.dataset.productAction===current)button.setAttribute('aria-current','page');
+      else button.removeAttribute('aria-current');
+    });
+  }
+  syncModuleNav();
   const originalRender=render;
   render=function(){
     originalRender();
+    syncModuleNav();
     if(screen==='ap-detail'||screen==='ap-editor'){
       $('bottom-nav').hidden=true;$('event-bar').hidden=true;$('demo-status').hidden=true;
     }
@@ -197,6 +214,7 @@
     const b=event.target.closest('button[data-product-action]');if(!b)return;
     const action=b.dataset.productAction,id=b.dataset.productId||'';
     if(action==='pdv')go('entry');
+    if(action==='module-products')go('global-products');
     if(action==='new')startEdit();
     if(action==='show'){chosenId=id;go('ap-detail');}
     if(action==='edit')startEdit(id||chosenId);
