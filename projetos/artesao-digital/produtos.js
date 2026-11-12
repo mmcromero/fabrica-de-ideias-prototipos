@@ -42,7 +42,7 @@
     return {body:`<section class="ap-root">
       <div class="ap-page-heading"><div><p class="ap-overline">Seu negócio</p><h1 tabindex="-1">Produtos</h1>
        <p class="ap-muted">Organize o catálogo, os preços e as quantidades em um só lugar.</p></div>
-       <div class="ap-primary-actions">${button('Abrir PDV','pdv')}${button('+ Novo produto','new','','primary')}</div></div>
+       <div class="ap-primary-actions">${button('+ Novo produto','new','','primary')}</div></div>
       <div class="ap-stats"><div><strong>${products.length}</strong><span>Produtos cadastrados</span></div>
        <div><strong>${total}</strong><span>Unidades próprias na base</span></div><div><strong>${zeros}</strong><span>Sem estoque próprio</span></div></div>
       <div class="ap-tools"><label>Buscar produto<input id="ap-search" type="search" placeholder="Nome, SKU ou categoria" value="${esc(filter)}"></label>
