@@ -67,3 +67,6 @@ A marca **Fábrica de Ideias** pertence à página do laboratório. As páginas 
 - [ ] Links relativos e telas verificadas
 - [ ] PR criado, sem merge não autorizado
 - [ ] URL pública verificada **após** publicação autorizada
+
+### Arquivo oficial da marca
+A vitrine usa `assets/fabrica-de-ideias-logo.png` como logo. **Antes do merge**, adicionar nesse caminho o PNG transparente oficial enviado pelo proprietário (arquivo simplificado). A imagem não deve ser redesenhada. Até o arquivo existir, a página exibe o símbolo provisório. O logo completo com fundo branco exige tratamento separado antes de uso em fundo escuro.
