@@ -19,6 +19,16 @@
       "publicado": true,
       "ordem": 20,
       "caminho": "projetos/artesao-digital/"
+    },
+    {
+      "id": "canal-do-henrique",
+      "nome": "relowmoto7",
+      "descricao": "Canal de gameplay, humor, histórias, curiosidades e Roblox.",
+      "status": "prototipo",
+      "publicado": true,
+      "ordem": 30,
+      "icone": "gamepad-2",
+      "caminho": "projetos/canal-do-henrique/"
     }
   ]
 }
