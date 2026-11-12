@@ -364,6 +364,32 @@ details p{margin-top:6px}
  .public-footer-nav .public-footer-link{border-left:0;padding-left:0}
 }
 
+
+/* Inscrição: hierarquia informativa com texto legal preservado e contraste AA. */
+.signup-note{
+ min-width:0;display:grid;gap:8px;
+ padding:14px 16px;border:1px solid transparent;border-left-width:4px;
+ border-radius:10px;box-shadow:none;
+}
+.signup-note--pilot{background:#EEF5F0;border-color:#D6E7DB;border-left-color:#1E4D3B;color:#294638}
+.signup-note--privacy{background:#FFF5E6;border-color:#EFD7AF;border-left-color:#A66F1E;color:#4B3B24}
+.signup-note__heading{display:flex;align-items:center;gap:9px}
+.signup-note--pilot .signup-note__heading{color:#1E4D3B}
+.signup-note--privacy .signup-note__heading{color:#704B1A}
+.signup-note__heading h2{margin:0;font-size:14px;font-weight:700;line-height:1.35;letter-spacing:0}
+.signup-note__icon{
+ display:inline-flex;justify-content:center;align-items:center;flex:0 0 21px;
+ width:21px;height:21px;border:1.5px solid currentColor;border-radius:50%;
+ font-size:12px;font-weight:700;line-height:1;
+}
+.signup-note .public-intro,.signup-note .public-privacy{
+ margin:0;color:inherit;font-size:14px;line-height:1.55;overflow-wrap:break-word;
+}
+@media(max-width:767px){
+ .signup-note{padding:12px 13px;gap:7px}
+ .signup-note__heading{gap:8px}
+}
+
 /* Landing de navegação: única função é testar o encaminhamento para o acesso */
 .landing-placeholder{display:grid;align-content:center;gap:18px;max-width:360px;width:100%;margin:auto;min-height:calc(100dvh - 90px);padding:20px}
 .landing-placeholder button{min-height:56px;font-size:16px}
@@ -1225,13 +1251,25 @@ function publicEntryView(mode){
  let content='';
  if(mode==='signup'){
   content=`<h1 tabindex="-1">Quero participar do piloto</h1>
-  <p class="public-intro">Projeto piloto gratuito, com acesso por convite. Solicite sua participação; a administração avaliará seu interesse. O envio não libera o acesso automaticamente.</p>
+  <aside class="signup-note signup-note--pilot" aria-labelledby="signup-note-pilot-title">
+   <div class="signup-note__heading">
+    <span class="signup-note__icon" aria-hidden="true">i</span>
+    <h2 id="signup-note-pilot-title">Como funciona o piloto</h2>
+   </div>
+   <p class="public-intro">Projeto piloto gratuito, com acesso por convite. Solicite sua participação; a administração avaliará seu interesse. O envio não libera o acesso automaticamente.</p>
+  </aside>
   <form id="interest-form" class="public-form">
    <label>Nome (obrigatório)<input id="interest-name" name="name" autocomplete="name" maxlength="100" required></label>
    <label>E-mail (obrigatório)<input id="interest-email" name="email" type="email" autocomplete="email" maxlength="254" required></label>
    <label>WhatsApp (opcional)<input id="interest-whatsapp" name="whatsapp" type="tel" autocomplete="tel" maxlength="40" placeholder="DDD e número"></label>
-   <p class="public-privacy">Seus dados serão usados somente pela administração do Artesão Digital para organizar contatos sobre futuros convites, por até 90 dias. O envio não cria uma conta nem garante convite. Nenhuma mensagem é enviada automaticamente.</p>
-   <label class="public-consent"><input name="consent" type="checkbox" required><span>Quero receber contato sobre convites e li a finalidade acima.</span></label>
+   <aside class="signup-note signup-note--privacy" aria-labelledby="signup-note-privacy-title">
+    <div class="signup-note__heading">
+     <span class="signup-note__icon" aria-hidden="true">✓</span>
+     <h2 id="signup-note-privacy-title">Como usamos seus dados</h2>
+    </div>
+    <p class="public-privacy" id="signup-privacy-copy">Seus dados serão usados somente pela administração do Artesão Digital para organizar contatos sobre futuros convites, por até 90 dias. O envio não cria uma conta nem garante convite. Nenhuma mensagem é enviada automaticamente.</p>
+   </aside>
+   <label class="public-consent"><input name="consent" type="checkbox" aria-describedby="signup-privacy-copy" required><span>Quero receber contato sobre convites e li a finalidade acima.</span></label>
    <button type="submit" class="primary full">Solicitar participação</button>
    <p id="interest-status" class="public-status" role="status" aria-live="polite"></p>
   </form>
