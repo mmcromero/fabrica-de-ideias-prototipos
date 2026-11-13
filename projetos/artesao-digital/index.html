@@ -409,6 +409,12 @@ details p{margin-top:6px}
  .top .header-inner .brand{left:auto;width:auto}
  .top .header-inner .brand img{max-width:52px;max-height:50px}
 }
+
+/* Rodapé público preservado: links legais e Ajuda em uma única faixa, versão abaixo. */
+.public-site-footer{display:grid;justify-items:center;align-content:center;gap:4px}
+.public-footer-nav button[data-prototype-footer]{color:#1E4D3B;background:transparent;border:0;font-size:13px;font-weight:500;text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:28px}
+.public-site-footer>.ap-footer-version{font-size:11px;color:#43594a}
+@media(max-width:767px){.public-footer-nav button[data-prototype-footer]{font-size:12px}}
 </style>
 <link rel="stylesheet" href="produtos.css">
 </head>
@@ -1262,10 +1268,12 @@ function publicEntryView(mode){
  const cardStart='<section class="public-card">';
  const cardEnd='</section>';
  const legal='<nav class="public-footer-nav" aria-label="Informações do Artesão Digital">'+
+  '<button type="button" data-prototype-footer="help">Ajuda</button>'+
   '<a target="_blank" rel="noopener noreferrer" href="https://artesaodigital.com.br/artesaos-piloto/legal">Termos de Uso</a>'+
   '<a target="_blank" rel="noopener noreferrer" href="https://artesaodigital.com.br/artesaos-piloto/legal#privacy">Política de Privacidade</a>'+
   '<a target="_blank" rel="noopener noreferrer" href="https://artesaodigital.com.br/artesaos-piloto/legal#cookies">Política de Cookies</a>'+
-  btn('Acesso administrativo','auth-admin',{style:'public-footer-link'})+'</nav>';
+  btn('Acesso administrativo','auth-admin',{style:'public-footer-link'})+'</nav>'+
+  '<small class="ap-footer-version">Artesão Digital · protótipo navegável</small>';
  let content='';
  if(mode==='signup'){
   content=`<h1 tabindex="-1">Quero participar do piloto</h1>
