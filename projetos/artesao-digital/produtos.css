@@ -223,3 +223,12 @@ body.ap-drawer-open{overflow:hidden}
 }
 @keyframes pl-enter{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.pl-sheet{animation:none}}
+
+/* Painel mobile: alternância direta entre filtros e ações em lote. */
+.ap-form label[hidden],.pl-sheet-layer[hidden]{display:none!important}
+.pl-sheet-tabs{display:none}
+@media(max-width:767px){
+ .pl-sheet-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:15px}
+ .pl-sheet-tabs button{min-height:42px;background:#fff;color:#1e4d3b;border:1px solid #bfcfc3;border-radius:8px;font-weight:650}
+ .pl-sheet-tabs button[aria-pressed="true"]{background:#e1f1e6;border-color:#1e4d3b}
+}
