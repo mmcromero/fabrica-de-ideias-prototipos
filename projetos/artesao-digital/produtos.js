@@ -214,7 +214,7 @@ const originOf=p=>p.origin||'own';
   const moduleNav=document.createElement('nav');
   moduleNav.className='ap-module-nav';
   moduleNav.setAttribute('aria-label','Módulos do Artesão Digital');
-  moduleNav.innerHTML=`<button type="button" data-product-action="module-products">${icon('box')}<span>Produtos</span></button><button type="button" data-product-action="pdv">${icon('store')}<span>PDV</span></button>`;
+  moduleNav.innerHTML=`<button type="button" data-product-action="module-products">${icon('box')}<span>Produtos</span></button><button type="button" data-product-action="pdv">${icon('store')}<span>PDV</span></button><button type="button" data-product-action="help">${icon('help')}<span>Ajuda</span></button>`;
   document.querySelector('.top').insertAdjacentElement('afterend',moduleNav);
   function syncModuleNav(){
     const publicScreens=['landing','signup','login','invite','admin-login','admin-home'];
@@ -278,6 +278,10 @@ const originOf=p=>p.origin||'own';
   function showPrototypeSupport(){
     modal('Suporte técnico · Protótipo',`<div class="stack"><p>O envio de chamados depende da conta autenticada e do servidor real. Esta tela não envia informações.</p><p>O suporte funcional existente será preservado na implementação definitiva.</p></div>`);
   }
+  const globalFooter=document.createElement('div');
+  globalFooter.id='ap-global-footer';
+  globalFooter.className='ap-internal-footer';
+  footer.insertAdjacentElement('afterend',globalFooter);
   const internalFoot=`<nav class="ap-internal-footer-links" aria-label="Links do rodapé">
     <button type="button" data-prototype-footer="support">Suporte técnico</button>
     <button type="button" data-prototype-footer="help">Ajuda</button>
@@ -290,12 +294,8 @@ const originOf=p=>p.origin||'own';
     const isInternal=!isPublic&&!isAdmin;
     mobileModuleBar.hidden=!isInternal;
     if(!isInternal)closeModuleDrawer();
-    if(isInternal){
-      footer.innerHTML=internalFoot;
-      footer.classList.add('ap-internal-footer');
-    }else{
-      footer.classList.remove('ap-internal-footer');
-    }
+    globalFooter.hidden=!isInternal;
+    if(isInternal)globalFooter.innerHTML=internalFoot;
   }
   document.addEventListener('click',event=>{
     const action=event.target.closest('[data-prototype-footer]')?.dataset.prototypeFooter;
@@ -307,6 +307,7 @@ const originOf=p=>p.origin||'own';
     const action=b.dataset.productAction,id=b.dataset.productId||'';
     if(action==='pdv')go('entry');
     if(action==='module-products')go('global-products');
+    if(action==='help')showPrototypeHelp();
     if(action==='new')startEdit();
     if(action==='show'){chosenId=id;go('ap-detail');}
     if(action==='edit')startEdit(id||chosenId);
