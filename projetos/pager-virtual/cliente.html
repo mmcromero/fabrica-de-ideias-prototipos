@@ -59,6 +59,34 @@
       align-items: center;
       padding: 16px;
       transition: background-color 0.2s, color 0.2s;
+      overflow-x: hidden;
+    }
+
+    /* EFEITO VISÃO PERIFÉRICA: Iluminação nas bordas da tela em amarelo (Edge Lighting) */
+    .edge-glow-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 99999;
+      opacity: 0;
+      transition: opacity 0.25s ease-in-out;
+    }
+
+    .edge-glow-overlay.active {
+      opacity: 1;
+      animation: edgePulseYellow 1.2s infinite ease-in-out;
+    }
+
+    @keyframes edgePulseYellow {
+      0% {
+        box-shadow: inset 0 0 30px 10px rgba(251, 191, 36, 0.5), inset 0 0 65px 20px rgba(245, 158, 11, 0.3);
+      }
+      50% {
+        box-shadow: inset 0 0 55px 18px rgba(251, 191, 36, 1), inset 0 0 100px 35px rgba(245, 158, 11, 0.7);
+      }
+      100% {
+        box-shadow: inset 0 0 30px 10px rgba(251, 191, 36, 0.5), inset 0 0 65px 20px rgba(245, 158, 11, 0.3);
+      }
     }
 
     :focus-visible {
@@ -193,7 +221,7 @@
       background: var(--success-bg);
       color: var(--success);
       border: 2px solid var(--success-border);
-      animation: pulseAlert 1.5s infinite;
+      animation: pulseAlert 0.9s infinite;
     }
 
     .status-badge.entregue {
@@ -203,19 +231,19 @@
     }
 
     @keyframes pulseAlert {
-      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
-      70% { transform: scale(1.05); box-shadow: 0 0 0 16px rgba(16, 185, 129, 0); }
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1.06); box-shadow: 0 0 0 16px rgba(16, 185, 129, 0); }
       100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
 
     .flash-alert {
       background: #064e3b !important;
-      animation: bgFlash 1s infinite alternate;
+      animation: bgFlash 0.7s infinite alternate;
     }
 
     @keyframes bgFlash {
       from { border-color: #10b981; }
-      to { border-color: #34d399; }
+      to { border-color: #fbbf24; }
     }
 
     .status-message {
@@ -228,9 +256,10 @@
     .sub-message {
       font-size: 0.9rem;
       color: var(--text-muted);
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
+    /* Botão Toggle de Alerta Sonoro e Vibração */
     .sound-toggle-btn {
       width: 100%;
       background: #0f172a;
@@ -244,14 +273,20 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       transition: all 0.2s;
     }
 
     .sound-toggle-btn.enabled {
-      background: rgba(59, 130, 246, 0.15);
-      border: 2px solid var(--primary);
-      color: #93c5fd;
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid var(--success);
+      color: #6ee7b7;
+    }
+
+    .sound-toggle-btn.muted {
+      background: rgba(239, 68, 68, 0.1);
+      border: 2px solid #ef4444;
+      color: #fca5a5;
     }
 
     .order-details {
@@ -335,6 +370,9 @@
 </head>
 <body>
 
+  <!-- Overlay para o efeito de iluminação periférica nas laterais da tela -->
+  <div id="edge-glow" class="edge-glow-overlay" aria-hidden="true"></div>
+
   <!-- Barra de acessibilidade rápida para o cliente -->
   <aside class="a11y-bar" aria-label="Acessibilidade">
     <button id="toggle-contrast" class="btn-chip" aria-pressed="false" title="Alternar modo de alto contraste">
@@ -375,15 +413,15 @@
         Tempo estimado: ~8 a 10 minutos. Fique à vontade para passear!
       </p>
 
-      <!-- Botão para habilitar o som e a vibração no celular -->
-      <button id="btn-sound-test" class="sound-toggle-btn" aria-label="Ativar alerta sonoro no celular">
+      <!-- Botão de Toggle: Ativa e Desativa o som e vibração a qualquer momento -->
+      <button id="btn-sound-test" class="sound-toggle-btn" aria-label="Ativar ou desativar alerta sonoro e vibração">
         <span id="sound-icon" aria-hidden="true">🔔</span>
-        <span id="sound-label">Toque aqui para ativar o som de aviso</span>
+        <span id="sound-label">Toque para ativar alerta sonoro e vibração</span>
       </button>
 
-      <!-- Botão para silenciar o alarme caso esteja tocando -->
+      <!-- Botão de emergência para silenciar alarme enquanto toca -->
       <button id="btn-silence" class="btn-chip" style="display: none; margin: 0 auto 16px; background: #dc2626; color: white;" aria-label="Silenciar toque do pedido">
-        🔇 Silenciar Alarme
+        🔇 Silenciar Alarme Agora
       </button>
     </section>
 
@@ -437,6 +475,7 @@
 
     // --- ELEMENTOS DO DOM ---
     const appCard = document.getElementById('app-card');
+    const edgeGlow = document.getElementById('edge-glow');
     const statusBadge = document.getElementById('status-badge');
     const statusIcon = document.getElementById('status-icon');
     const statusText = document.getElementById('status-text');
@@ -452,11 +491,13 @@
     const toggleContrast = document.getElementById('toggle-contrast');
     const toggleFont = document.getElementById('toggle-font');
 
-    // --- SÍNTESE DE ÁUDIO WEB & VIBRAÇÃO ---
+    // --- SÍNTESE DE ÁUDIO & VIBRAÇÃO HÁPTICA ---
     let audioContext = null;
     let alarmInterval = null;
+    let isSoundEnabled = false; // Controle de toggle
+    let isCurrentlyReady = false;
 
-    function initAudio() {
+    function getAudioContext() {
       if (!audioContext) {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         audioContext = new AudioCtx();
@@ -464,51 +505,78 @@
       if (audioContext.state === 'suspended') {
         audioContext.resume();
       }
-      btnSoundTest.classList.add('enabled');
-      soundIcon.textContent = '🔊';
-      soundLabel.textContent = 'Alerta Sonoro Ativo no Celular';
+      return audioContext;
     }
 
-    function playChime(isReadyAlert = false) {
-      if (!audioContext) initAudio();
-      if (!audioContext) return;
-
-      const now = audioContext.currentTime;
-      const notes = isReadyAlert ? [523.25, 659.25, 783.99, 1046.50] : [523.25, 659.25];
-      
-      notes.forEach((freq, idx) => {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.18);
-
-        gain.gain.setValueAtTime(0.35, now + idx * 0.18);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.18 + 0.35);
-
-        osc.connect(gain);
-        gain.connect(audioContext.destination);
-
-        osc.start(now + idx * 0.18);
-        osc.stop(now + idx * 0.18 + 0.4);
-      });
-
-      if ('vibrate' in navigator) {
-        if (isReadyAlert) {
-          navigator.vibrate([400, 200, 400, 200, 600]);
-        } else {
-          navigator.vibrate(200);
+    // Executa vibração segura para dispositivos móveis
+    function triggerVibration(pattern) {
+      try {
+        if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
+          navigator.vibrate(pattern);
         }
+      } catch (e) {
+        console.warn('Vibração não suportada pelo navegador/sistema.', e);
       }
     }
 
+    // Sequência ágil de pager: "tu-tu-tu-tu" rápido e nítido
+    function playChime(isReadyAlert = false) {
+      if (!isSoundEnabled) return;
+      const ctx = getAudioContext();
+      if (!ctx) return;
+
+      const now = ctx.currentTime;
+      // 4 bipes rápidos e agudos (A5, B5, C#6, E6)
+      const notes = isReadyAlert ? [880, 987.77, 1108.73, 1318.51] : [880, 1108.73];
+      
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.075);
+
+        gain.gain.setValueAtTime(0.45, now + idx * 0.075);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.075 + 0.1);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + idx * 0.075);
+        osc.stop(now + idx * 0.075 + 0.12);
+      });
+
+      // Vibração háptica ritmada com os bipes (em aparelhos compatíveis)
+      if (isReadyAlert) {
+        triggerVibration([80, 40, 80, 40, 80, 40, 150]);
+      } else {
+        triggerVibration(120);
+      }
+    }
+
+    // Loop rápido do alarme: repete a cada 1.4 segundos (cadência de pager)
     function startAlarmLoop() {
       stopAlarmLoop();
-      playChime(true);
-      btnSilence.style.display = 'inline-block';
-      alarmInterval = setInterval(() => {
+      isCurrentlyReady = true;
+
+      // Ativa efeito de visão periférica (Edge Lighting Amarelo)
+      edgeGlow.classList.add('active');
+
+      if (isSoundEnabled) {
         playChime(true);
-      }, 7000);
+        btnSilence.style.display = 'inline-block';
+      }
+
+      alarmInterval = setInterval(() => {
+        if (isCurrentlyReady) {
+          if (isSoundEnabled) {
+            playChime(true);
+          } else {
+            // Se o som estiver desativado, ainda vibra o celular e pisca
+            triggerVibration([80, 40, 80, 40, 120]);
+          }
+        }
+      }, 1400);
     }
 
     function stopAlarmLoop() {
@@ -516,8 +584,44 @@
         clearInterval(alarmInterval);
         alarmInterval = null;
       }
+      triggerVibration(0);
+      edgeGlow.classList.remove('active');
       btnSilence.style.display = 'none';
     }
+
+    // --- TOGGLE DE ATIVAÇÃO / DESATIVAÇÃO DO ALERTA ---
+    function toggleSound() {
+      isSoundEnabled = !isSoundEnabled;
+
+      if (isSoundEnabled) {
+        getAudioContext();
+        btnSoundTest.className = 'sound-toggle-btn enabled';
+        soundIcon.textContent = '🔊';
+        soundLabel.textContent = 'Alerta Sonoro Ativo (Toque para Desativar)';
+        playChime(false); // Bipe de confirmação
+        triggerVibration([100, 50, 100]); // Teste de vibração
+        liveAnnouncer.textContent = 'Alerta sonoro e vibração ativados.';
+
+        if (isCurrentlyReady) {
+          btnSilence.style.display = 'inline-block';
+          playChime(true);
+        }
+      } else {
+        btnSoundTest.className = 'sound-toggle-btn muted';
+        soundIcon.textContent = '🔇';
+        soundLabel.textContent = 'Alerta Desativado (Toque para Ativar)';
+        triggerVibration(0);
+        liveAnnouncer.textContent = 'Alerta sonoro desativado.';
+      }
+    }
+
+    btnSoundTest.addEventListener('click', toggleSound);
+
+    btnSilence.addEventListener('click', () => {
+      stopAlarmLoop();
+      appCard.classList.remove('flash-alert');
+      liveAnnouncer.textContent = 'Alarme silenciado.';
+    });
 
     // --- TRANSIÇÕES DE ESTADO DO CLIENTE ---
     function applyStatus(status) {
@@ -525,6 +629,7 @@
       appCard.classList.remove('flash-alert');
 
       if (status === 'preparo') {
+        isCurrentlyReady = false;
         statusBadge.className = 'status-badge preparo';
         statusIcon.textContent = '⏳';
         statusText.textContent = 'Em Preparo';
@@ -546,6 +651,7 @@
         liveAnnouncer.textContent = 'Atenção! Seu pedido ' + orderNumber + ' está pronto para retirada no Balcão 02!';
       } 
       else if (status === 'entregue') {
+        isCurrentlyReady = false;
         statusBadge.className = 'status-badge entregue';
         statusIcon.textContent = '✓';
         statusText.textContent = 'Pedido Entregue';
@@ -557,7 +663,6 @@
     }
 
     // --- RECEPTOR DE EVENTOS EM TEMPO REAL ---
-    // 1. MQTT via WebSockets público HiveMQ
     const topic = 'fabrica-de-ideias/pager/' + sessionId;
     const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt', {
       clientId: 'client_' + Math.random().toString(16).substr(2, 8),
@@ -580,7 +685,6 @@
       }
     });
 
-    // 2. BroadcastChannel local (se aberto no mesmo computador)
     const localChannel = new BroadcastChannel('pager_' + sessionId);
     localChannel.onmessage = (event) => {
       try {
@@ -591,19 +695,7 @@
       } catch (e) {}
     };
 
-    // --- EVENTOS DE INTERAÇÃO DO CLIENTE ---
-    btnSoundTest.addEventListener('click', () => {
-      initAudio();
-      playChime(false);
-      liveAnnouncer.textContent = 'Alerta sonoro testado e ativado.';
-    });
-
-    btnSilence.addEventListener('click', () => {
-      stopAlarmLoop();
-      appCard.classList.remove('flash-alert');
-      liveAnnouncer.textContent = 'Alarme silenciado.';
-    });
-
+    // Acessibilidade
     toggleContrast.addEventListener('click', () => {
       const isHigh = document.body.classList.toggle('high-contrast');
       toggleContrast.classList.toggle('active', isHigh);
