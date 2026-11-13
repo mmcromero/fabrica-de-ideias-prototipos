@@ -35,8 +35,8 @@ const originOf=p=>p.origin||'own';
   const all=getFiltered(),visible=getPage(),count=all.length,pages=Math.max(1,Math.ceil(count/pageSize));
   const option=(value,label,current)=>`<option value="${esc(value)}" ${value===current?'selected':''}>${esc(label)}</option>`;
   const categories=[...new Set(products.map(p=>p.category||'Sem categoria'))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
-  const selectFilters=()=>`<label>Origem<select id="pl-origin">${option('all','Todas as origens',originFilter)}${Object.entries(originNames).map(([v,n])=>option(v,n,originFilter)).join('')}</select></label>
-  <label>Categoria<select id="pl-category">${option('all','Todas as categorias',categoryFilter)}${categories.map(c=>option(c,c,categoryFilter)).join('')}</select></label>`;
+  const selectFilters=(mobile=false)=>`<label>Origem<select id="${mobile?'pl-sheet-origin':'pl-origin'}">${option('all','Todas as origens',originFilter)}${Object.entries(originNames).map(([v,n])=>option(v,n,originFilter)).join('')}</select></label>
+  <label>Categoria<select id="${mobile?'pl-sheet-category':'pl-category'}">${option('all','Todas as categorias',categoryFilter)}${categories.map(c=>option(c,c,categoryFilter)).join('')}</select></label>`;
   const bulkTools=()=>`<div class="pl-bulk-tools"><strong>${selected.size} selecionado(s)</strong>
   <button type="button" data-pl-action="page-select">Selecionar página (${visible.length})</button>
   <button type="button" data-pl-action="all-select">Selecionar todos os ${count} resultados</button>
@@ -61,7 +61,7 @@ const originOf=p=>p.origin||'own';
   <div><button type="button" data-pl-page="-1" ${page<=1?'disabled':''}>‹ Anterior</button><span>${page} de ${pages}</span><button type="button" data-pl-page="1" ${page>=pages?'disabled':''}>Próxima ›</button></div></div>`;
   const sheet=sheetMode?`<div class="pl-sheet-layer"><div class="pl-sheet-shade" data-pl-action="close-sheet"></div><section role="dialog" aria-modal="true" aria-label="${sheetMode==='filters'?'Filtros':'Ações em lote'}" class="pl-sheet">
     <header><strong>${sheetMode==='filters'?'Filtros':'Ações em lote'}</strong><button type="button" data-pl-action="close-sheet" aria-label="Fechar painel">×</button></header><div class="pl-sheet-tabs"><button type="button" data-pl-action="filters-sheet" aria-pressed="${sheetMode==='filters'}">☷ Filtros</button><button type="button" data-pl-action="bulk-sheet" aria-pressed="${sheetMode==='bulk'}">☑ Ações em lote</button></div>
-    ${sheetMode==='filters'?`<div class="pl-sheet-fields">${selectFilters()}<button type="button" data-pl-action="clear-filters">Limpar filtros</button><button type="button" data-pl-action="apply-filters" class="pl-primary">Aplicar filtros</button></div>`:bulkTools()}
+    ${sheetMode==='filters'?`<div class="pl-sheet-fields">${selectFilters(true)}<button type="button" data-pl-action="clear-filters">Limpar filtros</button><button type="button" data-pl-action="apply-filters" class="pl-primary">Aplicar filtros</button></div>`:bulkTools()}
     </section></div>`:'';
   return {body:`<section class="ap-root pl-root"><div class="ap-page-heading">
     ${moduleHeading('box','Produtos','Organize o catálogo, os preços, o estoque e a origem dos seus produtos.')}
@@ -81,7 +81,7 @@ const originOf=p=>p.origin||'own';
     return {body:`<section class="ap-root">
       <div>${button('‹ Voltar ao catálogo','back')}</div>
       <div class="ap-page-heading"><div><p class="ap-overline">Ficha do produto</p><h1 tabindex="-1">${esc(p.name)}</h1>
-       <p class="ap-muted">${esc(p.sku)} · ${esc(p.category||'Sem categoria')}</p></div>${button('Editar produto','edit',p.id,'primary')}</div>
+       <p class="ap-muted">${esc(p.sku)} · ${esc(p.category||'Sem categoria')} · ${originNames[originOf(p)]}</p></div>${button('Editar produto','edit',p.id,'primary')}</div>
       <div class="ap-columns">
        <section class="ap-panel"><h2>Informações gerais</h2>
         <div class="ap-image-placeholder" aria-label="Sem foto cadastrada">${icon('box')}<span>Foto do produto</span></div>
@@ -331,8 +331,8 @@ const originOf=p=>p.origin||'own';
   document.addEventListener('change',function plChange(event){
   const e=event.target;
   if(e.id==='ap-origin'){const o=e.value;$('ap-related-field').hidden=o==='own';$('ap-repasse-field').hidden=o!=='consigned';return;}
-  if(e.id==='pl-origin'){originFilter=e.value;page=1;render();return;}
-  if(e.id==='pl-category'){categoryFilter=e.value;page=1;render();return;}
+  if(e.id==='pl-origin'||e.id==='pl-sheet-origin'){originFilter=e.value;page=1;render();return;}
+  if(e.id==='pl-category'||e.id==='pl-sheet-category'){categoryFilter=e.value;page=1;render();return;}
   if(e.id==='pl-size'){pageSize=Number(e.value)||10;localStorage.setItem('ad-products-page-size',String(pageSize));page=1;render();return;}
   if(e.dataset.plSelect){if(e.checked)selected.add(e.dataset.plSelect);else selected.delete(e.dataset.plSelect);render();return;}
   if(e.dataset.plCatalog){const p=products.find(p=>p.id===e.dataset.plCatalog);if(p){p.catalogVisible=e.checked;persistProducts();render();}return;}
