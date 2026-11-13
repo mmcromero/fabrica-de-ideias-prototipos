@@ -254,3 +254,5 @@ body.ap-drawer-open{overflow:hidden}
 .ap-internal-footer-links button,.ap-internal-footer-links a{border:0;background:transparent;color:#1E4D3B;text-decoration:underline;text-underline-offset:3px;font-size:12px;font-family:inherit;padding:3px;cursor:pointer}
 .ap-footer-version{font-size:11px;color:#43594a}
 @media(max-width:767px){.ap-internal-footer-links{column-gap:11px}.ap-internal-footer-links button,.ap-internal-footer-links a{font-size:11px}}
+
+#ap-global-footer[hidden]{display:none!important}
