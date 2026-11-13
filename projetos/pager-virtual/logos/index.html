@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1120">
+  <title>Galeria de Identidade Visual &amp; Naming — Pager Digital</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #f97316;
+      --primary-hover: #ea580c;
+      --success: #10b981;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .nav-bar {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .nav-bar a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .nav-bar a:hover {
+      color: #7dd3fc;
+    }
+
+    .badge-subfolder {
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid #f97316;
+      color: #fb923c;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    header {
+      width: 100%;
+      max-width: 900px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #f97316, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
+    }
+
+    p.subtitle {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 720px;
+      margin: 0 auto 20px;
+      line-height: 1.5;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .btn-toggle {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-toggle:hover, .btn-toggle.active {
+      background: var(--primary);
+      border-color: #ea580c;
+      color: #fff;
+    }
+
+    .main-container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid #10b981;
+    }
+
+    .badge-tag.orange {
+      background: rgba(249, 115, 22, 0.15);
+      color: #fb923c;
+      border-color: #f97316;
+    }
+
+    .badge-tag.blue {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border-color: #38bdf8;
+    }
+
+    .preview-box {
+      padding: 36px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 240px;
+      transition: background 0.25s ease;
+    }
+
+    .preview-box object {
+      max-width: 100%;
+      height: auto;
+      max-height: 200px;
+    }
+
+    /* Modos de visualização dinâmicos */
+    body.view-transparent .preview-box {
+      background-color: #1e293b;
+      background-image: 
+        linear-gradient(45deg, #0f172a 25%, transparent 25%), 
+        linear-gradient(-45deg, #0f172a 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #0f172a 75%), 
+        linear-gradient(-45deg, transparent 75%, #0f172a 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+
+    body.view-light .preview-box {
+      background: #f1f5f9;
+    }
+
+    .card-body {
+      padding: 20px 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-file {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #38bdf8;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      transition: all 0.2s;
+    }
+
+    .btn-file:hover {
+      background: rgba(56, 189, 248, 0.2);
+    }
+
+    footer {
+      margin-top: 48px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      width: 100%;
+      max-width: 900px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav-bar">
+    <div class="nav-links">
+      <a href="../index.html">← Painel do Pager (Admin)</a>
+      <a href="../cliente.html">📱 Visão do Cliente</a>
+    </div>
+    <span class="badge-subfolder">Ativos de Marca · SVG</span>
+  </nav>
+
+  <header>
+    <h1>Showroom de Marcas &amp; Identidade Visual</h1>
+    <p class="subtitle">
+      Arquivos vetoriais SVG matematicamente puros e isolados. Zero risco de mutação, com preservação integral de proporções, transparência e escala infinita.
+    </p>
+
+    <div class="toolbar">
+      <button class="btn-toggle active" onclick="setView('default', this)">🌙 Fundo Escuro Nativo</button>
+      <button class="btn-toggle" onclick="setView('transparent', this)">🏁 Modo Transparência (Checkerboard)</button>
+      <button class="btn-toggle" onclick="setView('light', this)">☀️ Simular Luz Diurna (Fundo Claro)</button>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- OPÇÃO 1 -->
+    <article class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span>Opção 1: Bipou! — A Cloche Acústica</span>
+          <span class="badge-tag">Recomendada</span>
+        </div>
+        <span style="font-size: 0.8rem; color: var(--muted);">bipouapp.com.br / usebipou.com.br</span>
+      </div>
+      <div class="preview-box">
+        <object type="image/svg+xml" data="./opcao-1-bipou-cloche-ondas.svg" style="width: 100%; max-width: 720px;"></object>
+      </div>
+      <div class="card-body">
+        <strong>Conceito Criativo:</strong> A silhueta da tampa de prato gastronômico (*cloche*) em degradê âmbar projeta ondas de alerta sonoro em verde esmeralda. Transmite o zelo do preparo e a certeza de que o chamado chega no bolso onde o cliente estiver.
+        <div class="card-actions">
+          <a class="btn-file" href="./opcao-1-bipou-cloche-ondas.svg" target="_blank">📄 Abrir SVG (Fundo Escuro)</a>
+          <a class="btn-file" href="./opcao-1-bipou-cloche-ondas-transparente.svg" target="_blank">🏁 Abrir SVG (100% Transparente)</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- OPÇÃO 5: AVISAQUI -->
+    <article class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span>Opção 2: Avisaqui. — O Sino Amigável</span>
+          <span class="badge-tag">Domínio .com.br 100% Livre</span>
+        </div>
+        <span style="font-size: 0.8rem; color: #34d399; font-weight: 700;">avisaqui.com.br LIVRE</span>
+      </div>
+      <div class="preview-box">
+        <object type="image/svg+xml" data="./opcao-5-avisaqui-acolhedor.svg" style="width: 100%; max-width: 720px;"></object>
+      </div>
+      <div class="card-body">
+        <strong>Conceito Criativo:</strong> Contração natural de *"Avisa aqui"*. Símbolo estilizado que mescla a silhueta de um sino de balcão e balão de notificação amigável. Registro marcário e domínio raiz `.com.br` completamente desimpedidos no Brasil.
+        <div class="card-actions">
+          <a class="btn-file" href="./opcao-5-avisaqui-acolhedor.svg" target="_blank">📄 Abrir SVG Isolado</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- OPÇÃO 2 -->
+    <article class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span>Opção 3: BIPOU.IO — Monograma B &amp; Anéis de Pager</span>
+          <span class="badge-tag orange">Tech &amp; Moderno</span>
+        </div>
+      </div>
+      <div class="preview-box">
+        <object type="image/svg+xml" data="./opcao-2-bipou-monograma-b.svg" style="width: 100%; max-width: 720px;"></object>
+      </div>
+      <div class="card-body">
+        <strong>Conceito Criativo:</strong> O antigo disco de plástico é desmaterializado em um monograma 'B' construído por arcos dinâmicos de transmissão e um ponto luminoso de pronto. Ideal para ícone de aplicativo web e PWA.
+        <div class="card-actions">
+          <a class="btn-file" href="./opcao-2-bipou-monograma-b.svg" target="_blank">📄 Abrir SVG Isolado</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- OPÇÃO 3 -->
+    <article class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span>Opção 4: Bipou! — O Sorriso &amp; Hospitalidade</span>
+          <span class="badge-tag orange">Afetivo &amp; Sabor</span>
+        </div>
+      </div>
+      <div class="preview-box">
+        <object type="image/svg+xml" data="./opcao-3-bipou-sorriso-hospitalidade.svg" style="width: 100%; max-width: 720px;"></object>
+      </div>
+      <div class="card-body">
+        <strong>Conceito Criativo:</strong> Tigela acolhedora que forma um sorriso de hospitalidade gastronômica, encimada por arcos harmônicos que simbolizam o alívio e a satisfação de não pegar filas.
+        <div class="card-actions">
+          <a class="btn-file" href="./opcao-3-bipou-sorriso-hospitalidade.svg" target="_blank">📄 Abrir SVG Isolado</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- OPÇÃO 4 -->
+    <article class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <span>Opção 5: PRONTTO. — Monograma P &amp; Radar SaaS</span>
+          <span class="badge-tag blue">Corporativo B2B</span>
+        </div>
+      </div>
+      <div class="preview-box">
+        <object type="image/svg+xml" data="./opcao-4-prontto-saas-elegante.svg" style="width: 100%; max-width: 720px;"></object>
+      </div>
+      <div class="card-body">
+        <strong>Conceito Criativo:</strong> Linhas de engenharia com a letra 'P' contendo um checkmark de conclusão integrado e pulso circular de radar de tempo. Voltado para redes de franquias e gestão corporativa.
+        <div class="card-actions">
+          <a class="btn-file" href="./opcao-4-prontto-saas-elegante.svg" target="_blank">📄 Abrir SVG Isolado</a>
+        </div>
+      </div>
+    </article>
+
+  </main>
+
+  <footer>
+    Fábrica de Ideias · Laboratório de Protótipos &amp; Identidade Visual
+  </footer>
+
+  <script>
+    function setView(mode, btn) {
+      document.body.classList.remove('view-transparent', 'view-light');
+      document.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (mode === 'transparent') {
+        document.body.classList.add('view-transparent');
+      } else if (mode === 'light') {
+        document.body.classList.add('view-light');
+      }
+    }
+  </script>
+</body>
+</html>
