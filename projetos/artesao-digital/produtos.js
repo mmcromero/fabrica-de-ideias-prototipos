@@ -25,7 +25,7 @@
 const originOf=p=>p.origin||'own';
   const originNames={own:'Próprio',client:'De cliente',consigned:'Consignado'};
   const productQty=p=>(profile(p).variants||[]).reduce((n,v)=>n+Math.max(0,Number(v.qty)||0),0);
-  const persistProducts=()=>{try{localStorage.setItem(KEY,JSON.stringify({products:products.map(p=>({...p})),profiles}));}catch{feedback('Falha ao gravar dados no navegador.');}};
+  const persistProducts=()=>{try{localStorage.setItem(KEY,JSON.stringify({products:products.map(p=>({...p})),profiles,materialLibrary:techLibrary}));}catch{feedback('Falha ao gravar dados no navegador.');}};
   const getFiltered=()=>products.filter(p=>!p.archived&&(!filter||filterText(p.name+' '+p.sku+' '+p.category).includes(filterText(filter)))&&(originFilter==='all'||originOf(p)===originFilter)&&(categoryFilter==='all'||p.category===categoryFilter));
   const getPage=()=>{const rows=getFiltered();page=Math.min(Math.max(1,page),Math.max(1,Math.ceil(rows.length/pageSize)));return rows.slice((page-1)*pageSize,page*pageSize)};
 
@@ -245,12 +245,14 @@ const originOf=p=>p.origin||'own';
         <p class="ap-help">Reservas, lotes e transferências continuam registrados na estrutura operacional existente.</p>
        </section>
       </div>
-      <section class="ap-panel"><h2>Dados de fabricação</h2>
-       ${m.materials||m.notes||Number(m.machine)||Number(m.manual)?
-        `<div class="ap-rows"><div>Materiais<strong>${esc(m.materials||'Não informado')}</strong></div>
-        <div>Tempo de máquina<strong>${Number(m.machine)||0} min</strong></div><div>Tempo de trabalho<strong>${Number(m.manual)||0} min</strong></div>
-        ${m.notes?`<div>Observações<strong>${esc(m.notes)}</strong></div>`:''}</div>`:
-        '<p class="ap-muted">Nenhum dado de fabricação informado. Você pode adicionar depois.</p>'}
+      <section class="ap-panel ap-tech-detail"><h2>Dados de fabricação</h2>
+        ${(()=>{const f=normalizeTech(m),main=f.main||newTechStep(),materials=[...(main.materials||[]),...(f.base?.materials||[])];
+        return `<div class="ap-rows"><div>Tempo de máquina<strong>${main.machineSeconds===null?'Não informado':Math.floor(main.machineSeconds/3600)+'h '+Math.floor(main.machineSeconds%3600/60)+'min '+main.machineSeconds%60+'s'}</strong></div>
+        <div>Tempo de trabalho humano<strong>${main.humanSeconds===null?'Não informado':Math.floor(main.humanSeconds/3600)+'h '+Math.floor(main.humanSeconds%3600/60)+'min '+main.humanSeconds%60+'s'}</strong></div>
+        <div>Materiais utilizados<strong>${materials.length} material(is)</strong></div>${materials.map(x=>`<div>${esc(x.name||'Material sem nome')}<strong>${techCost(x)===null?'Custo pendente':techBRL(techCost(x))}</strong></div>`).join('')}
+        <div>Etapa adicional<strong>${f.base?'Incluída':'Não incluída'}</strong></div>
+        </div>`})()}
+        ${m?.legacyText?`<p class="ap-tech-legacy">Materiais anteriores: ${esc(m.legacyText)}</p>`:''}
       </section>
       <div class="ap-buttons-end">${button('Voltar ao catálogo','back')}${button('Editar produto','edit',p.id,'primary')}</div>
     </section>`};
@@ -261,7 +263,8 @@ const originOf=p=>p.origin||'own';
     draft={name:p?.name||'',sku:p?.sku||'',category:p?.category||'',origin:p?.origin||'own',catalogVisible:!!p?.catalogVisible,relatedParty:p?.relatedParty||'',repasse:Number(p?.repasse)||0,description:v?.description||'',
       prices:{retail:p?.prices?.retail||0,wholesale:p?.prices?.wholesale||0,factory:p?.prices?.factory||0},
       variants:v?v.variants.map(x=>({...x})):[{color:'Padrão',qty:0}],
-      manufacturing:{materials:v?.manufacturing?.materials||'',machine:v?.manufacturing?.machine||0,manual:v?.manufacturing?.manual||0,notes:v?.manufacturing?.notes||''}};
+      manufacturing:normalizeTech(v?.manufacturing)};
+    techOpen=!!(draft.manufacturing.main.materials?.length||draft.manufacturing.base||draft.manufacturing.legacyText);
     go('ap-editor');
   }
   function editorView(){
@@ -300,18 +303,7 @@ const originOf=p=>p.origin||'own';
             ${field('ap-retail','Varejo (R$)',(d.prices.retail/100).toFixed(2),'inputmode="decimal"')}
           </div>
         </section>
-        <details class="ap-panel ap-manufacturing" ${d.manufacturing.materials||d.manufacturing.notes||Number(d.manufacturing.machine)||Number(d.manufacturing.manual)?'open':''}>
-          <summary><span><strong>Dados de fabricação</strong><small>Opcional — preencha quando desejar</small></span><span aria-hidden="true">⌄</span></summary>
-          <div class="ap-manufacturing-fields">
-            <label>Materiais e insumos<textarea id="ap-materials" rows="3" maxlength="600" placeholder="Materiais utilizados">${esc(d.manufacturing.materials)}</textarea></label>
-            <div class="ap-fields">
-              ${field('ap-machine','Tempo de máquina (min)',d.manufacturing.machine,'type="number" min="0" step="1"')}
-              ${field('ap-manual','Tempo de trabalho (min)',d.manufacturing.manual,'type="number" min="0" step="1"')}
-            </div>
-            <label>Observações técnicas<textarea id="ap-notes" rows="3" maxlength="600">${esc(d.manufacturing.notes)}</textarea></label>
-            <p class="ap-help">O cálculo de custos usará o cadastro de materiais e as regras existentes na implementação futura.</p>
-          </div>
-        </details>
+        ${techFormHTML(d.manufacturing)}
         <p id="ap-error" class="ap-error" role="alert" hidden></p>
         <div class="ap-buttons-end">${button('Cancelar','cancel')}<button type="submit" class="ap-btn ap-btn--primary">${chosenId?'Salvar alterações':'Cadastrar produto'}</button></div>
       </form>
@@ -324,8 +316,7 @@ const originOf=p=>p.origin||'own';
     draft.origin=value('ap-origin')||'own';draft.catalogVisible=!!$('ap-visible')?.checked;draft.relatedParty=value('ap-related').trim();draft.repasse=cents(value('ap-repasse'));
     draft.prices={retail:cents(value('ap-retail')),factory:cents(value('ap-factory')),wholesale:cents(value('ap-wholesale'))};
     draft.variants=draft.variants.map((v,i)=>({color:value('ap-color-'+i).trim(),qty:Number(value('ap-qty-'+i))}));
-    draft.manufacturing={materials:value('ap-materials').trim(),machine:Number(value('ap-machine'))||0,
-      manual:Number(value('ap-manual'))||0,notes:value('ap-notes').trim()};
+    collectTech();
   }
   function error(message){
     const e=$('ap-error');if(e){e.hidden=false;e.textContent=message;e.scrollIntoView({block:'nearest'});}
@@ -341,10 +332,18 @@ const originOf=p=>p.origin||'own';
     if(d.variants.some(v=>!v.color||!Number.isInteger(v.qty)||v.qty<0||v.qty>999999))return error('Revise as cores e as quantidades.');
     const names=d.variants.map(v=>filterText(v.color));
     if(new Set(names).size!==names.length)return error('Cada variação precisa ter um nome diferente.');
+    const issue=techErrors(d.manufacturing)[0];if(issue)return error(issue);
     let p=products.find(x=>x.id===chosenId);
     if(!p){const last=Math.max(0,...products.map(x=>Number(x.id.slice(1))||0));p={id:'p'+(last+1)};products.push(p);}
     Object.assign(p,{name:d.name,sku:d.sku,category:d.category||'Sem categoria',origin:d.origin,catalogVisible:d.catalogVisible,relatedParty:d.relatedParty,repasse:d.repasse,prices:{...d.prices}});
-    profiles[p.id]={description:d.description,variants:d.variants.map(v=>({...v})),manufacturing:{...d.manufacturing}};
+    profiles[p.id]={description:d.description,variants:d.variants.map(v=>({...v})),manufacturing:structuredClone(d.manufacturing)};
+    for(const step of [d.manufacturing.main,d.manufacturing.base])for(const material of step?.materials||[]){
+      if(material.referenceId||!material.name.trim()||techCost(material)===null)continue;
+      const savedDefinition={name:material.name,mode:material.mode,purchaseQuantity:material.purchaseQuantity,purchasePrice:material.purchasePrice,purchaseUnit:material.purchaseUnit,customUnit:material.customUnit};
+      if(!techLibrary.some(item=>JSON.stringify({name:item.name,mode:item.mode,purchaseQuantity:item.purchaseQuantity,purchasePrice:item.purchasePrice,purchaseUnit:item.purchaseUnit,customUnit:item.customUnit})===JSON.stringify(savedDefinition))){
+        techLibrary.push({id:'m'+(techLibrary.length+1),...savedDefinition});
+      }
+    }
     data.central[p.id]=d.variants.reduce((n,v)=>n+v.qty,0);
     productCategories.splice(0,productCategories.length,...new Set(products.map(p=>p.category)));
     persistProducts();
