@@ -29,6 +29,16 @@
       "ordem": 30,
       "icone": "gamepad-2",
       "caminho": "projetos/canal-do-henrique/"
+    },
+    {
+      "id": "pager-virtual",
+      "nome": "Pager Virtual",
+      "descricao": "Acompanhamento de pedidos em praça de alimentação via QR Code, com alertas sonoros e acessibilidade.",
+      "status": "prototipo",
+      "publicado": true,
+      "ordem": 40,
+      "icone": "bell",
+      "caminho": "projetos/pager-virtual/"
     }
   ]
 }
