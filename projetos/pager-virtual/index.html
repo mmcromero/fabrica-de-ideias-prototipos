@@ -4,733 +4,418 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0f172a">
-  <title>Pager Virtual — Acompanhamento de Pedido</title>
+  <title>Pager Virtual — Painel do Restaurante (Admin)</title>
   <style>
     :root {
       --bg: #0b1120;
       --card-bg: #1e293b;
       --card-border: #334155;
-      --text-main: #f8fafc;
+      --text: #f8fafc;
       --text-muted: #94a3b8;
       --primary: #3b82f6;
       --primary-hover: #2563eb;
-      --warning: #f59e0b;
-      --warning-bg: rgba(245, 158, 11, 0.15);
       --success: #10b981;
-      --success-bg: rgba(16, 185, 129, 0.2);
-      --success-border: #059669;
-      --focus-ring: #60a5fa;
-      --font-scale: 1rem;
-    }
-
-    body.high-contrast {
-      --bg: #000000;
-      --card-bg: #121212;
-      --card-border: #ffffff;
-      --text-main: #ffffff;
-      --text-muted: #e2e8f0;
-      --primary: #93c5fd;
-      --warning: #fde047;
-      --warning-bg: #000000;
-      --success: #86efac;
-      --success-bg: #000000;
-      --success-border: #ffffff;
-      --focus-ring: #ffffff;
-    }
-
-    body.large-text {
-      --font-scale: 1.15rem;
+      --success-hover: #059669;
+      --warning: #f59e0b;
+      --danger: #ef4444;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-size: var(--font-scale);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background-color: var(--bg);
-      color: var(--text-main);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 16px;
-      padding-bottom: 120px; /* espaço para barra de simulação */
-      transition: background-color 0.2s, color 0.2s;
+      padding: 20px 16px 40px;
     }
 
-    a, button {
-      min-height: 48px;
-      min-width: 48px;
-    }
-
-    :focus-visible {
-      outline: 3px solid var(--focus-ring);
-      outline-offset: 3px;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    /* Cabeçalho de Navegação e Acessibilidade */
-    .top-bar {
+    .top-nav {
       width: 100%;
-      max-width: 480px;
+      max-width: 900px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-      font-size: 0.9rem;
-    }
-
-    .top-bar a {
-      color: var(--primary);
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      font-weight: 600;
-    }
-
-    .top-bar a:hover {
-      text-decoration: underline;
-    }
-
-    .a11y-controls {
-      display: flex;
-      gap: 8px;
-    }
-
-    .btn-chip {
-      background: #1e293b;
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-      border-radius: 9999px;
-      padding: 6px 12px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .btn-chip.active {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary-hover);
-    }
-
-    /* Container do Aplicativo */
-    .app-card {
-      width: 100%;
-      max-width: 480px;
-      background: var(--card-bg);
-      border: 2px solid var(--card-border);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-    }
-
-    .restaurant-header {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border-bottom: 1px solid var(--card-border);
-    }
-
-    .logo-badge {
-      width: 44px;
-      height: 44px;
-      background: #f97316;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .restaurant-info h1 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      line-height: 1.2;
-    }
-
-    .restaurant-info p {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .order-status-card {
-      padding: 24px 20px;
-      text-align: center;
-    }
-
-    .order-number-tag {
-      display: inline-block;
-      font-size: 0.85rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-      font-weight: 600;
-    }
-
-    .order-number {
-      font-size: 3.5rem;
-      font-weight: 900;
-      line-height: 1;
-      margin-bottom: 16px;
-      letter-spacing: -0.04em;
-    }
-
-    /* Status Visual */
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      border-radius: 9999px;
-      font-weight: 700;
-      font-size: 1.05rem;
-      margin-bottom: 20px;
-    }
-
-    .status-badge.preparo {
-      background: var(--warning-bg);
-      color: var(--warning);
-      border: 1px solid var(--warning);
-    }
-
-    .status-badge.pronto {
-      background: var(--success-bg);
-      color: var(--success);
-      border: 2px solid var(--success-border);
-      animation: pulseAlert 1.5s infinite;
-    }
-
-    .status-badge.entregue {
-      background: rgba(148, 163, 184, 0.15);
-      color: var(--text-muted);
-      border: 1px solid var(--card-border);
-    }
-
-    @keyframes pulseAlert {
-      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
-      70% { transform: scale(1.05); box-shadow: 0 0 0 16px rgba(16, 185, 129, 0); }
-      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-    }
-
-    /* Alerta piscante de tela inteira ao chamar */
-    .flash-alert {
-      background: #064e3b !important;
-      animation: bgFlash 1s infinite alternate;
-    }
-
-    @keyframes bgFlash {
-      from { border-color: #10b981; }
-      to { border-color: #34d399; }
-    }
-
-    .status-message {
-      font-size: 1.05rem;
-      color: var(--text-main);
-      margin-bottom: 12px;
-      line-height: 1.5;
-    }
-
-    .sub-message {
-      font-size: 0.9rem;
-      color: var(--text-muted);
       margin-bottom: 24px;
     }
 
-    /* Botão de Som / Habilitar Áudio */
-    .sound-toggle-btn {
-      width: 100%;
-      background: #0f172a;
-      border: 2px dashed #475569;
-      color: var(--text-main);
-      padding: 14px 18px;
-      border-radius: 12px;
-      cursor: pointer;
+    .top-nav a {
+      color: var(--primary);
+      text-decoration: none;
       font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .badge-admin {
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid var(--primary);
+      color: #93c5fd;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .admin-container {
+      width: 100%;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .admin-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    .card h2 {
+      font-size: 1.15rem;
+      margin-bottom: 8px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card p.desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    /* QR Code Display */
+    .qr-wrapper {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 16px;
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 16px;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    #qrcode img, #qrcode canvas {
+      display: block;
+      margin: auto;
+    }
+
+    .qr-instruction {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+
+    .qr-subtext {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Painel de Controle de Pedidos */
+    .order-box {
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px;
+      background: rgba(0, 0, 0, 0.25);
+      margin-bottom: 20px;
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .order-num {
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .status-pill {
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    .status-pill.preparo {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border: 1px solid #f59e0b;
+    }
+
+    .status-pill.pronto {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid #10b981;
+    }
+
+    .status-pill.entregue {
+      background: rgba(148, 163, 184, 0.2);
+      color: #cbd5e1;
+      border: 1px solid #64748b;
+    }
+
+    .order-items {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      padding-top: 10px;
+      line-height: 1.5;
+    }
+
+    /* Botões de Ação do Restaurante */
+    .btn-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .btn-action {
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 20px;
-      transition: all 0.2s;
-    }
-
-    .sound-toggle-btn.enabled {
-      background: rgba(59, 130, 246, 0.15);
-      border: 2px solid var(--primary);
-      color: #93c5fd;
-    }
-
-    .sound-toggle-btn:hover {
-      background: #1e293b;
-    }
-
-    /* Resumo dos itens do pedido */
-    .order-details {
-      border-top: 1px solid var(--card-border);
-      padding: 20px;
-      background: rgba(0, 0, 0, 0.15);
-    }
-
-    .order-details h2 {
-      font-size: 0.95rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-    }
-
-    .item-list {
-      list-style: none;
-    }
-
-    .item-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
-      font-size: 0.95rem;
-    }
-
-    .item-row:last-child {
-      border-bottom: none;
-    }
-
-    .item-total {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 12px;
-      font-weight: 700;
-      font-size: 1.05rem;
-      padding-top: 10px;
-      border-top: 1px solid var(--card-border);
-    }
-
-    /* Área pós-entrega (Pesquisa + Cupom) */
-    .review-box {
-      margin-top: 16px;
-      padding: 18px;
-      background: rgba(16, 185, 129, 0.08);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    .star-rating {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin: 12px 0;
-    }
-
-    .star-btn {
-      background: none;
-      border: none;
-      font-size: 1.8rem;
-      cursor: pointer;
-      color: #fbbf24;
-      line-height: 1;
-    }
-
-    .coupon-badge {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 8px 16px;
-      background: #0f172a;
-      border: 1px dashed #fbbf24;
-      color: #fef08a;
-      font-weight: 700;
-      border-radius: 6px;
-      font-family: monospace;
-      font-size: 1.05rem;
-    }
-
-    /* BARRA FIXA DE SIMULAÇÃO (CONTROLE DE DEMO) */
-    .sim-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #0f172a;
-      border-top: 2px solid #334155;
-      padding: 12px 16px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      z-index: 999;
-      box-shadow: 0 -8px 20px rgba(0, 0, 0, 0.6);
-    }
-
-    .sim-title {
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #94a3b8;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .sim-buttons {
-      display: flex;
-      gap: 8px;
-      width: 100%;
-      max-width: 480px;
-      justify-content: space-between;
-    }
-
-    .sim-btn {
-      flex: 1;
-      padding: 10px 8px;
-      border-radius: 8px;
-      border: 1px solid #475569;
-      background: #1e293b;
-      color: #fff;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
       transition: all 0.15s;
     }
 
-    .sim-btn.active {
-      border-color: #38bdf8;
-      background: #0284c7;
+    .btn-call {
+      background: var(--success);
+      color: #ffffff;
     }
 
-    .sim-btn.call {
-      background: #059669;
-      border-color: #10b981;
-    }
-    .sim-btn.call:hover {
-      background: #047857;
+    .btn-call:hover {
+      background: var(--success-hover);
+      transform: translateY(-2px);
     }
 
-    /* Modal / Toast de status para leitores de tela */
-    [aria-live] {
-      pointer-events: none;
+    .btn-delivered {
+      background: #334155;
+      color: #f1f5f9;
+      border: 1px solid #475569;
+    }
+
+    .btn-delivered:hover {
+      background: #475569;
+    }
+
+    .btn-reset {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px dashed #475569;
+      padding: 10px;
+      font-size: 0.85rem;
+    }
+
+    .btn-reset:hover {
+      color: #fff;
+      border-color: #94a3b8;
+    }
+
+    /* Status de Conexão */
+    .connection-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 16px;
+      justify-content: center;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
     }
   </style>
 </head>
 <body>
 
-  <!-- Barra de topo com navegação e acessibilidade -->
-  <header class="top-bar">
-    <a href="../../" aria-label="Voltar para a vitrine da Fábrica de Ideias">
-      ← Fábrica de Ideias
-    </a>
-    <div class="a11y-controls" role="group" aria-label="Opções de Acessibilidade">
-      <button id="toggle-contrast" class="btn-chip" aria-pressed="false" title="Alternar modo de alto contraste">
-        Alto Contraste
-      </button>
-      <button id="toggle-font" class="btn-chip" aria-pressed="false" title="Aumentar tamanho do texto">
-        Texto A+
-      </button>
-    </div>
+  <header class="top-nav">
+    <a href="../../">← Fábrica de Ideias</a>
+    <span class="badge-admin">Modo Balcão / Cozinha (Admin)</span>
   </header>
 
-  <!-- Região ARIA para leitura assertiva das mudanças de estado -->
-  <div id="live-announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
-
-  <!-- Cartão do Pager do Cliente -->
-  <main id="app-card" class="app-card">
-    <header class="restaurant-header">
-      <div class="logo-badge" aria-hidden="true">🍔</div>
-      <div class="restaurant-info">
-        <h1>Burger House Grill</h1>
-        <p>Praça de Alimentação · Piso L2</p>
-      </div>
-    </header>
-
-    <section class="order-status-card">
-      <span class="order-number-tag">Senha de Retirada</span>
-      <div class="order-number" id="order-num" aria-label="Pedido número 42">#42</div>
-
-      <div id="status-badge" class="status-badge preparo">
-        <span id="status-icon" aria-hidden="true">⏳</span>
-        <span id="status-text">Em Preparo</span>
-      </div>
-
-      <p id="status-message" class="status-message">
-        Sua comida está sendo preparada com todo cuidado pelo nosso chef!
+  <main class="admin-container">
+    <!-- COLUNA 1: DISPLAY DE BALCÃO / QR CODE PARA O CLIENTE -->
+    <section class="card">
+      <h2>📱 Display de Retirada (Balcão)</h2>
+      <p class="desc">
+        Este QR Code simula o código impresso na nota fiscal ou exibido na tela frontal do caixa. 
+        <strong>Aponte a câmera do seu celular para escanear e abrir o Pager do Cliente.</strong>
       </p>
 
-      <p id="sub-message" class="sub-message">
-        Tempo estimado: ~8 a 10 minutos. Fique à vontade para passear!
-      </p>
+      <div class="qr-wrapper">
+        <div id="qrcode"></div>
+      </div>
 
-      <!-- Botão para habilitar e testar áudio (essencial para vencer políticas de autoplay do navegador) -->
-      <button id="btn-sound-test" class="sound-toggle-btn" aria-label="Ativar e testar alerta sonoro do pedido">
-        <span id="sound-icon" aria-hidden="true">🔔</span>
-        <span id="sound-label">Ativar Alerta Sonoro no Celular</span>
-      </button>
+      <p class="qr-instruction">Escaneie com a câmera do celular</p>
+      <p class="qr-subtext" id="qr-session-info">Pedido #42 · Conexão Tempo Real Ativa</p>
 
-      <!-- Botão para silenciar alarme quando estiver tocando -->
-      <button id="btn-silence" class="btn-chip" style="display: none; margin: 0 auto 16px; background: #dc2626; color: white;" aria-label="Silenciar toque do pedido">
-        🔇 Silenciar Alarme
-      </button>
+      <div class="connection-status">
+        <span class="dot"></span>
+        <span id="conn-label">Sincronização em tempo real conectada</span>
+      </div>
     </section>
 
-    <!-- Resumo do Pedido -->
-    <section class="order-details" aria-labelledby="order-details-title">
-      <h2 id="order-details-title">Itens do Pedido</h2>
-      <ul class="item-list">
-        <li class="item-row">
-          <span>1x Classic Bacon Burger</span>
-          <strong>R$ 32,90</strong>
-        </li>
-        <li class="item-row">
-          <span>1x Batata Rústica Pequena</span>
-          <strong>R$ 11,00</strong>
-        </li>
-        <li class="item-row">
-          <span>1x Refrigerante Lata 350ml</span>
-          <strong>R$ 6,50</strong>
-        </li>
-      </ul>
-      <div class="item-total">
-        <span>Total Pago</span>
-        <span>R$ 50,40</span>
+    <!-- COLUNA 2: CONTROLE DE PEDIDOS (KDS / COZINHA) -->
+    <section class="card">
+      <h2>🍳 Painel da Cozinha / Atendimento</h2>
+      <p class="desc">
+        Quando a comida estiver pronta, clique em <strong>"Chamar Pedido"</strong>. O celular do cliente vai apitar e vibrar instantaneamente!
+      </p>
+
+      <div class="order-box">
+        <div class="order-header">
+          <div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Senha Atual</div>
+            <div class="order-num" id="order-num-display">#42</div>
+          </div>
+          <span id="admin-status-badge" class="status-pill preparo">🟡 Em Preparo</span>
+        </div>
+        <div class="order-items">
+          • 1x Classic Bacon Burger<br>
+          • 1x Batata Rústica Pequena<br>
+          • 1x Suco Natural de Laranja 500ml
+        </div>
       </div>
 
-      <!-- Área de feedback pós-entrega -->
-      <div id="delivered-section" class="review-box" style="display: none;">
-        <h3>Como estava seu lanche?</h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Sua opinião nos ajuda a melhorar!</p>
-        <div class="star-rating" role="radiogroup" aria-label="Avalie sua experiência de 1 a 5 estrelas">
-          <button class="star-btn" aria-label="1 estrela">★</button>
-          <button class="star-btn" aria-label="2 estrelas">★</button>
-          <button class="star-btn" aria-label="3 estrelas">★</button>
-          <button class="star-btn" aria-label="4 estrelas">★</button>
-          <button class="star-btn" aria-label="5 estrelas">★</button>
-        </div>
-        <p style="font-size: 0.9rem; margin-top: 10px;">Ganhe 10% de desconto na próxima visita:</p>
-        <span class="coupon-badge">BURGER10</span>
+      <div class="btn-actions">
+        <button id="btn-admin-call" class="btn-action btn-call">
+          🔔 Chamar Pedido! (Disparar Alerta)
+        </button>
+
+        <button id="btn-admin-deliver" class="btn-action btn-delivered">
+          ✓ Marcar como Entregue
+        </button>
+
+        <button id="btn-admin-reset" class="btn-action btn-reset">
+          ↺ Reiniciar Pedido para "Em Preparo"
+        </button>
       </div>
     </section>
   </main>
 
-  <!-- BARRA DE CONTROLE PARA DEMONSTRAÇÃO (SIMULADOR) -->
-  <aside class="sim-bar" aria-label="Controles de Demonstração do Protótipo">
-    <div class="sim-title">Controle do Protótipo (Simular Ações da Cozinha)</div>
-    <div class="sim-buttons">
-      <button id="sim-preparo" class="sim-btn active" title="Simular status em preparo">
-        🟡 Em Preparo
-      </button>
-      <button id="sim-pronto" class="sim-btn call" title="Simular chamada do pedido">
-        🟢 Chamar Pedido!
-      </button>
-      <button id="sim-entregue" class="sim-btn" title="Simular pedido entregue">
-        ⚪ Marcar Entregue
-      </button>
-    </div>
-  </aside>
-
+  <script src="./qrcode.min.js"></script>
+  <script src="./mqtt.min.js"></script>
   <script>
-    // --- ESTADO DO PROTÓTIPO ---
-    let audioContext = null;
-    let audioUnlocked = false;
-    let alarmInterval = null;
-    let currentStatus = 'preparo'; // 'preparo' | 'pronto' | 'entregue'
-
-    // --- ELEMENTOS DO DOM ---
-    const appCard = document.getElementById('app-card');
-    const statusBadge = document.getElementById('status-badge');
-    const statusIcon = document.getElementById('status-icon');
-    const statusText = document.getElementById('status-text');
-    const statusMessage = document.getElementById('status-message');
-    const subMessage = document.getElementById('sub-message');
-    const liveAnnouncer = document.getElementById('live-announcer');
-    const btnSoundTest = document.getElementById('btn-sound-test');
-    const soundIcon = document.getElementById('sound-icon');
-    const soundLabel = document.getElementById('sound-label');
-    const btnSilence = document.getElementById('btn-silence');
-    const deliveredSection = document.getElementById('delivered-section');
-
-    const simPreparo = document.getElementById('sim-preparo');
-    const simPronto = document.getElementById('sim-pronto');
-    const simEntregue = document.getElementById('sim-entregue');
-
-    const toggleContrast = document.getElementById('toggle-contrast');
-    const toggleFont = document.getElementById('toggle-font');
-
-    // --- SÍNTESE DE ÁUDIO WEB (SEM ARQUIVOS EXTERNOS) ---
-    function initAudio() {
-      if (!audioContext) {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        audioContext = new AudioCtx();
-      }
-      if (audioContext.state === 'suspended') {
-        audioContext.resume();
-      }
-      audioUnlocked = true;
-      btnSoundTest.classList.add('enabled');
-      soundIcon.textContent = '🔊';
-      soundLabel.textContent = 'Alerta Sonoro Ativo (Clique para Testar)';
+    // Gerar uma sessão única de demonstração para isolar canais
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderNumber = urlParams.get('pedido') || '42';
+    // Sessão fixa por dispositivo ou gerada
+    let sessionId = localStorage.getItem('pager_session_id');
+    if (!sessionId) {
+      sessionId = 'SESS-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+      localStorage.setItem('pager_session_id', sessionId);
     }
 
-    function playChime(isReadyAlert = false) {
-      if (!audioContext) initAudio();
-      if (!audioContext) return;
+    // URL absoluta de destino para o cliente (funciona em qualquer celular escaneando)
+    const baseUrl = window.location.href.split('?')[0].replace('index.html', '');
+    const clientUrl = baseUrl + 'cliente.html?sessao=' + sessionId + '&pedido=' + orderNumber;
 
-      const now = audioContext.currentTime;
-      // Frequências para sequência agradável de chamada de pager
-      const notes = isReadyAlert ? [523.25, 659.25, 783.99, 1046.50] : [523.25, 659.25];
-      
-      notes.forEach((freq, idx) => {
-        const osc = audioContext.createOscillator();
-        const gain = audioContext.createGain();
+    // Gerar QR Code
+    new QRCode(document.getElementById('qrcode'), {
+      text: clientUrl,
+      width: 180,
+      height: 180,
+      colorDark: '#0f172a',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
 
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, now + idx * 0.18);
+    document.getElementById('qr-session-info').textContent = `Pedido #${orderNumber} · Sessão ${sessionId}`;
 
-        gain.gain.setValueAtTime(0.3, now + idx * 0.18);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.18 + 0.35);
+    // Conexão de Tempo Real (MQTT via WebSocket seguro WSS no HiveMQ público)
+    const topic = 'fabrica-de-ideias/pager/' + sessionId;
+    const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt', {
+      clientId: 'admin_' + Math.random().toString(16).substr(2, 8),
+      clean: true,
+      keepalive: 60
+    });
 
-        osc.connect(gain);
-        gain.connect(audioContext.destination);
+    // Fallback local via BroadcastChannel se aberto no mesmo navegador
+    const localChannel = new BroadcastChannel('pager_' + sessionId);
 
-        osc.start(now + idx * 0.18);
-        osc.stop(now + idx * 0.18 + 0.4);
-      });
+    let currentStatus = 'preparo';
+    const adminStatusBadge = document.getElementById('admin-status-badge');
 
-      // Vibração no celular (API nativa do Android)
-      if ('vibrate' in navigator) {
-        if (isReadyAlert) {
-          navigator.vibrate([400, 200, 400, 200, 600]);
-        } else {
-          navigator.vibrate(200);
-        }
-      }
-    }
-
-    function startAlarmLoop() {
-      stopAlarmLoop();
-      playChime(true);
-      btnSilence.style.display = 'inline-block';
-      // Repete o bipe a cada 8 segundos se não silenciar
-      alarmInterval = setInterval(() => {
-        playChime(true);
-      }, 8000);
-    }
-
-    function stopAlarmLoop() {
-      if (alarmInterval) {
-        clearInterval(alarmInterval);
-        alarmInterval = null;
-      }
-      btnSilence.style.display = 'none';
-    }
-
-    // --- TRANSIÇÕES DE ESTADO DO PEDIDO ---
-    function setStatus(status) {
+    function updateAdminUI(status) {
       currentStatus = status;
-      stopAlarmLoop();
-      appCard.classList.remove('flash-alert');
-
-      // Atualiza botões do simulador
-      [simPreparo, simPronto, simEntregue].forEach(b => b.classList.remove('active'));
-
       if (status === 'preparo') {
-        simPreparo.classList.add('active');
-        statusBadge.className = 'status-badge preparo';
-        statusIcon.textContent = '⏳';
-        statusText.textContent = 'Em Preparo';
-        statusMessage.textContent = 'Sua comida está sendo preparada com todo cuidado pelo nosso chef!';
-        subMessage.textContent = 'Tempo estimado: ~8 a 10 minutos. Fique à vontade para passear!';
-        deliveredSection.style.display = 'none';
-
-        // ARIA leitor de tela
-        liveAnnouncer.textContent = 'Status do pedido 42 atualizado: Em preparo. Tempo estimado de 8 a 10 minutos.';
-      } 
-      else if (status === 'pronto') {
-        simPronto.classList.add('active');
-        statusBadge.className = 'status-badge pronto';
-        statusIcon.textContent = '🔔';
-        statusText.textContent = 'PRONTO PARA RETIRADA!';
-        statusMessage.innerHTML = '<strong>Seu pedido está no balcão de entrega!</strong>';
-        subMessage.textContent = 'Por favor, dirija-se ao Balcão 02 com a senha #42.';
-        appCard.classList.add('flash-alert');
-        deliveredSection.style.display = 'none';
-
-        // Dispara alarme sonoro, vibração e leitor de tela
-        startAlarmLoop();
-        liveAnnouncer.textContent = 'Atenção! Seu pedido número 42 está pronto para retirada no Balcão 02!';
-      } 
-      else if (status === 'entregue') {
-        simEntregue.classList.add('active');
-        statusBadge.className = 'status-badge entregue';
-        statusIcon.textContent = '✓';
-        statusText.textContent = 'Pedido Entregue';
-        statusMessage.textContent = 'Bom apetite! Esperamos que aproveite sua refeição.';
-        subMessage.textContent = 'Pedido finalizado em 13/11 às 16:05.';
-        deliveredSection.style.display = 'block';
-
-        liveAnnouncer.textContent = 'Pedido 42 foi retirado com sucesso. Bom apetite!';
+        adminStatusBadge.className = 'status-pill preparo';
+        adminStatusBadge.textContent = '🟡 Em Preparo';
+      } else if (status === 'pronto') {
+        adminStatusBadge.className = 'status-pill pronto';
+        adminStatusBadge.textContent = '🟢 Pronto p/ Retirada';
+      } else if (status === 'entregue') {
+        adminStatusBadge.className = 'status-pill entregue';
+        adminStatusBadge.textContent = '⚪ Entregue';
       }
     }
 
-    // --- EVENTOS ---
-    btnSoundTest.addEventListener('click', () => {
-      initAudio();
-      playChime(false);
-      liveAnnouncer.textContent = 'Teste de som executado com sucesso. O áudio do seu pager está ativo.';
+    function broadcastStatus(status) {
+      updateAdminUI(status);
+      const payload = JSON.stringify({ status: status, order: orderNumber, timestamp: Date.now() });
+
+      // Envia via MQTT para celulares em qualquer rede
+      if (client.connected) {
+        client.publish(topic, payload, { retain: true, qos: 1 });
+      }
+      // Envia localmente
+      localChannel.postMessage(payload);
+    }
+
+    client.on('connect', () => {
+      document.getElementById('conn-label').textContent = 'Conectado em tempo real ao satélite';
+      // Publica estado inicial retido
+      broadcastStatus(currentStatus);
     });
 
-    btnSilence.addEventListener('click', () => {
-      stopAlarmLoop();
-      appCard.classList.remove('flash-alert');
-      liveAnnouncer.textContent = 'Alarme sonoro silenciado.';
+    // Ações dos Botões
+    document.getElementById('btn-admin-call').addEventListener('click', () => {
+      broadcastStatus('pronto');
     });
 
-    // Simulador
-    simPreparo.addEventListener('click', () => setStatus('preparo'));
-    simPronto.addEventListener('click', () => setStatus('pronto'));
-    simEntregue.addEventListener('click', () => setStatus('entregue'));
-
-    // Acessibilidade
-    toggleContrast.addEventListener('click', () => {
-      const isHigh = document.body.classList.toggle('high-contrast');
-      toggleContrast.classList.toggle('active', isHigh);
-      toggleContrast.setAttribute('aria-pressed', isHigh);
-      liveAnnouncer.textContent = isHigh ? 'Alto contraste ativado' : 'Alto contraste desativado';
+    document.getElementById('btn-admin-deliver').addEventListener('click', () => {
+      broadcastStatus('entregue');
     });
 
-    toggleFont.addEventListener('click', () => {
-      const isLarge = document.body.classList.toggle('large-text');
-      toggleFont.classList.toggle('active', isLarge);
-      toggleFont.setAttribute('aria-pressed', isLarge);
-      liveAnnouncer.textContent = isLarge ? 'Tamanho de texto aumentado' : 'Tamanho de texto padrão';
-    });
-
-    // Avaliação por estrelas
-    document.querySelectorAll('.star-btn').forEach((btn, index) => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.star-btn').forEach((s, idx) => {
-          s.style.opacity = idx <= index ? '1' : '0.3';
-        });
-        liveAnnouncer.textContent = `Você avaliou com ${index + 1} estrelas. Obrigado!`;
-      });
+    document.getElementById('btn-admin-reset').addEventListener('click', () => {
+      broadcastStatus('preparo');
     });
   </script>
 </body>
