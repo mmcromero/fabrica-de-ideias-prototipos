@@ -29,7 +29,158 @@ const originOf=p=>p.origin||'own';
   const getFiltered=()=>products.filter(p=>!p.archived&&(!filter||filterText(p.name+' '+p.sku+' '+p.category).includes(filterText(filter)))&&(originFilter==='all'||originOf(p)===originFilter)&&(categoryFilter==='all'||p.category===categoryFilter));
   const getPage=()=>{const rows=getFiltered();page=Math.min(Math.max(1,page),Math.max(1,Math.ceil(rows.length/pageSize)));return rows.slice((page-1)*pageSize,page*pageSize)};
 
-  const field=(id,label,value,extra='')=>`<label for="${id}">${label}<input id="${id}" value="${esc(value)}" ${extra}></label>`;
+
+  const TECH_UNITS={g:['Gramas (g)','mass',1],kg:['Quilos (kg)','mass',1000],ml:['Mililitros (ml)','volume',1],l:['Litros (l)','volume',1000],mm:['Milímetros (mm)','length',.1],cm:['Centímetros (cm)','length',1],m:['Metros (m)','length',100],un:['Unidades','count',1],custom:['Outra unidade','custom',1]};
+  const techLibrary=Array.isArray(saved?.materialLibrary)?saved.materialLibrary.filter(m=>m&&m.name):[];
+  let techOpen=false;
+  const newTechMaterial=()=>({name:'',mode:'quantity',purchaseQuantity:null,purchasePrice:null,purchaseUnit:'kg',customUnit:'',quantity:null,unit:'g',referenceId:null});
+  const newTechStep=()=>({machineSeconds:null,humanSeconds:null,materials:[],packaging:0,label:0,packagingMode:'manual',packagingMaterialId:null,packagingQuantity:1});
+  const normalizeTech=m=>{
+    if(m?.main?.materials)return structuredClone(m);
+    const step=newTechStep();
+    const machine=Number(m?.machine),manual=Number(m?.manual);
+    step.machineSeconds=Number.isFinite(machine)?machine*60:null;
+    step.humanSeconds=Number.isFinite(manual)?manual*60:null;
+    return {main:step,base:null,legacyText:typeof m?.materials==='string'?m.materials:'',legacyNotes:typeof m?.notes==='string'?m.notes:''};
+  };
+  const techNumber=v=>v===''||v===undefined||v===null?null:Number(v);
+  const techFloat=v=>Number.isFinite(Number(v))?Number(v):0;
+  const techBRL=v=>v===null?'Pendente':new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v);
+  const techCompatible=(a,b)=>!!TECH_UNITS[a]&&!!TECH_UNITS[b]&&TECH_UNITS[a][1]===TECH_UNITS[b][1];
+  const techCost=m=>{
+    if(!m.name?.trim())return null;
+    if(m.quantity===null||m.quantity===''||!Number.isFinite(Number(m.quantity))||Number(m.quantity)<0)return null;
+    if(m.mode==='direct')return Number(m.quantity);
+    if(!Number.isFinite(Number(m.purchaseQuantity))||Number(m.purchaseQuantity)<=0||m.purchasePrice===null||!Number.isFinite(Number(m.purchasePrice))||Number(m.purchasePrice)<0)return null;
+    if(!techCompatible(m.purchaseUnit,m.unit))return null;
+    if(m.purchaseUnit==='custom'&&!m.customUnit?.trim())return null;
+    return Number(m.purchasePrice)*Number(m.quantity)*TECH_UNITS[m.unit][2]/(Number(m.purchaseQuantity)*TECH_UNITS[m.purchaseUnit][2]);
+  };
+  const techStepCost=st=>{
+    let sum=0,complete=true;
+    for(const m of st.materials||[]){const value=techCost(m);if(value===null)complete=false;else sum+=value;}
+    if(st.packagingMode==='registered'){
+      const pack=techLibrary.find(m=>String(m.id)===String(st.packagingMaterialId));
+      const value=pack?techCost({...pack,quantity:st.packagingQuantity,unit:pack.purchaseUnit}):null;
+      if(value===null)complete=false;else sum+=value;
+    }else{
+      if(st.packaging===null||!Number.isFinite(Number(st.packaging)))complete=false;
+      else sum+=Number(st.packaging);
+    }
+    if(st.label===null||!Number.isFinite(Number(st.label)))complete=false;
+    else sum+=Number(st.label);
+    return complete?sum:null;
+  };
+  const techOpts=(values,current)=>values.map(([key,label])=>`<option value="${esc(key)}" ${String(current)===String(key)?'selected':''}>${esc(label)}</option>`).join('');
+  const techUnitOpts=(material,used=false)=>techOpts(Object.entries(TECH_UNITS).filter(([key])=>!used||techCompatible(material.purchaseUnit,key)).map(([key,v])=>[key,key==='custom'&&material.customUnit?material.customUnit:v[0]]),used?material.unit:material.purchaseUnit);
+  const techDuration=(label,step,key)=>{
+    const secs=Number.isFinite(step[key])&&step[key]!==null?Number(step[key]):null;
+    const h=secs===null?'':Math.floor(secs/3600),m=secs===null?'':Math.floor(secs%3600/60),x=secs===null?'':secs%60;
+    return `<fieldset class="ap-tech-duration" data-tech-duration="${key}"><legend>${label}</legend><div class="ap-tech-three">${[['Horas',h],['Minutos',m],['Segundos',x]].map(([txt,val],i)=>`<label>${txt}<input type="number" data-tech-time="${key}" data-tech-part="${i}" min="0" max="${i===0?999999:59}" step="1" value="${val}"></label>`).join('')}</div></fieldset>`;
+  };
+  const techMaterialHTML=(mat,index,which)=>{
+    const prefix=`${which}-${index}`,registered=!!mat.referenceId,amount=techCost(mat);
+    return `<div class="ap-tech-material" data-tech-material="${index}" data-tech-step="${which}">
+      <div class="ap-section-head"><h4>Material ${index+1}</h4><button type="button" class="ap-btn" data-tech-action="remove-material" data-tech-step="${which}" data-tech-index="${index}">Remover material</button></div>
+      <label>Selecionar material cadastrado<select data-tech-ref="${prefix}">${techOpts([['','Referência do produto / preencher ou selecionar'],...techLibrary.map(m=>[m.id,m.name])],mat.referenceId||'')}</select></label>
+      ${registered?`<div class="ap-tech-reference"><strong>Material cadastrado: ${esc(mat.name)}</strong><span>Forma de custo: ${mat.mode==='direct'?'Custo direto em reais':'Preço por quantidade comprada'}</span>${mat.mode==='quantity'?`<span>Referência de compra: ${mat.purchaseQuantity} ${esc(TECH_UNITS[mat.purchaseUnit]?.[0]||mat.customUnit)}</span><span>Preço da referência: ${techBRL(mat.purchasePrice)}</span>`:''}<small>Dados em leitura. A referência é gerenciada no Estoque.</small></div>`:
+      `<div class="ap-tech-material-fields"><label>Nome do material<input data-tech-field="name" maxlength="200" value="${esc(mat.name)}" placeholder="Nome do material"></label>
+      <label>Forma de custo<select data-tech-field="mode">${techOpts([['quantity','Preço por quantidade comprada'],['direct','Custo direto em reais']],mat.mode)}</select></label>
+      ${mat.mode==='quantity'?`<label>Quantidade da compra<input type="number" data-tech-field="purchaseQuantity" min="0.000001" step="any" value="${mat.purchaseQuantity??''}"></label>
+      <label>Unidade da compra<select data-tech-field="purchaseUnit">${techUnitOpts(mat)}</select></label>
+      ${mat.purchaseUnit==='custom'?`<label>Nome da unidade<input data-tech-field="customUnit" maxlength="40" value="${esc(mat.customUnit)}"></label>`:''}
+      <label>Preço pago pela compra (R$)<input type="number" min="0" step="any" data-tech-field="purchasePrice" value="${mat.purchasePrice??''}"></label>`:''}</div>`}
+      <div class="ap-tech-material-fields"><label>${mat.mode==='direct'?'Custo utilizado (R$)':'Quantidade utilizada'}<input data-tech-field="quantity" type="number" min="0" step="any" value="${mat.quantity??''}"></label>
+      ${mat.mode==='quantity'?`<label>Unidade utilizada<select data-tech-field="unit">${techUnitOpts(mat,true)}</select></label>`:''}</div>
+      <p class="ap-tech-cost">${amount===null?'Custo pendente: complete a referência e o consumo.':'Custo utilizado: '+techBRL(amount)}</p>
+      </div>`;
+  };
+  const techStepHTML=(step,which)=>{
+    const sub=techStepCost(step),registered=step.packagingMode==='registered';
+    return `<div class="ap-tech-step" data-tech-step-container="${which}">
+      <h3>${which==='main'?'Produção':'Etapa adicional'}</h3>
+      <div class="ap-tech-times">${techDuration('Tempo de máquina',step,'machineSeconds')}${techDuration('Tempo de trabalho humano',step,'humanSeconds')}</div>
+      <fieldset class="ap-tech-materials"><legend>Materiais utilizados</legend>
+        <div class="ap-tech-material-list">${(step.materials||[]).map((m,i)=>techMaterialHTML(m,i,which)).join('')}</div>
+        <button type="button" class="ap-btn ap-btn--soft" data-tech-action="add-material" data-tech-step="${which}">+ Adicionar material</button>
+        <p class="ap-help">Materiais novos completos ficam na base ao salvar o produto. Selecionar uma referência não modifica outros produtos.</p>
+      </fieldset>
+      <fieldset class="ap-tech-packaging"><legend>Embalagem do produto</legend>
+        <label>Forma de custo da embalagem<select data-tech-packaging-mode>${techOpts([['manual','Custo manual'],['registered','Material cadastrado']],step.packagingMode||'manual')}</select></label>
+        ${registered?`<label>Embalagem cadastrada<select data-tech-packaging-ref>${techOpts([['','Selecione'],...techLibrary.filter(m=>m.mode==='quantity').map(m=>[m.id,m.name])],step.packagingMaterialId||'')}</select></label>
+          <label>Quantidade de embalagem por produto<input type="number" min="0.000001" step="any" data-tech-packaging-quantity value="${step.packagingQuantity??1}"></label>`:
+          `<label>Embalagem de fabricação (R$)<input type="number" min="0" step="any" data-tech-packaging value="${step.packaging??0}"></label>`}
+        <p class="ap-help">Use uma forma de custo, sem duplicar a embalagem entre materiais e custo manual.</p>
+      </fieldset>
+      <label>Etiqueta (R$)<input type="number" min="0" step="any" data-tech-label value="${step.label??0}"></label>
+      <p class="ap-tech-subtotal">${sub===null?'Subtotal de materiais e embalagem pendente':'Materiais, embalagem e etiqueta: '+techBRL(sub)}. O custo total depende dos parâmetros operacionais.</p>
+    </div>`;
+  };
+  const techFormHTML=manufacturing=>{
+    const m=manufacturing||normalizeTech(null);
+    return `<details class="ap-panel ap-manufacturing ap-technical" ${techOpen?'open':''}>
+      <summary><span><strong>Dados de fabricação (ficha técnica)</strong><small>Opcional — conforme o cadastro do Artesão Digital</small></span><span aria-hidden="true">⌄</span></summary>
+      <div class="ap-manufacturing-fields">
+        ${m.legacyText?`<p class="ap-tech-legacy">Materiais do cadastro anterior preservados: ${esc(m.legacyText)}</p>`:''}
+        ${m.legacyNotes?`<p class="ap-tech-legacy">Observações anteriores preservadas: ${esc(m.legacyNotes)}</p>`:''}
+        ${techStepHTML(m.main||newTechStep(),'main')}
+        <label class="ap-tech-add-step"><input id="ap-tech-add-step" type="checkbox" ${m.base?'checked':''}> Incluir etapa adicional de produção no custo</label>
+        ${m.base?techStepHTML(m.base,'base'):''}
+        <div class="ap-tech-results"><h3>Resultados calculados</h3>
+          <p class="ap-muted">Custos dos materiais são estimados pelas referências informadas. O custo final e os preços sugeridos dependem dos parâmetros de fabricação do sistema real.</p>
+          <p class="ap-tech-total">Materiais e embalagem: ${techStepCost(m.main)===null||(m.base&&techStepCost(m.base)===null)?'pendente':techBRL((techStepCost(m.main)||0)+(m.base?techStepCost(m.base)||0:0))}</p>
+          <p class="ap-help">Os preços comerciais não são alterados automaticamente.</p>
+        </div>
+      </div>
+    </details>`;
+  };
+  function collectTech(){
+    if(!draft||screen!=='ap-editor')return;
+    const m=draft.manufacturing;
+    for(const container of document.querySelectorAll('[data-tech-step-container]')){
+      const which=container.dataset.techStepContainer,step=m[which];
+      if(!step)continue;
+      for(const key of ['machineSeconds','humanSeconds']){
+        const parts=[...container.querySelectorAll(`[data-tech-time="${key}"]`)].map(n=>n.value);
+        step[key]=parts.every(v=>v==='')?null:parts.some((v,i)=>v!==''&&(!Number.isInteger(Number(v))||Number(v)<0||(i>0&&Number(v)>59)))?null:parts.reduce((sum,v,i)=>sum+Number(v||0)*[3600,60,1][i],0);
+      }
+      for(const row of container.querySelectorAll('[data-tech-material]')){
+        const index=Number(row.dataset.techMaterial),mat=step.materials[index];if(!mat)continue;
+        if(!mat.referenceId){
+          for(const field of row.querySelectorAll('[data-tech-field]')){
+            const k=field.dataset.techField;
+            mat[k]=['purchaseQuantity','purchasePrice','quantity'].includes(k)?techNumber(field.value):field.value;
+          }
+        }else{
+          const q=row.querySelector('[data-tech-field="quantity"]');if(q)mat.quantity=techNumber(q.value);
+          const u=row.querySelector('[data-tech-field="unit"]');if(u)mat.unit=u.value;
+        }
+      }
+      step.packagingMode=container.querySelector('[data-tech-packaging-mode]')?.value||'manual';
+      step.packaging=techNumber(container.querySelector('[data-tech-packaging]')?.value??'0');
+      step.packagingMaterialId=container.querySelector('[data-tech-packaging-ref]')?.value||null;
+      step.packagingQuantity=techNumber(container.querySelector('[data-tech-packaging-quantity]')?.value??'1');
+      step.label=techNumber(container.querySelector('[data-tech-label]')?.value??'0');
+    }
+  }
+  function techErrors(m){
+    const issues=[];
+    for(const which of ['main','base']){
+      const st=m[which];if(!st)continue;
+      const title=which==='main'?'Produção':'Etapa adicional';
+      for(const row of st.materials||[]){
+        if(!row.name?.trim()){issues.push(title+': informe o nome de cada material.');continue;}
+        if(techCost(row)===null)issues.push(title+': confira a referência e o consumo de '+row.name+'.');
+      }
+      if(st.packagingMode==='registered'&&!techLibrary.some(x=>String(x.id)===String(st.packagingMaterialId)))issues.push(title+': selecione uma embalagem cadastrada.');
+      if(st.packagingMode==='registered'&&(!Number.isFinite(Number(st.packagingQuantity))||Number(st.packagingQuantity)<=0))issues.push(title+': confira a quantidade de embalagem.');
+      if(st.packagingMode==='manual'&&(st.packaging===null||!Number.isFinite(Number(st.packaging))||Number(st.packaging)<0))issues.push(title+': confira o custo da embalagem.');
+      if(st.label===null||!Number.isFinite(Number(st.label))||Number(st.label)<0)issues.push(title+': confira o custo da etiqueta.');
+    }
+    return issues;
+  }
+
+    const field=(id,label,value,extra='')=>`<label for="${id}">${label}<input id="${id}" value="${esc(value)}" ${extra}></label>`;
   const button=(label,action,id='',kind='outline')=>`<button type="button" class="ap-btn ap-btn--${kind}" data-product-action="${action}" data-product-id="${esc(id)}">${label}</button>`;
   function listView(){
   const all=getFiltered(),visible=getPage(),count=all.length,pages=Math.max(1,Math.ceil(count/pageSize));
