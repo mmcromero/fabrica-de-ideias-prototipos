@@ -11,48 +11,62 @@
     });
     productCategories.splice(0,productCategories.length,...new Set(products.map(p=>p.category)));
   }
-  let filter='',availabilityFilter='all',chosenId=null,draft=null;
+  let filter='',availabilityFilter='all',originFilter='all',categoryFilter='all',page=1,pageSize=10,bulk=false,selected=new Set(),sheetMode='',chosenId=null,draft=null;
   const ownQty=p=>Math.max(0,Number(data.central[p.id]??0));
   const profile=p=>profiles[p.id]||{description:'',variants:[{color:'Padrão',qty:ownQty(p)}],manufacturing:{materials:'',machine:0,manual:0,notes:''}};
+const originOf=p=>p.origin||'own';
+  const originNames={own:'Próprio',client:'De cliente',consigned:'Consignado'};
+  const productQty=p=>(profile(p).variants||[]).reduce((n,v)=>n+Math.max(0,Number(v.qty)||0),0);
+  const persistProducts=()=>{try{localStorage.setItem(KEY,JSON.stringify({products:products.map(p=>({...p})),profiles}));}catch{feedback('Falha ao gravar dados no navegador.');}};
+  const getFiltered=()=>products.filter(p=>!p.archived&&(!filter||filterText(p.name+' '+p.sku+' '+p.category).includes(filterText(filter)))&&(originFilter==='all'||originOf(p)===originFilter)&&(categoryFilter==='all'||p.category===categoryFilter));
+  const getPage=()=>{const rows=getFiltered();page=Math.min(Math.max(1,page),Math.max(1,Math.ceil(rows.length/pageSize)));return rows.slice((page-1)*pageSize,page*pageSize)};
+
   const field=(id,label,value,extra='')=>`<label for="${id}">${label}<input id="${id}" value="${esc(value)}" ${extra}></label>`;
   const button=(label,action,id='',kind='outline')=>`<button type="button" class="ap-btn ap-btn--${kind}" data-product-action="${action}" data-product-id="${esc(id)}">${label}</button>`;
-  function card(p){
-    const v=profile(p).variants||[],qty=ownQty(p);
-    return `<article class="ap-card">
-      <div class="ap-thumbnail" aria-hidden="true">${icon('box')}</div>
-      <div class="ap-card-body"><div class="ap-card-header"><div><h3>${esc(p.name)}</h3><p>${esc(p.sku)} · ${esc(p.category||'Sem categoria')}</p></div>
-      <span class="ap-tag ${qty===0?'ap-tag--zero':''}">${qty?'Em estoque':'Sem estoque próprio'}</span></div>
-      <div class="ap-card-facts"><div><strong>${money(p.prices.retail)}</strong><small>Varejo</small></div><div><strong>${qty}</strong><small>Unidades próprias</small></div></div>
-      <p class="ap-subtle">${v.length>1?v.length+' cores / variações':v[0]?.color==='Padrão'?'Sem variações':esc(v[0]?.color||'Sem variações')}</p>
-      <div class="ap-card-actions">${button('Ver detalhes','show',p.id)}${button('Editar','edit',p.id,'soft')}</div>
-      </div></article>`;
-  }
-  function filtered(){
-    return products.filter(p=>{
-      if(filter&&!filterText(p.name+' '+p.sku+' '+p.category).includes(filterText(filter)))return false;
-      return availabilityFilter==='all'||(availabilityFilter==='available'&&ownQty(p)>0)||(availabilityFilter==='zero'&&ownQty(p)===0);
-    });
-  }
-  function cards(){
-    const rows=filtered();return rows.length?rows.map(card).join(''):
-      `<div class="ap-empty"><strong>Nenhum produto encontrado</strong><p>Experimente outra busca ou filtro.</p>${button('Limpar filtros','clear')}</div>`;
-  }
   function listView(){
-    const total=products.reduce((n,p)=>n+ownQty(p),0),zeros=products.filter(p=>!ownQty(p)).length;
-    return {body:`<section class="ap-root">
-      <div class="ap-page-heading">${moduleHeading('box','Produtos','Organize o catálogo, os preços e as quantidades em um só lugar.')}
-       <div class="ap-primary-actions">${button('+ Novo produto','new','','primary')}</div></div>
-      <div class="ap-stats"><div><strong>${products.length}</strong><span>Produtos cadastrados</span></div>
-       <div><strong>${total}</strong><span>Unidades próprias na base</span></div><div><strong>${zeros}</strong><span>Sem estoque próprio</span></div></div>
-      <div class="ap-tools"><label>Buscar produto<input id="ap-search" type="search" placeholder="Nome, SKU ou categoria" value="${esc(filter)}"></label>
-       <label>Disponibilidade<select id="ap-availability">
-        <option value="all" ${availabilityFilter==='all'?'selected':''}>Todos os produtos</option>
-        <option value="available" ${availabilityFilter==='available'?'selected':''}>Com estoque</option>
-        <option value="zero" ${availabilityFilter==='zero'?'selected':''}>Sem estoque</option></select></label></div>
-      <div class="ap-list-title"><h2>Catálogo</h2><span id="ap-count">${filtered().length} produtos</span></div>
-      <div class="ap-grid" id="ap-cards">${cards()}</div>
-     </section>`};
-  }
+  const all=getFiltered(),visible=getPage(),count=all.length,pages=Math.max(1,Math.ceil(count/pageSize));
+  const option=(value,label,current)=>`<option value="${esc(value)}" ${value===current?'selected':''}>${esc(label)}</option>`;
+  const categories=[...new Set(products.map(p=>p.category||'Sem categoria'))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const selectFilters=()=>`<label>Origem<select id="pl-origin">${option('all','Todas as origens',originFilter)}${Object.entries(originNames).map(([v,n])=>option(v,n,originFilter)).join('')}</select></label>
+  <label>Categoria<select id="pl-category">${option('all','Todas as categorias',categoryFilter)}${categories.map(c=>option(c,c,categoryFilter)).join('')}</select></label>`;
+  const bulkTools=()=>`<div class="pl-bulk-tools"><strong>${selected.size} selecionado(s)</strong>
+  <button type="button" data-pl-action="page-select">Selecionar página (${visible.length})</button>
+  <button type="button" data-pl-action="all-select">Selecionar todos os ${count} resultados</button>
+  <button type="button" data-pl-action="clear-select">Limpar seleção</button>
+  <div class="pl-bulk-buttons">${[['archive','Arquivar'],['include','Incluir no catálogo'],['remove','Retirar do catálogo'],['private','Tornar privado']].map(([k,v])=>`<button type="button" data-pl-action="${k}" ${selected.size?'':'disabled'}>${v}</button>`).join('')}</div></div>`;
+  const row=p=>{
+    const qty=productQty(p),origin=originOf(p),vars=profile(p).variants||[];
+    return `<article class="pl-row">
+      ${bulk?`<label class="pl-rowcheck"><input type="checkbox" data-pl-select="${esc(p.id)}" ${selected.has(p.id)?'checked':''} aria-label="Selecionar ${esc(p.name)}"></label>`:''}
+      <span class="pl-image" aria-hidden="true">${icon('box')}</span>
+      <div class="pl-name"><strong>${esc(p.name)}</strong><small>${esc(p.sku)}</small>
+      <div class="pl-prices"><span><small>Atacado</small>${money(p.prices.wholesale)}</span><span><small>Fábrica</small>${money(p.prices.factory)}</span><span><small>Varejo</small>${money(p.prices.retail)}</span></div></div>
+      <span class="pl-category">${esc(p.category||'Sem categoria')}</span>
+      <span class="pl-origin pl-origin--${origin}">${originNames[origin]||'Próprio'}</span>
+      <div class="pl-stock"><strong class="${qty===0?'pl-zero':''}">${qty}</strong>${vars.length>1?`<small>${vars.length} variações</small>`:''}</div>
+      <label class="pl-catalog"><input type="checkbox" data-pl-catalog="${esc(p.id)}" ${p.catalogVisible?'checked':''} aria-label="No catálogo: ${esc(p.name)}"><span>No catálogo</span></label>
+      <div class="pl-actions">${button('Editar','edit',p.id)}<button type="button" data-pl-more="${esc(p.id)}" aria-label="Mais ações de ${esc(p.name)}">⋯</button></div>
+    </article>`;
+  };
+  const pager=`<div class="pl-pager"><span>${count?((page-1)*pageSize+1):0}–${Math.min(page*pageSize,count)} de ${count} produtos</span>
+  <label>Por página <select id="pl-size">${[10,20,30,40,50].map(n=>option(String(n),String(n),String(pageSize))).join('')}</select></label>
+  <div><button type="button" data-pl-page="-1" ${page<=1?'disabled':''}>‹ Anterior</button><span>${page} de ${pages}</span><button type="button" data-pl-page="1" ${page>=pages?'disabled':''}>Próxima ›</button></div></div>`;
+  const sheet=sheetMode?`<div class="pl-sheet-layer"><div class="pl-sheet-shade" data-pl-action="close-sheet"></div><section role="dialog" aria-modal="true" aria-label="${sheetMode==='filters'?'Filtros':'Ações em lote'}" class="pl-sheet">
+    <header><strong>${sheetMode==='filters'?'Filtros':'Ações em lote'}</strong><button type="button" data-pl-action="close-sheet" aria-label="Fechar painel">×</button></header>
+    ${sheetMode==='filters'?`<div class="pl-sheet-fields">${selectFilters()}<button type="button" data-pl-action="clear-filters">Limpar filtros</button><button type="button" data-pl-action="apply-filters" class="pl-primary">Aplicar filtros</button></div>`:bulkTools()}
+    </section></div>`:'';
+  return {body:`<section class="ap-root pl-root"><div class="ap-page-heading">
+    ${moduleHeading('box','Produtos','Organize o catálogo, os preços, o estoque e a origem dos seus produtos.')}
+    <div class="ap-primary-actions">${button('+ Novo produto','new','','primary')}</div></div>
+    <div class="pl-toolbar"><label class="pl-search">Buscar produto ou SKU<input id="pl-search" type="search" placeholder="Buscar produto ou SKU" value="${esc(filter)}"></label>
+    <div class="pl-filters-desktop">${selectFilters()}</div><button type="button" class="pl-bulk-toggle" data-pl-action="toggle-bulk" aria-expanded="${bulk}">☷ Ações em lote</button></div>
+    <div class="pl-mobile-controls"><button type="button" data-pl-action="filters-sheet">☷ Filtros</button><button type="button" data-pl-action="bulk-sheet">☑ Ações em lote</button></div>
+    <div class="pl-results-count">${count} produtos encontrados ${originFilter!=='all'||categoryFilter!=='all'?'<button type="button" data-pl-action="clear-filters">Limpar filtros</button>':''}</div>
+    ${bulk?`<div class="pl-bulk-desktop">${bulkTools()}</div>`:''}
+    <div class="pl-table"><div class="pl-table-head">${bulk?'<span>Selecionar</span>':''}<span>Foto</span><span>Produto e preços</span><span>Categoria</span><span>Origem</span><span>Estoque</span><span>No catálogo</span><span>Ações</span></div>
+      <div>${visible.length?visible.map(row).join(''):'<div class="pl-empty">Nenhum produto encontrado.</div>'}</div></div>
+    ${pager}${sheet}</section>`};
+}
   function detailsView(){
     const p=products.find(x=>x.id===chosenId);if(!p)return listView();
     const meta=profile(p),m=meta.manufacturing||{},v=meta.variants||[];
