@@ -230,60 +230,78 @@ const originOf=p=>p.origin||'own';
   render=function(){
     originalRender();
     syncModuleNav();
+    syncPrototypeFooter();
     if(screen==='entry')$('bottom-nav').hidden=true;
     if(screen==='ap-detail'||screen==='ap-editor'){
       $('bottom-nav').hidden=true;$('event-bar').hidden=true;$('demo-status').hidden=true;
     }
   };
-  // Menu principal mobile: painel lateral sobreposto, separado da navegação interna do PDV.
-  const moduleDrawer=document.createElement('div');
-  moduleDrawer.className='ap-drawer-layer';
-  moduleDrawer.hidden=true;
-  moduleDrawer.innerHTML=`<div class="ap-drawer-backdrop" data-close-module-drawer></div>
-    <aside class="ap-drawer" role="dialog" aria-modal="true" aria-label="Menu principal">
-      <div class="ap-drawer-head"><strong>Menu principal</strong><button type="button" class="ap-drawer-close" aria-label="Fechar menu" data-close-module-drawer>${icon('close')}</button></div>
-      <nav aria-label="Módulos"><button type="button" data-drawer-screen="global-products">${icon('box')}<span>Produtos</span></button>
-      <button type="button" data-drawer-screen="entry">${icon('store')}<span>PDV</span></button></nav>
-    </aside>`;
-  document.body.appendChild(moduleDrawer);
-  let focusBeforeDrawer=null;
+
+  // Navegação principal responsiva: faixa clara sob o cabeçalho, igual à aplicação atual.
+  const mobileModuleBar=document.createElement('div');
+  mobileModuleBar.className='ap-mobile-menu';
+  mobileModuleBar.innerHTML=`<button type="button" class="ap-mobile-menu-toggle" aria-controls="ap-mobile-module-links" aria-expanded="false"><span class="ap-menu-symbol">${icon('menu')}</span><span class="ap-menu-word">Menu</span></button>
+    <nav id="ap-mobile-module-links" aria-label="Módulos do Artesão Digital" hidden>
+      <button type="button" data-mobile-module="global-products">${icon('box')}<span>Produtos</span></button>
+      <button type="button" data-mobile-module="entry">${icon('store')}<span>PDV</span></button>
+      <button type="button" data-mobile-module="help">${icon('help')}<span>Ajuda</span></button>
+    </nav>`;
+  moduleNav.insertAdjacentElement('afterend',mobileModuleBar);
+  const toggleModuleMenu=mobileModuleBar.querySelector('.ap-mobile-menu-toggle');
+  const moduleLinks=mobileModuleBar.querySelector('nav');
   function closeModuleDrawer(){
-    if(moduleDrawer.hidden)return;
-    moduleDrawer.hidden=true;
-    document.body.classList.remove('ap-drawer-open');
-    $('back').setAttribute('aria-expanded','false');
-    focusBeforeDrawer?.focus({preventScroll:true});
-    focusBeforeDrawer=null;
+    moduleLinks.hidden=true;
+    toggleModuleMenu.setAttribute('aria-expanded','false');
+    toggleModuleMenu.querySelector('.ap-menu-symbol').innerHTML=icon('menu');
+    toggleModuleMenu.querySelector('.ap-menu-word').textContent='Menu';
   }
-  function openModuleDrawer(){
-    if(!window.matchMedia('(max-width:767px)').matches)return;
-    focusBeforeDrawer=document.activeElement;
-    moduleDrawer.hidden=false;
-    document.body.classList.add('ap-drawer-open');
-    $('back').setAttribute('aria-expanded','true');
-    moduleDrawer.querySelector('.ap-drawer-close').focus({preventScroll:true});
+  function openModuleMenu(){
+    moduleLinks.hidden=false;
+    toggleModuleMenu.setAttribute('aria-expanded','true');
+    toggleModuleMenu.querySelector('.ap-menu-symbol').innerHTML=icon('close');
+    toggleModuleMenu.querySelector('.ap-menu-word').textContent='Fechar menu';
   }
-  $('back').removeEventListener('click',globalMenu);
-  $('back').setAttribute('aria-controls','ap-mobile-modules');
-  moduleDrawer.id='ap-mobile-modules';
-  $('back').setAttribute('aria-expanded','false');
-  $('back').addEventListener('click',openModuleDrawer);
-  moduleDrawer.addEventListener('click',event=>{
-    const route=event.target.closest('[data-drawer-screen]');
-    if(route){const target=route.dataset.drawerScreen;closeModuleDrawer();go(target);return;}
-    if(event.target.closest('[data-close-module-drawer]'))closeModuleDrawer();
+  toggleModuleMenu.addEventListener('click',()=>moduleLinks.hidden?openModuleMenu():closeModuleDrawer());
+  mobileModuleBar.addEventListener('click',event=>{
+    const target=event.target.closest('[data-mobile-module]');
+    if(!target)return;
+    const route=target.dataset.mobileModule;
+    closeModuleDrawer();
+    if(route==='help'){showPrototypeHelp();return;}
+    go(route);
   });
-  document.addEventListener('keydown',event=>{
-    if(moduleDrawer.hidden)return;
-    if(event.key==='Escape'){event.preventDefault();closeModuleDrawer();}
-    if(event.key==='Tab'){
-      const controls=[...moduleDrawer.querySelectorAll('button')];
-      const first=controls[0],last=controls[controls.length-1];
-      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
-      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
-    }
-  });
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!moduleLinks.hidden){closeModuleDrawer();toggleModuleMenu.focus();}});
   window.matchMedia('(min-width:768px)').addEventListener('change',event=>{if(event.matches)closeModuleDrawer();});
+  function showPrototypeHelp(){
+    modal('Ajuda · Artesão Digital',`<div class="stack"><p>Esta é uma demonstração navegável das telas. A Ajuda completa será integrada ao aplicativo real.</p><p>Use Produtos para consultar e cadastrar. Use PDV para testar o fluxo de venda.</p></div>`);
+  }
+  function showPrototypeSupport(){
+    modal('Suporte técnico · Protótipo',`<div class="stack"><p>O envio de chamados depende da conta autenticada e do servidor real. Esta tela não envia informações.</p><p>O suporte funcional existente será preservado na implementação definitiva.</p></div>`);
+  }
+  const internalFoot=`<nav class="ap-internal-footer-links" aria-label="Links do rodapé">
+    <button type="button" data-prototype-footer="support">Suporte técnico</button>
+    <button type="button" data-prototype-footer="help">Ajuda</button>
+    <a href="https://artesaodigital.com.br/artesaos-piloto/legal" target="_blank" rel="noopener noreferrer">Termos e Política de Privacidade</a>
+  </nav><small class="ap-footer-version">Artesão Digital · protótipo navegável</small>`;
+  function syncPrototypeFooter(){
+    const publicScreens=['landing','signup','login','invite','admin-login'];
+    const isPublic=publicScreens.includes(screen);
+    const isAdmin=screen==='admin-home';
+    const isInternal=!isPublic&&!isAdmin;
+    mobileModuleBar.hidden=!isInternal;
+    if(!isInternal)closeModuleDrawer();
+    if(isInternal){
+      footer.innerHTML=internalFoot;
+      footer.classList.add('ap-internal-footer');
+    }else{
+      footer.classList.remove('ap-internal-footer');
+    }
+  }
+  document.addEventListener('click',event=>{
+    const action=event.target.closest('[data-prototype-footer]')?.dataset.prototypeFooter;
+    if(action==='help')showPrototypeHelp();
+    if(action==='support')showPrototypeSupport();
+  });
   document.addEventListener('click',event=>{
     const b=event.target.closest('button[data-product-action]');if(!b)return;
     const action=b.dataset.productAction,id=b.dataset.productId||'';
@@ -352,4 +370,5 @@ const originOf=p=>p.origin||'own';
   document.addEventListener('submit',event=>{
     if(event.target.id==='ap-product-form'){event.preventDefault();save();}
   });
+  render();
 })();
