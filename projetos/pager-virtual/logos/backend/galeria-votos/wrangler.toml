@@ -2,8 +2,8 @@ name = "fabrica-ideias-galeria-votos"
 main = "src/index.js"
 compatibility_date = "2026-11-13"
 
-# Antes do deploy: criar banco D1 e preencher database_id com o ID real.
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "fabrica-ideias-galeria-votos"
-# database_id = "PREENCHER_ID_REAL"
+# Banco D1 criado e associado ao Worker pelo painel Cloudflare; ID confirmado na captura.
+[[d1_databases]]
+binding = "DB"
+database_name = "fabrica-ideias-galeria-votos"
+database_id = "bd062bc0-9a45-4cf3-ae2e-d4c8e3164b04"
