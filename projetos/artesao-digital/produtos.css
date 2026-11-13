@@ -232,3 +232,27 @@ body.ap-drawer-open{overflow:hidden}
  .pl-sheet-tabs button{min-height:42px;background:#fff;color:#1e4d3b;border:1px solid #bfcfc3;border-radius:8px;font-weight:650}
  .pl-sheet-tabs button[aria-pressed="true"]{background:#e1f1e6;border-color:#1e4d3b}
 }
+
+/* UX: navegação mobile idêntica ao padrão do aplicativo, em faixa clara. */
+.ap-mobile-menu[hidden],.ap-mobile-menu nav[hidden]{display:none!important}
+.ap-mobile-menu{display:none;background:#F5F5EF;color:#1E4D3B;border-bottom:1px solid #cbd8cc}
+.ap-mobile-menu-toggle{display:flex;align-items:center;gap:12px;width:100%;min-height:54px;padding:11px 20px;border:0;background:transparent;text-align:left;color:inherit;font:500 16px Arial,Helvetica,sans-serif}
+.ap-mobile-menu-toggle .icon,.ap-mobile-menu nav .icon{width:19px;height:19px;flex-shrink:0}
+.ap-mobile-menu nav{display:grid}
+.ap-mobile-menu nav button{display:flex;align-items:center;gap:14px;min-height:52px;width:100%;padding:12px 21px;border:0;background:transparent;text-align:left;color:#1E4D3B;font-size:15px}
+.ap-mobile-menu nav button:hover,.ap-mobile-menu nav button:focus-visible{background:#e5eae5}
+.ap-mobile-menu button:focus-visible{outline:2px solid #1E4D3B;outline-offset:-3px}
+@media(max-width:767px){
+ .ap-mobile-menu:not([hidden]){display:block}
+ .top .header-inner{grid-template-columns:minmax(0,1fr) auto;column-gap:8px}
+ .top .header-inner .header-menu{display:none!important}
+ .top .header-inner .brand{grid-column:1;grid-row:1;justify-self:start}
+ .top .header-inner .header-actions{grid-column:2;grid-row:1}
+}
+.ap-internal-footer{display:grid;gap:4px;justify-items:center;align-content:center;background:#F5F5EF!important;border-top:1px solid #cbb493;box-shadow:none!important;padding:10px 12px max(12px,env(safe-area-inset-bottom))!important}
+.ap-internal-footer-links{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;column-gap:15px;row-gap:4px}
+.ap-internal-footer-links button,.ap-internal-footer-links a{border:0;background:transparent;color:#1E4D3B;text-decoration:underline;text-underline-offset:3px;font-size:12px;font-family:inherit;padding:3px;cursor:pointer}
+.ap-footer-version{font-size:11px;color:#43594a}
+@media(max-width:767px){.ap-internal-footer-links{column-gap:11px}.ap-internal-footer-links button,.ap-internal-footer-links a{font-size:11px}}
+
+#ap-global-footer[hidden]{display:none!important}
