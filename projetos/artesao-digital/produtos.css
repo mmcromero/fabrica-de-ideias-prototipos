@@ -116,3 +116,110 @@ body.ap-drawer-open{overflow:hidden}
 @keyframes ap-drawer-enter{from{transform:translateX(-100%)}to{transform:translateX(0)}}
 @media(min-width:768px){.ap-drawer-layer{display:none!important}}
 @media(prefers-reduced-motion:reduce){.ap-drawer{animation:none}}
+
+
+/* PROD-UX-003 — Listagem de produtos: desktop em tabela, celular em linhas compactas. */
+.pl-root{gap:18px;padding-bottom:34px}
+.pl-toolbar{display:grid;grid-template-columns:minmax(200px,1.2fr) minmax(330px,1.7fr) auto;align-items:end;gap:12px}
+.pl-toolbar label,.pl-sheet-fields label{display:grid;gap:5px;font-size:12px;font-weight:700;color:#355445}
+.pl-toolbar input,.pl-toolbar select,.pl-sheet-fields select{width:100%;height:46px;background:#fff;border:1px solid #cbd6cd;border-radius:8px;padding:8px 11px;color:#1F2A25;font-size:14px;font-family:inherit}
+.pl-toolbar label.pl-search{font-size:0;gap:0}
+.pl-filters-desktop{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pl-bulk-toggle,.pl-mobile-controls button{height:46px;padding:9px 13px;border:1px solid #1E4D3B;border-radius:8px;background:#fff;color:#1E4D3B;font-size:13px;font-weight:700;cursor:pointer}
+.pl-results-count{display:flex;align-items:center;gap:12px;flex-wrap:wrap;color:#576d61;font-size:13px}
+.pl-results-count button{background:transparent;color:#1E4D3B;border:0;text-decoration:underline;cursor:pointer}
+.pl-table{background:#fff;border:1px solid #dce5dd;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px #1a362508}
+.pl-table-head,.pl-row{display:grid;grid-template-columns:68px minmax(170px,2.4fr) minmax(85px,1fr) minmax(93px,.95fr) 84px 96px 124px;gap:9px;align-items:center;padding:11px 14px}
+.pl-table:has(.pl-rowcheck) .pl-table-head,.pl-table:has(.pl-rowcheck) .pl-row{grid-template-columns:30px 58px minmax(170px,2.4fr) minmax(75px,1fr) minmax(88px,.95fr) 74px 82px 118px}
+.pl-table-head{background:#eaf2eb;color:#1c3d2d;font-size:12px;font-weight:700}
+.pl-row{border-top:1px solid #e7ece7;min-height:76px;font-size:12px}
+.pl-row:hover{background:#fbfdfb}
+.pl-image{display:grid;place-items:center;width:52px;height:52px;background:#edf3ee;border-radius:9px;color:#4d755b}
+.pl-image .icon{width:27px;height:27px}
+.pl-name{min-width:0;display:grid;gap:3px}
+.pl-name strong{color:#172e23;font-size:13px;overflow-wrap:anywhere}
+.pl-name>small{font-size:11px;color:#627468}
+.pl-prices{display:flex;gap:13px;flex-wrap:wrap;padding-top:3px}
+.pl-prices span{display:grid;gap:2px;font-size:12px;font-weight:650;color:#243c30}
+.pl-prices small{font-size:10px;color:#607264;font-weight:400}
+.pl-origin{justify-self:start;background:#e0f3e6;color:#245b3b;padding:5px 7px;border-radius:6px;font-size:12px;white-space:nowrap}
+.pl-origin--client{background:#fff0cf;color:#71521f}
+.pl-origin--consigned{background:#efe1f7;color:#66377d}
+.pl-stock{display:grid;gap:3px;justify-items:start}
+.pl-stock strong{min-width:34px;padding:4px 8px;text-align:center;background:#e1f4e4;border-radius:20px;color:#1a592e}
+.pl-stock strong.pl-zero{background:#fee1e2;color:#992b2e}
+.pl-stock small{color:#65776d;font-size:10px}
+.pl-catalog{display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer}
+.pl-catalog input,.pl-rowcheck input{width:19px;height:19px;accent-color:#126638;cursor:pointer}
+.pl-catalog span{display:none}
+.pl-actions{display:flex;align-items:center;gap:6px}
+.pl-actions .ap-btn{min-height:35px;padding:7px 9px;font-size:12px}
+.pl-more{width:35px;height:35px;border-radius:7px;border:1px solid #cbd7ce;background:white;color:#173c2b;font-size:20px;cursor:pointer}
+.pl-pager{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid #dce5dd;border-radius:9px;padding:12px 14px;font-size:12px}
+.pl-pager label{display:flex;align-items:center;gap:9px}
+.pl-pager select{border:1px solid #cbd6cd;border-radius:6px;background:#fff;padding:7px}
+.pl-pager>div{display:flex;align-items:center;gap:9px}
+.pl-pager button{border:1px solid #cbd6cd;background:#fff;border-radius:7px;min-height:37px;padding:8px 11px;cursor:pointer}
+.pl-pager button:disabled{opacity:.35;cursor:default}
+.pl-bulk-desktop{background:#e6f3e9;border:1px solid #cae0ce;border-radius:10px;padding:12px}
+.pl-bulk-tools{display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:13px}
+.pl-bulk-tools>button{background:transparent;border:0;color:#195c38;text-decoration:underline;cursor:pointer;padding:7px 4px}
+.pl-bulk-buttons{display:flex;flex-wrap:wrap;gap:6px}
+.pl-bulk-buttons button{border:1px solid #97b69d;background:#fff;border-radius:7px;color:#194a30;min-height:37px;padding:8px 9px;cursor:pointer}
+.pl-bulk-buttons button:disabled{opacity:.4;cursor:default}
+.pl-rowcheck{display:flex}
+.pl-empty{padding:25px;text-align:center;color:#586d60}
+.pl-mobile-controls,.pl-sheet-layer{display:none}
+.pl-root .ap-primary-actions .ap-btn{min-height:46px}
+@media(max-width:1030px) and (min-width:768px){
+ .pl-table-head,.pl-row{grid-template-columns:48px minmax(160px,2fr) 78px 88px 65px 65px 95px;gap:5px;padding:10px 8px}
+ .pl-table:has(.pl-rowcheck) .pl-table-head,.pl-table:has(.pl-rowcheck) .pl-row{grid-template-columns:25px 45px minmax(135px,2fr) 73px 80px 55px 60px 91px}
+ .pl-prices{gap:6px}.pl-actions .ap-btn{padding:6px}
+}
+@media(max-width:767px){
+ .pl-toolbar{display:block}
+ .pl-search{display:block}
+ .pl-filters-desktop,.pl-bulk-toggle,.pl-table-head,.pl-bulk-desktop{display:none!important}
+ .pl-mobile-controls{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+ .pl-mobile-controls button{min-width:0}
+ .pl-row,.pl-table:has(.pl-rowcheck) .pl-row{position:relative;display:grid;grid-template-columns:auto 55px minmax(0,1fr) auto;gap:7px 9px;padding:11px 9px;min-height:90px}
+ .pl-row:not(:has(.pl-rowcheck)){grid-template-columns:55px minmax(0,1fr) auto}
+ .pl-rowcheck{grid-column:1;grid-row:1/3;align-self:center}
+ .pl-image{grid-row:1/3;grid-column:2;width:50px;height:50px}
+ .pl-row:not(:has(.pl-rowcheck)) .pl-image{grid-column:1}
+ .pl-name{grid-column:3;grid-row:1/3;align-self:center}
+ .pl-row:not(:has(.pl-rowcheck)) .pl-name{grid-column:2}
+ .pl-name strong{font-size:13px}
+ .pl-prices{gap:6px}
+ .pl-prices span{font-size:10px}
+ .pl-prices small{display:none}
+ .pl-category{display:none}
+ .pl-origin{grid-column:3;grid-row:3;align-self:center;font-size:10px}
+ .pl-row:not(:has(.pl-rowcheck)) .pl-origin{grid-column:2}
+ .pl-stock{grid-column:3;grid-row:4;display:flex;align-items:center;gap:5px}
+ .pl-row:not(:has(.pl-rowcheck)) .pl-stock{grid-column:2}
+ .pl-stock strong{font-size:11px}
+ .pl-catalog{grid-column:4;grid-row:3/5;justify-self:end}
+ .pl-catalog span{display:none}
+ .pl-actions{grid-column:4;grid-row:1/3;align-self:center;justify-self:end}
+ .pl-actions .ap-btn{display:none}
+ .pl-sheet-layer{display:flex;position:fixed;inset:0;z-index:1400;align-items:end}
+ .pl-sheet-shade{position:absolute;inset:0;background:#091e1596}
+ .pl-sheet{position:relative;z-index:1;width:100%;max-height:82dvh;overflow-y:auto;background:#fff;border-radius:19px 19px 0 0;padding:16px 17px max(24px,env(safe-area-inset-bottom));box-shadow:0 -9px 24px #12271a50;animation:pl-enter .18s ease-out}
+ .pl-sheet header{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e0e8e0;padding-bottom:12px;margin-bottom:16px}
+ .pl-sheet header strong{font-size:18px}
+ .pl-sheet header button{font-size:23px;border:0;background:transparent;padding:4px 8px}
+ .pl-sheet-fields{display:grid;gap:12px}
+ .pl-sheet-fields button,.pl-primary{padding:12px;background:#eaf3eb;border:1px solid #bdd5c2;color:#1e4d3b;border-radius:8px;min-height:44px}
+ .pl-sheet-fields .pl-primary{background:#126638;color:#fff}
+ .pl-sheet .pl-bulk-tools{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+ .pl-sheet .pl-bulk-tools strong{grid-column:1/-1}
+ .pl-sheet .pl-bulk-buttons{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+ .pl-sheet .pl-bulk-buttons button{min-height:57px}
+ .pl-pager{display:grid;justify-items:center;gap:12px}
+ .pl-root .ap-primary-actions{display:flex}
+ .pl-root .ap-primary-actions .ap-btn{width:100%}
+ .pl-root .ap-page-heading{display:grid}
+}
+@keyframes pl-enter{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.pl-sheet{animation:none}}
