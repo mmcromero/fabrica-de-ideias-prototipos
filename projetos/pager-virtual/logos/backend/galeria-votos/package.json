@@ -1,0 +1,1 @@
+{"name":"fabrica-ideias-galeria-votos","private":true,"type":"module","scripts":{"test":"node --test","deploy":"wrangler deploy","db:local":"wrangler d1 execute fabrica-ideias-galeria-votos --local --file=./schema.sql","db:remote":"wrangler d1 execute fabrica-ideias-galeria-votos --remote --file=./schema.sql"},"devDependencies":{"wrangler":"^4.0.0"}}
