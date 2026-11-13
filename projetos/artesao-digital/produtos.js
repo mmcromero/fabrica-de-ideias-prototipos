@@ -219,7 +219,7 @@ const originOf=p=>p.origin||'own';
   function syncModuleNav(){
     const publicScreens=['landing','signup','login','invite','admin-login','admin-home'];
     moduleNav.hidden=publicScreens.includes(screen);
-    const current=['global-products','ap-detail','ap-editor'].includes(screen)?'module-products':'pdv';
+    const current=['global-products','ap-detail','ap-editor'].includes(screen)?'module-products':screen==='global-settings'?null:'pdv';
     moduleNav.querySelectorAll('button').forEach(button=>{
       if(button.dataset.productAction===current)button.setAttribute('aria-current','page');
       else button.removeAttribute('aria-current');
@@ -231,6 +231,7 @@ const originOf=p=>p.origin||'own';
     originalRender();
     syncModuleNav();
     syncPrototypeFooter();
+    syncHeaderActionState();
     if(screen==='entry')$('bottom-nav').hidden=true;
     if(screen==='ap-detail'||screen==='ap-editor'){
       $('bottom-nav').hidden=true;$('event-bar').hidden=true;$('demo-status').hidden=true;
@@ -297,6 +298,23 @@ const originOf=p=>p.origin||'own';
     globalFooter.hidden=!isInternal;
     if(isInternal)globalFooter.innerHTML=internalFoot;
   }
+  function syncHeaderActionState(){
+    const settingsButton=document.querySelector('.header-action[data-action="global-settings"]');
+    const alertsButton=document.querySelector('.header-action[data-action="notifications"]');
+    const inSettings=screen==='global-settings';
+    const alertsOpen=dialog.open&&$('dialog-title').textContent==='Alertas';
+    for(const [button,active] of [[settingsButton,inSettings],[alertsButton,alertsOpen]]){
+      if(!button)continue;
+      if(active){button.setAttribute('aria-current','page');button.dataset.active='true';}
+      else{button.removeAttribute('aria-current');delete button.dataset.active;}
+    }
+  }
+  document.addEventListener('click',event=>{
+    if(event.target.closest('button[data-action="notifications"]')){
+      queueMicrotask(syncHeaderActionState);
+    }
+  });
+  dialog.addEventListener('close',syncHeaderActionState);
   document.addEventListener('click',event=>{
     const action=event.target.closest('[data-prototype-footer]')?.dataset.prototypeFooter;
     if(action==='help')showPrototypeHelp();
