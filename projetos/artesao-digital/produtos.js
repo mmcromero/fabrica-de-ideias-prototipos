@@ -172,6 +172,7 @@
   views['ap-editor']=editorView;
   const originalGo=go;
   go=function(next){
+    closeModuleDrawer();
     if(next==='entry'&&(screen==='login'||screen==='invite'))return originalGo('global-products');
     return originalGo(next);
   };
@@ -195,20 +196,60 @@
   render=function(){
     originalRender();
     syncModuleNav();
+    if(screen==='entry')$('bottom-nav').hidden=true;
     if(screen==='ap-detail'||screen==='ap-editor'){
       $('bottom-nav').hidden=true;$('event-bar').hidden=true;$('demo-status').hidden=true;
     }
   };
-  const originalMenu=globalMenu;
-  $('back').removeEventListener('click',originalMenu);
-  globalMenu=function(){
-    modal('Menu principal · Artesão Digital',`<div class="stack">
-      ${btn(iconText('box','Produtos'),'global-products',{style:'full'})}
-      ${btn(iconText('store','PDV'),'entry',{style:'full'})}
-      <p class="muted">Módulos da primeira versão: Produtos e PDV.</p>
-    </div>`);
-  };
-  $('back').addEventListener('click',globalMenu);
+  // Menu principal mobile: painel lateral sobreposto, separado da navegação interna do PDV.
+  const moduleDrawer=document.createElement('div');
+  moduleDrawer.className='ap-drawer-layer';
+  moduleDrawer.hidden=true;
+  moduleDrawer.innerHTML=`<div class="ap-drawer-backdrop" data-close-module-drawer></div>
+    <aside class="ap-drawer" role="dialog" aria-modal="true" aria-label="Menu principal">
+      <div class="ap-drawer-head"><strong>Menu principal</strong><button type="button" class="ap-drawer-close" aria-label="Fechar menu" data-close-module-drawer>${icon('close')}</button></div>
+      <nav aria-label="Módulos"><button type="button" data-drawer-screen="global-products">${icon('box')}<span>Produtos</span></button>
+      <button type="button" data-drawer-screen="entry">${icon('store')}<span>PDV</span></button></nav>
+    </aside>`;
+  document.body.appendChild(moduleDrawer);
+  let focusBeforeDrawer=null;
+  function closeModuleDrawer(){
+    if(moduleDrawer.hidden)return;
+    moduleDrawer.hidden=true;
+    document.body.classList.remove('ap-drawer-open');
+    $('back').setAttribute('aria-expanded','false');
+    focusBeforeDrawer?.focus({preventScroll:true});
+    focusBeforeDrawer=null;
+  }
+  function openModuleDrawer(){
+    if(!window.matchMedia('(max-width:767px)').matches)return;
+    focusBeforeDrawer=document.activeElement;
+    moduleDrawer.hidden=false;
+    document.body.classList.add('ap-drawer-open');
+    $('back').setAttribute('aria-expanded','true');
+    moduleDrawer.querySelector('.ap-drawer-close').focus({preventScroll:true});
+  }
+  $('back').removeEventListener('click',globalMenu);
+  $('back').setAttribute('aria-controls','ap-mobile-modules');
+  moduleDrawer.id='ap-mobile-modules';
+  $('back').setAttribute('aria-expanded','false');
+  $('back').addEventListener('click',openModuleDrawer);
+  moduleDrawer.addEventListener('click',event=>{
+    const route=event.target.closest('[data-drawer-screen]');
+    if(route){const target=route.dataset.drawerScreen;closeModuleDrawer();go(target);return;}
+    if(event.target.closest('[data-close-module-drawer]'))closeModuleDrawer();
+  });
+  document.addEventListener('keydown',event=>{
+    if(moduleDrawer.hidden)return;
+    if(event.key==='Escape'){event.preventDefault();closeModuleDrawer();}
+    if(event.key==='Tab'){
+      const controls=[...moduleDrawer.querySelectorAll('button')];
+      const first=controls[0],last=controls[controls.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    }
+  });
+  window.matchMedia('(min-width:768px)').addEventListener('change',event=>{if(event.matches)closeModuleDrawer();});
   document.addEventListener('click',event=>{
     const b=event.target.closest('button[data-product-action]');if(!b)return;
     const action=b.dataset.productAction,id=b.dataset.productId||'';
