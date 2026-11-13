@@ -11,7 +11,7 @@
     });
     productCategories.splice(0,productCategories.length,...new Set(products.map(p=>p.category)));
   }
-  let filter='',availabilityFilter='all',originFilter='all',categoryFilter='all',page=1,pageSize=10,bulk=false,selected=new Set(),sheetMode='',chosenId=null,draft=null;
+  let filter='',availabilityFilter='all',originFilter='all',categoryFilter='all',page=1,pageSize=Number(localStorage.getItem('ad-products-page-size')||10),bulk=false,selected=new Set(),sheetMode='',chosenId=null,draft=null;
   const ownQty=p=>Math.max(0,Number(data.central[p.id]??0));
   const profile=p=>profiles[p.id]||{description:'',variants:[{color:'Padrão',qty:ownQty(p)}],manufacturing:{materials:'',machine:0,manual:0,notes:''}};
 const originOf=p=>p.origin||'own';
@@ -81,7 +81,7 @@ const originOf=p=>p.origin||'own';
         <div class="ap-rows"><div>Atacado<strong>${money(p.prices.wholesale)}</strong></div><div>Loja de fábrica<strong>${money(p.prices.factory)}</strong></div><div>Varejo<strong>${money(p.prices.retail)}</strong></div></div>
        </section>
        <section class="ap-panel"><h2>Cores e quantidades</h2>
-        <p class="ap-muted">Estoque próprio na base: <strong>${ownQty(p)} un.</strong></p>
+        <p class="ap-muted">Saldo da origem: <strong>${productQty(p)} un.</strong></p>
         <div class="ap-rows">${v.map(x=>`<div>${esc(x.color)}<strong>${Number(x.qty)||0} un.</strong></div>`).join('')}</div>
         <p class="ap-help">Reservas, lotes e transferências continuam registrados na estrutura operacional existente.</p>
        </section>
@@ -291,10 +291,11 @@ const originOf=p=>p.origin||'own';
     if(action==='remove-color'&&draft?.variants.length>1){collect();draft.variants.splice(Number(id),1);go('ap-editor');}
   });
   document.addEventListener('click',function plClick(event){
-  const bt=event.target.closest('[data-pl-action],[data-pl-more],[data-pl-page]');
+  const bt=event.target.closest('[data-pl-action],[data-pl-more],[data-pl-page],[data-pl-archive]');
   if(!bt)return;
+  if(bt.dataset.plArchive){const p=products.find(p=>p.id===bt.dataset.plArchive);if(p&&confirm('Arquivar '+p.name+'? O histórico será preservado.')){p.archived=true;selected.delete(p.id);persistProducts();dialog.close();render();}return;}
   if(bt.dataset.plPage){page+=Number(bt.dataset.plPage);render();return;}
-  if(bt.dataset.plMore){const p=products.find(p=>p.id===bt.dataset.plMore);if(p&&confirm('Arquivar '+p.name+'? O histórico será preservado.')){p.archived=true;persistProducts();render();}return;}
+  if(bt.dataset.plMore){const p=products.find(p=>p.id===bt.dataset.plMore);if(p)modal('Ações · '+p.name,`<div class="stack"><button type="button" class="ap-btn" data-product-action="show" data-product-id="${esc(p.id)}">Ver detalhes</button><button type="button" class="ap-btn" data-product-action="edit" data-product-id="${esc(p.id)}">Editar</button><button type="button" class="ap-btn" data-pl-archive="${esc(p.id)}">Arquivar</button></div>`);return;}
   const action=bt.dataset.plAction;
   if(action==='toggle-bulk'){bulk=!bulk;selected.clear();render();return;}
   if(action==='filters-sheet'){sheetMode=sheetMode==='filters'?'':'filters';render();return;}
@@ -323,7 +324,7 @@ const originOf=p=>p.origin||'own';
   const e=event.target;
   if(e.id==='pl-origin'){originFilter=e.value;page=1;render();return;}
   if(e.id==='pl-category'){categoryFilter=e.value;page=1;render();return;}
-  if(e.id==='pl-size'){pageSize=Number(e.value)||10;page=1;render();return;}
+  if(e.id==='pl-size'){pageSize=Number(e.value)||10;localStorage.setItem('ad-products-page-size',String(pageSize));page=1;render();return;}
   if(e.dataset.plSelect){if(e.checked)selected.add(e.dataset.plSelect);else selected.delete(e.dataset.plSelect);render();return;}
   if(e.dataset.plCatalog){const p=products.find(p=>p.id===e.dataset.plCatalog);if(p){p.catalogVisible=e.checked;persistProducts();render();}return;}
 });
