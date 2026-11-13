@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "id": "pager-virtual-bipou-avisaqui",
+  "title": "Bipou e Avisaqui",
+  "apiBaseUrl": null,
+  "logos": [
+    {
+      "id": "bipou-cloche-acustica",
+      "name": "Bipou — Cloche acústica"
+    },
+    {
+      "id": "bipou-monograma-b",
+      "name": "Bipou — Monograma B"
+    },
+    {
+      "id": "bipou-sorriso-hospitalidade",
+      "name": "Bipou — Sorriso e hospitalidade"
+    },
+    {
+      "id": "avisaqui-sino-amigavel",
+      "name": "Avisaqui — Sino amigável"
+    },
+    {
+      "id": "bipou-pulso-circular",
+      "name": "Bipou — Pulso circular"
+    },
+    {
+      "id": "bipou-balao-sonoro",
+      "name": "Bipou — Balão sonoro"
+    },
+    {
+      "id": "bipou-cloche-minimalista",
+      "name": "Bipou — Cloche minimalista"
+    },
+    {
+      "id": "avisaqui-sino-linear",
+      "name": "Avisaqui — Sino linear"
+    },
+    {
+      "id": "avisaqui-pin-aviso",
+      "name": "Avisaqui — Pin de aviso"
+    },
+    {
+      "id": "avisaqui-check-notificacao",
+      "name": "Avisaqui — Check e notificação"
+    }
+  ]
+}
