@@ -60,7 +60,7 @@ const originOf=p=>p.origin||'own';
     let sum=0,complete=true;
     for(const m of st.materials||[]){const value=techCost(m);if(value===null)complete=false;else sum+=value;}
     if(st.packagingMode==='registered'){
-      const pack=techLibrary.find(m=>String(m.id)===String(st.packagingMaterialId));
+      const pack=techLibrary.find(m=>String(m.id)===String(st.packagingMaterialId)&&m.classifications?.includes('product_packaging'));
       const value=pack?techCost({...pack,quantity:st.packagingQuantity,unit:pack.purchaseUnit}):null;
       if(value===null)complete=false;else sum+=value;
     }else{
@@ -107,8 +107,8 @@ const originOf=p=>p.origin||'own';
       </fieldset>
       <fieldset class="ap-tech-packaging"><legend>Embalagem do produto</legend>
         <label>Forma de custo da embalagem<select data-tech-packaging-mode>${techOpts([['manual','Custo manual'],['registered','Material cadastrado']],step.packagingMode||'manual')}</select></label>
-        ${registered?`<label>Embalagem cadastrada<select data-tech-packaging-ref>${techOpts([['','Selecione'],...techLibrary.filter(m=>m.mode==='quantity').map(m=>[m.id,m.name])],step.packagingMaterialId||'')}</select></label>
-          <label>Quantidade de embalagem por produto<input type="number" min="0.000001" step="any" data-tech-packaging-quantity value="${step.packagingQuantity??1}"></label>`:
+        ${registered?`<label>Embalagem cadastrada<select data-tech-packaging-ref>${techOpts([['','Selecione'],...techLibrary.filter(m=>m.mode==='quantity'&&m.classifications?.includes('product_packaging')).map(m=>[m.id,m.name])],step.packagingMaterialId||'')}</select></label>
+          <p class="ap-help">Apenas embalagens classificadas em Estoque aparecem aqui. O laboratório ainda não possui cadastro dessa classificação.</p><label>Quantidade de embalagem por produto<input type="number" min="0.000001" step="any" data-tech-packaging-quantity value="${step.packagingQuantity??1}"></label>`:
           `<label>Embalagem de fabricação (R$)<input type="number" min="0" step="any" data-tech-packaging value="${step.packaging??0}"></label>`}
         <p class="ap-help">Use uma forma de custo, sem duplicar a embalagem entre materiais e custo manual.</p>
       </fieldset>
@@ -172,7 +172,7 @@ const originOf=p=>p.origin||'own';
         if(!row.name?.trim()){issues.push(title+': informe o nome de cada material.');continue;}
         if(techCost(row)===null)issues.push(title+': confira a referência e o consumo de '+row.name+'.');
       }
-      if(st.packagingMode==='registered'&&!techLibrary.some(x=>String(x.id)===String(st.packagingMaterialId)))issues.push(title+': selecione uma embalagem cadastrada.');
+      if(st.packagingMode==='registered'&&!techLibrary.some(x=>String(x.id)===String(st.packagingMaterialId)&&x.classifications?.includes('product_packaging')))issues.push(title+': selecione uma embalagem cadastrada.');
       if(st.packagingMode==='registered'&&(!Number.isFinite(Number(st.packagingQuantity))||Number(st.packagingQuantity)<=0))issues.push(title+': confira a quantidade de embalagem.');
       if(st.packagingMode==='manual'&&(st.packaging===null||!Number.isFinite(Number(st.packaging))||Number(st.packaging)<0))issues.push(title+': confira o custo da embalagem.');
       if(st.label===null||!Number.isFinite(Number(st.label))||Number(st.label)<0)issues.push(title+': confira o custo da etiqueta.');
