@@ -97,3 +97,22 @@
 .ap-root .ap-page-heading{align-items:flex-start}
 .ap-root .ap-page-heading>.entry-heading{flex:1;min-width:0}
 @media(max-width:575px){.ap-root .ap-page-heading{display:block}}
+
+/* Navegação de módulos no celular: gaveta lateral sobre a página. */
+.ap-drawer-layer[hidden]{display:none!important}
+.ap-drawer-layer{position:fixed;inset:0;z-index:1200;display:flex}
+.ap-drawer-backdrop{position:absolute;inset:0;background:#071f15a8}
+.ap-drawer{position:relative;z-index:1;width:min(82vw,320px);height:100%;background:#f8faf7;box-shadow:4px 0 24px #081c1670;display:flex;flex-direction:column;color:#1E4D3B;animation:ap-drawer-enter .18s ease-out}
+.ap-drawer-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 18px;border-bottom:1px solid #d9dfd7}
+.ap-drawer-head strong{font-size:18px}
+.ap-drawer-close{display:grid;place-items:center;width:44px;height:44px;border:0;background:transparent;color:inherit;cursor:pointer}
+.ap-drawer-close .icon{width:23px;height:23px}
+.ap-drawer nav{display:grid;align-content:start;gap:2px;padding:12px}
+.ap-drawer nav button{display:flex;align-items:center;gap:14px;min-height:52px;padding:12px 14px;border:0;border-radius:8px;background:transparent;color:inherit;text-align:left;font-size:16px;cursor:pointer}
+.ap-drawer nav button:active,.ap-drawer nav button:hover{background:#e5f0e8}
+.ap-drawer nav .icon{width:21px;height:21px}
+.ap-drawer button:focus-visible{outline:3px solid #126638;outline-offset:2px}
+body.ap-drawer-open{overflow:hidden}
+@keyframes ap-drawer-enter{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+@media(min-width:768px){.ap-drawer-layer{display:none!important}}
+@media(prefers-reduced-motion:reduce){.ap-drawer{animation:none}}
