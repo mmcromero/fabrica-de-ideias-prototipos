@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0f172a">
-  <title>Pager Virtual — Painel do Restaurante (Admin)</title>
+  <meta name="theme-color" content="#090e17">
+  <title>KDS Cozinha & Balcão — Pager Virtual</title>
   <style>
     :root {
-      --bg: #0b1120;
-      --card-bg: #1e293b;
-      --card-border: #334155;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
+      --bg: #090e17;
+      --card-bg: #131c2e;
+      --card-border: #23334d;
+      --text: #f1f5f9;
+      --text-muted: #8fa0bc;
       --primary: #3b82f6;
       --primary-hover: #2563eb;
       --success: #10b981;
@@ -33,390 +33,588 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 20px 16px 40px;
+      padding: 16px 20px 40px;
     }
 
-    .top-nav {
-      width: 100%;
-      max-width: 900px;
+    /* BARRA SUPERIOR DO KDS */
+    .kds-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
-    }
-
-    .top-nav a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-
-    .badge-admin {
-      background: rgba(59, 130, 246, 0.2);
-      border: 1px solid var(--primary);
-      color: #93c5fd;
-      padding: 4px 12px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .admin-container {
-      width: 100%;
-      max-width: 900px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    @media (max-width: 768px) {
-      .admin-container {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 2px solid var(--card-border);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-    }
-
-    .card h2 {
-      font-size: 1.15rem;
-      margin-bottom: 8px;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .card p.desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 20px;
-      line-height: 1.4;
-    }
-
-    /* QR Code Display */
-    .qr-wrapper {
-      background: #ffffff;
-      padding: 16px;
-      border-radius: 16px;
-      width: 220px;
-      height: 220px;
-      margin: 0 auto 16px;
-      display: grid;
-      place-items: center;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    }
-
-    #qrcode img, #qrcode canvas {
-      display: block;
-      margin: auto;
-    }
-
-    .qr-instruction {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #cbd5e1;
-      font-weight: 600;
-    }
-
-    .qr-subtext {
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    /* Painel de Controle de Pedidos */
-    .order-box {
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 16px;
-      background: rgba(0, 0, 0, 0.25);
+      flex-wrap: wrap;
+      gap: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--card-border);
       margin-bottom: 20px;
     }
 
-    .order-header {
+    .brand-title {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .order-num {
-      font-size: 1.8rem;
-      font-weight: 900;
-      letter-spacing: -0.02em;
-    }
-
-    .status-pill {
-      padding: 6px 14px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 0.85rem;
-    }
-
-    .status-pill.preparo {
-      background: rgba(245, 158, 11, 0.2);
-      color: #fbbf24;
-      border: 1px solid #f59e0b;
-    }
-
-    .status-pill.pronto {
-      background: rgba(16, 185, 129, 0.2);
-      color: #34d399;
-      border: 1px solid #10b981;
-    }
-
-    .status-pill.entregue {
-      background: rgba(148, 163, 184, 0.2);
-      color: #cbd5e1;
-      border: 1px solid #64748b;
-    }
-
-    .order-items {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      border-top: 1px dashed rgba(255, 255, 255, 0.1);
-      padding-top: 10px;
-      line-height: 1.5;
-    }
-
-    /* Botões de Ação do Restaurante */
-    .btn-actions {
-      display: flex;
-      flex-direction: column;
       gap: 12px;
     }
 
-    .btn-action {
-      border: none;
-      border-radius: 12px;
-      padding: 16px;
-      font-size: 1rem;
+    .brand-title h1 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-title span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .kds-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .metric-tag {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.85rem;
       font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .metric-tag.active-orders {
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+
+    .metric-tag.finished {
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    /* BOTÃO DISCRETO DE SIMULAÇÃO DE NOVO PEDIDO */
+    .btn-sim-order {
+      background: #1e293b;
+      color: #93c5fd;
+      border: 1px dashed #3b82f6;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-sim-order:hover {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: #60a5fa;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    /* GRID DE CARTÕES DE PEDIDOS */
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 18px;
+    }
+
+    .order-card {
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease-out;
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Animação de entrada e saída dos pedidos */
+    .order-card.fade-in {
+      animation: cardEnter 0.3s ease-out;
+    }
+
+    .order-card.fade-out {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+
+    @keyframes cardEnter {
+      from { opacity: 0; transform: translateY(-12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .order-card.ready-state {
+      border-color: #10b981;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.3);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .card-id {
+      font-size: 1.8rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .card-meta {
+      font-size: 0.75rem;
+      background: #1e293b;
+      padding: 4px 8px;
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .status-badge {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      border-radius: 4px;
+    }
+
+    .status-badge.preparo {
+      color: #fbbf24;
+    }
+
+    .status-badge.pronto {
+      color: #34d399;
+    }
+
+    .order-summary {
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+      margin-bottom: 14px;
+      min-height: 48px;
+    }
+
+    /* MINIATURA DO QR CODE DO PEDIDO */
+    .qr-strip {
+      background: #ffffff;
+      padding: 8px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      cursor: pointer;
+      border: 1px solid #cbd5e1;
+      transition: transform 0.15s;
+    }
+
+    .qr-strip:hover {
+      transform: scale(1.02);
+    }
+
+    .qr-thumb {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .qr-strip-text {
+      color: #0f172a;
+      font-size: 0.75rem;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .qr-strip-text span {
+      color: #64748b;
+      font-weight: 500;
+      display: block;
+      margin-top: 2px;
+      font-size: 0.7rem;
+    }
+
+    /* BOTÕES DE AÇÃO DO CARD */
+    .card-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-action-kds {
+      flex: 1;
+      padding: 12px 10px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 6px;
       transition: all 0.15s;
     }
 
-    .btn-call {
+    .btn-call-kds {
       background: var(--success);
-      color: #ffffff;
+      color: white;
     }
 
-    .btn-call:hover {
+    .btn-call-kds:hover {
       background: var(--success-hover);
-      transform: translateY(-2px);
     }
 
-    .btn-delivered {
+    .btn-finish-kds {
       background: #334155;
-      color: #f1f5f9;
+      color: #f8fafc;
       border: 1px solid #475569;
     }
 
-    .btn-delivered:hover {
+    .btn-finish-kds:hover {
       background: #475569;
     }
 
-    .btn-reset {
-      background: transparent;
+    /* MODAL DE QR CODE AMPLIADO (DISPLAY DO CAIXA) */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      place-items: center;
+      z-index: 10000;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: grid;
+    }
+
+    .modal-box {
+      background: #1e293b;
+      border: 2px solid var(--card-border);
+      border-radius: 24px;
+      padding: 24px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .modal-qr {
+      background: #fff;
+      padding: 16px;
+      border-radius: 16px;
+      width: 220px;
+      height: 220px;
+      margin: 16px auto;
+      display: grid;
+      place-items: center;
+    }
+
+    .btn-close-modal {
+      width: 100%;
+      padding: 12px;
+      background: #334155;
+      border: none;
+      color: white;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
       color: var(--text-muted);
-      border: 1px dashed #475569;
-      padding: 10px;
-      font-size: 0.85rem;
-    }
-
-    .btn-reset:hover {
-      color: #fff;
-      border-color: #94a3b8;
-    }
-
-    /* Status de Conexão */
-    .connection-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-top: 16px;
-      justify-content: center;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #10b981;
+      border: 2px dashed var(--card-border);
+      border-radius: 16px;
     }
   </style>
 </head>
 <body>
 
-  <header class="top-nav">
-    <a href="../../">← Fábrica de Ideias</a>
-    <span class="badge-admin">Modo Balcão / Cozinha (Admin)</span>
+  <!-- CABEÇALHO DO KDS -->
+  <header class="kds-header">
+    <div class="brand-title">
+      <div style="font-size: 2rem;">🍳</div>
+      <div>
+        <h1>Burger House Grill · KDS</h1>
+        <span>Painel de Atendimento da Cozinha & Balcão</span>
+      </div>
+    </div>
+
+    <div class="kds-controls">
+      <div class="metric-tag active-orders">
+        <span id="active-count">3</span> Pedidos Ativos
+      </div>
+      <div class="metric-tag finished">
+        <span id="finished-count">0</span> Finalizados
+      </div>
+
+      <!-- BOTÃO DE TESTE: SIMULA ENTRADA DE NOVO PEDIDO DO PDV -->
+      <button id="btn-add-sim-order" class="btn-sim-order" title="Simula novo pedido recebido da impressora/PDV">
+        ➕ Simular Novo Pedido (PDV)
+      </button>
+    </div>
   </header>
 
-  <main class="admin-container">
-    <!-- COLUNA 1: DISPLAY DE BALCÃO / QR CODE PARA O CLIENTE -->
-    <section class="card">
-      <h2>📱 Display de Retirada (Balcão)</h2>
-      <p class="desc">
-        Este QR Code simula o código impresso na nota fiscal ou exibido na tela frontal do caixa. 
-        <strong>Aponte a câmera do seu celular para escanear e abrir o Pager do Cliente.</strong>
+  <!-- GRID DE CARTÕES DE PEDIDOS -->
+  <main id="orders-grid" class="orders-grid"></main>
+
+  <!-- MODAL DE QR CODE AMPLIADO (DISPLAY DO CAIXA) -->
+  <div id="qr-modal" class="modal-backdrop">
+    <div class="modal-box">
+      <h2 id="modal-title" style="font-size: 1.4rem;">Display do Caixa</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+        Aponte a câmera do celular para abrir o Pager do Cliente
       </p>
 
-      <div class="qr-wrapper">
-        <div id="qrcode"></div>
+      <div class="modal-qr">
+        <div id="modal-qrcode"></div>
       </div>
 
-      <p class="qr-instruction">Escaneie com a câmera do celular</p>
-      <p class="qr-subtext" id="qr-session-info">Pedido #42 · Conexão Tempo Real Ativa</p>
-
-      <div class="connection-status">
-        <span class="dot"></span>
-        <span id="conn-label">Sincronização em tempo real conectada</span>
-      </div>
-    </section>
-
-    <!-- COLUNA 2: CONTROLE DE PEDIDOS (KDS / COZINHA) -->
-    <section class="card">
-      <h2>🍳 Painel da Cozinha / Atendimento</h2>
-      <p class="desc">
-        Quando a comida estiver pronta, clique em <strong>"Chamar Pedido"</strong>. O celular do cliente vai apitar e vibrar instantaneamente!
-      </p>
-
-      <div class="order-box">
-        <div class="order-header">
-          <div>
-            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Senha Atual</div>
-            <div class="order-num" id="order-num-display">#42</div>
-          </div>
-          <span id="admin-status-badge" class="status-pill preparo">🟡 Em Preparo</span>
-        </div>
-        <div class="order-items">
-          • 1x Classic Bacon Burger<br>
-          • 1x Batata Rústica Pequena<br>
-          • 1x Suco Natural de Laranja 500ml
-        </div>
-      </div>
-
-      <div class="btn-actions">
-        <button id="btn-admin-call" class="btn-action btn-call">
-          🔔 Chamar Pedido! (Disparar Alerta)
-        </button>
-
-        <button id="btn-admin-deliver" class="btn-action btn-delivered">
-          ✓ Marcar como Entregue
-        </button>
-
-        <button id="btn-admin-reset" class="btn-action btn-reset">
-          ↺ Reiniciar Pedido para "Em Preparo"
-        </button>
-      </div>
-    </section>
-  </main>
+      <p id="modal-link-label" style="font-size: 0.72rem; color: #94a3b8; font-family: monospace; word-break: break-all;"></p>
+      <button id="btn-close-modal" class="btn-close-modal">Fechar Display</button>
+    </div>
+  </div>
 
   <script src="./qrcode.min.js"></script>
   <script src="./mqtt.min.js"></script>
   <script>
-    // Gerar uma sessão única de demonstração para isolar canais
-    const urlParams = new URLSearchParams(window.location.search);
-    const orderNumber = urlParams.get('pedido') || '42';
-    // Sessão fixa por dispositivo ou gerada
-    let sessionId = localStorage.getItem('pager_session_id');
-    if (!sessionId) {
-      sessionId = 'SESS-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-      localStorage.setItem('pager_session_id', sessionId);
-    }
+    // --- BANCO DE DADOS EM LOOP (15 PEDIDOS REALISTAS) ---
+    const orderPool = [
+      { id: '41', cliente: 'Mesa 04', items: '1x Smash Burger Duplo, 1x Batata Rústica, 1x Coca Zero' },
+      { id: '42', cliente: 'Balcão', items: '1x Classic Bacon Burger, 1x Suco de Laranja 500ml' },
+      { id: '43', cliente: 'Retirada', items: '2x Cheeseburger Artesanal, 2x Fritas Crocantes' },
+      { id: '44', cliente: 'Mesa 12', items: '1x Cheddar Melt Especial, 1x Onion Rings, 1x Milkshake' },
+      { id: '45', cliente: 'Balcão', items: '1x Salada Caesar com Frango, 1x Água Mineral c/ Gás' },
+      { id: '46', cliente: 'Retirada', items: '1x Costela BBQ Burger, 1x Batata Canoa com Cheddar' },
+      { id: '47', cliente: 'Mesa 02', items: '1x Veggie Burger Grão-de-Bico, 1x Suco Verde Detox' },
+      { id: '48', cliente: 'Balcão', items: '2x Hot Dog Especial da Casa, 1x Guaraná Lata' },
+      { id: '49', cliente: 'Mesa 08', items: '1x Picanha Burger 200g, 1x Mandioca Frita' },
+      { id: '50', cliente: 'Retirada', items: '1x Monster 3 Carnes, 1x Batata Suprema, 1x Milkshake' },
+      { id: '51', cliente: 'Balcão', items: '1x Wrap de Frango Crispy, 1x Suco Abacaxi c/ Hortelã' },
+      { id: '52', cliente: 'Mesa 05', items: '1x Gorgonzola Burger, 1x Batata c/ Alecrim, 1x Refri' },
+      { id: '53', cliente: 'Retirada', items: '3x Mini Smash Kids, 3x Batatinhas Smile, 3x Sucos' },
+      { id: '54', cliente: 'Balcão', items: '1x Trufado Burger, 1x Cerveja Artesanal IPA 500ml' },
+      { id: '55', cliente: 'Mesa 09', items: '1x Combo Casal: 2 Burgers, 1 Batata Mega, 2 Bebidas' }
+    ];
 
-    // URL absoluta de destino para o cliente (funciona em qualquer celular escaneando)
-    const baseUrl = window.location.href.split('?')[0].replace('index.html', '');
-    const clientUrl = baseUrl + 'cliente.html?sessao=' + sessionId + '&pedido=' + orderNumber;
+    let poolIndex = 3; // Os primeiros 3 já começam na tela
+    let finishedCount = 0;
 
-    // Gerar QR Code
-    new QRCode(document.getElementById('qrcode'), {
-      text: clientUrl,
-      width: 180,
-      height: 180,
-      colorDark: '#0f172a',
-      colorLight: '#ffffff',
-      correctLevel: QRCode.CorrectLevel.M
-    });
+    // Sessão do KDS para isolamento
+    const baseSession = localStorage.getItem('kds_session') || 'KDS-' + Math.random().toString(36).substring(2, 7).toUpperCase();
+    localStorage.setItem('kds_session', baseSession);
 
-    document.getElementById('qr-session-info').textContent = `Pedido #${orderNumber} · Sessão ${sessionId}`;
+    // Lista ativa de pedidos na tela (começa com 3)
+    let activeOrders = [
+      { id: '41', items: orderPool[0].items, status: 'preparo', time: '6 min atrás' },
+      { id: '42', items: orderPool[1].items, status: 'preparo', time: '4 min atrás' },
+      { id: '43', items: orderPool[2].items, status: 'preparo', time: '1 min atrás' }
+    ];
 
-    // Conexão de Tempo Real (MQTT via WebSocket seguro WSS no HiveMQ público)
-    const topic = 'fabrica-de-ideias/pager/' + sessionId;
+    // Conexão MQTT em tempo real
     const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt', {
-      clientId: 'admin_' + Math.random().toString(16).substr(2, 8),
+      clientId: 'kds_' + Math.random().toString(16).substr(2, 8),
       clean: true,
       keepalive: 60
     });
 
-    // Fallback local via BroadcastChannel se aberto no mesmo navegador
-    const localChannel = new BroadcastChannel('pager_' + sessionId);
+    const localChannel = new BroadcastChannel('pager_global');
 
-    let currentStatus = 'preparo';
-    const adminStatusBadge = document.getElementById('admin-status-badge');
+    function broadcastOrder(orderId, status) {
+      const topic = 'fabrica-de-ideias/pager/' + baseSession + '_' + orderId;
+      const payload = JSON.stringify({ status: status, order: orderId, timestamp: Date.now() });
 
-    function updateAdminUI(status) {
-      currentStatus = status;
-      if (status === 'preparo') {
-        adminStatusBadge.className = 'status-pill preparo';
-        adminStatusBadge.textContent = '🟡 Em Preparo';
-      } else if (status === 'pronto') {
-        adminStatusBadge.className = 'status-pill pronto';
-        adminStatusBadge.textContent = '🟢 Pronto p/ Retirada';
-      } else if (status === 'entregue') {
-        adminStatusBadge.className = 'status-pill entregue';
-        adminStatusBadge.textContent = '⚪ Entregue';
-      }
-    }
-
-    function broadcastStatus(status) {
-      updateAdminUI(status);
-      const payload = JSON.stringify({ status: status, order: orderNumber, timestamp: Date.now() });
-
-      // Envia via MQTT para celulares em qualquer rede
       if (client.connected) {
         client.publish(topic, payload, { retain: true, qos: 1 });
       }
-      // Envia localmente
-      localChannel.postMessage(payload);
+      localChannel.postMessage({ topic, payload });
     }
 
-    client.on('connect', () => {
-      document.getElementById('conn-label').textContent = 'Conectado em tempo real ao satélite';
-      // Publica estado inicial retido
-      broadcastStatus(currentStatus);
+    function getClientUrl(orderId) {
+      const baseUrl = window.location.href.split('?')[0].replace('index.html', '');
+      return baseUrl + 'cliente.html?sessao=' + baseSession + '_' + orderId + '&pedido=' + orderId;
+    }
+
+    const grid = document.getElementById('orders-grid');
+
+    function renderOrders() {
+      grid.innerHTML = '';
+      document.getElementById('active-count').textContent = activeOrders.length;
+      document.getElementById('finished-count').textContent = finishedCount;
+
+      if (activeOrders.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div style="font-size: 2.5rem; margin-bottom: 8px;">🍽️</div>
+            <h3>Cozinha em dia! Nenhum pedido pendente.</h3>
+            <p style="font-size: 0.85rem; margin-top: 6px;">
+              Clique em <strong>"➕ Simular Novo Pedido (PDV)"</strong> acima para adicionar mais pedidos.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      activeOrders.forEach(order => {
+        const card = document.createElement('div');
+        card.id = 'card-' + order.id;
+        card.className = 'order-card ' + (order.status === 'pronto' ? 'ready-state' : '');
+
+        const statusLabel = order.status === 'preparo' ? '🟡 Em Preparo' : '🟢 Chamando no Celular!';
+
+        card.innerHTML = `
+          <div>
+            <div class="card-top">
+              <div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Senha</div>
+                <div class="card-id">#${order.id}</div>
+              </div>
+              <div class="card-meta">${order.time}</div>
+            </div>
+
+            <div class="status-badge ${order.status}">${statusLabel}</div>
+            <div class="order-summary">${order.items}</div>
+
+            <!-- Miniatura do QR Code que abre o display expandido -->
+            <div class="qr-strip" onclick="openQrModal('${order.id}')" title="Toque para ampliar o QR Code deste pedido">
+              <div class="qr-thumb" id="thumb-qr-${order.id}"></div>
+              <div class="qr-strip-text">
+                📱 QR Code do Pedido #${order.id}
+                <span>Toque para ampliar display</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            ${order.status === 'preparo' ? `
+              <button class="btn-action-kds btn-call-kds" onclick="callOrder('${order.id}')">
+                🔔 Chamar Pedido!
+              </button>
+            ` : `
+              <button class="btn-action-kds btn-call-kds" onclick="callOrder('${order.id}')" title="Toca o alarme novamente">
+                🔔 Re-chamar
+              </button>
+              <button class="btn-action-kds btn-finish-kds" onclick="finishOrder('${order.id}')">
+                ✓ Finalizar & Sumir
+              </button>
+            `}
+          </div>
+        `;
+
+        grid.appendChild(card);
+
+        // Renderiza o QR Code em miniatura
+        setTimeout(() => {
+          const container = document.getElementById('thumb-qr-' + order.id);
+          if (container && !container.hasChildNodes()) {
+            new QRCode(container, {
+              text: getClientUrl(order.id),
+              width: 48,
+              height: 48,
+              colorDark: '#0f172a',
+              colorLight: '#ffffff',
+              correctLevel: QRCode.CorrectLevel.L
+            });
+          }
+        }, 10);
+      });
+    }
+
+    // AÇÃO: Chamar pedido (muda status e toca no celular do cliente)
+    window.callOrder = function(orderId) {
+      const order = activeOrders.find(o => o.id === orderId);
+      if (order) {
+        order.status = 'pronto';
+        broadcastOrder(orderId, 'pronto');
+        renderOrders();
+      }
+    };
+
+    // AÇÃO: Finalizar pedido (some da tela do KDS com animação suave)
+    window.finishOrder = function(orderId) {
+      const cardEl = document.getElementById('card-' + orderId);
+      if (cardEl) {
+        cardEl.classList.add('fade-out');
+      }
+
+      broadcastOrder(orderId, 'entregue');
+      finishedCount++;
+
+      setTimeout(() => {
+        activeOrders = activeOrders.filter(o => o.id !== orderId);
+        renderOrders();
+      }, 300);
+    };
+
+    // AÇÃO: Adicionar novo pedido do pool em loop (15 pedidos)
+    document.getElementById('btn-add-sim-order').addEventListener('click', () => {
+      const template = orderPool[poolIndex % orderPool.length];
+      poolIndex++;
+
+      // Gera número incremental
+      const newId = String(parseInt(activeOrders.length ? activeOrders[activeOrders.length - 1].id : '55') + 1);
+
+      activeOrders.unshift({
+        id: newId,
+        items: template.items,
+        status: 'preparo',
+        time: 'Agora mesmo'
+      });
+
+      renderOrders();
+
+      const newCard = document.getElementById('card-' + newId);
+      if (newCard) {
+        newCard.classList.add('fade-in');
+      }
     });
 
-    // Ações dos Botões
-    document.getElementById('btn-admin-call').addEventListener('click', () => {
-      broadcastStatus('pronto');
+    // Modal de QR Code ampliado
+    window.openQrModal = function(orderId) {
+      const modal = document.getElementById('qr-modal');
+      const title = document.getElementById('modal-title');
+      const qrContainer = document.getElementById('modal-qrcode');
+      const linkLabel = document.getElementById('modal-link-label');
+
+      title.textContent = 'Display do Caixa · Pedido #' + orderId;
+      qrContainer.innerHTML = '';
+      const url = getClientUrl(orderId);
+      linkLabel.textContent = url;
+
+      new QRCode(qrContainer, {
+        text: url,
+        width: 190,
+        height: 190,
+        colorDark: '#0f172a',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      modal.classList.add('open');
+    };
+
+    document.getElementById('btn-close-modal').addEventListener('click', () => {
+      document.getElementById('qr-modal').classList.remove('open');
     });
 
-    document.getElementById('btn-admin-deliver').addEventListener('click', () => {
-      broadcastStatus('entregue');
-    });
-
-    document.getElementById('btn-admin-reset').addEventListener('click', () => {
-      broadcastStatus('preparo');
-    });
+    // Inicialização
+    renderOrders();
   </script>
 </body>
 </html>
