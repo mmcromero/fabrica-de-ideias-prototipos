@@ -11,6 +11,14 @@
     });
     productCategories.splice(0,productCategories.length,...new Set(products.map(p=>p.category)));
   }
+  // Exemplos sintéticos para testar SKU idêntico entre origens; não representam clientes reais.
+  for(const sample of [
+    {id:'p9001',name:'Porta-copos Botânica',sku:'AD-101',category:'Casa',origin:'consigned',relatedParty:'Consignante exemplo',repasse:600,catalogVisible:true,prices:{retail:1400,wholesale:950,factory:1150},variants:[{color:'Verde',qty:8},{color:'Areia',qty:4}]},
+    {id:'p9002',name:'Porta-copos Botânica',sku:'AD-101',category:'Casa',origin:'client',relatedParty:'Cliente exemplo',repasse:0,catalogVisible:false,prices:{retail:1400,wholesale:950,factory:1150},variants:[{color:'Azul',qty:5}]}
+  ]){
+    if(!products.some(p=>p.id===sample.id))products.push({...sample,variants:undefined});
+    if(!profiles[sample.id])profiles[sample.id]={description:'Registro fictício de teste.',variants:sample.variants,manufacturing:{materials:'',machine:0,manual:0,notes:''}};
+  }
   let filter='',availabilityFilter='all',originFilter='all',categoryFilter='all',page=1,pageSize=Number(localStorage.getItem('ad-products-page-size')||10),bulk=false,selected=new Set(),sheetMode='',chosenId=null,draft=null;
   const ownQty=p=>Math.max(0,Number(data.central[p.id]??0));
   const profile=p=>profiles[p.id]||{description:'',variants:[{color:'Padrão',qty:ownQty(p)}],manufacturing:{materials:'',machine:0,manual:0,notes:''}};
