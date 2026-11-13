@@ -256,3 +256,41 @@ body.ap-drawer-open{overflow:hidden}
 @media(max-width:767px){.ap-internal-footer-links{column-gap:11px}.ap-internal-footer-links button,.ap-internal-footer-links a{font-size:11px}}
 
 #ap-global-footer[hidden]{display:none!important}
+
+/* PROD-TECH-005 — ficha técnica baseada em ProductionFields/MaterialFields. */
+.ap-technical{display:block}
+.ap-technical summary{min-height:48px;padding:4px 0}
+.ap-technical .ap-manufacturing-fields{display:grid;gap:16px;margin-top:14px}
+.ap-tech-step{display:grid;gap:16px;background:#fbfdfa;border:1px solid #dce5dd;padding:16px;border-radius:11px;min-width:0}
+.ap-tech-step>h3{font-size:17px;color:#1E4D3B;margin:0}
+.ap-tech-times{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ap-tech-duration{min-width:0;padding:12px;border:1px solid #dce5dd;border-radius:9px}
+.ap-tech-duration legend,.ap-tech-materials legend,.ap-tech-packaging legend{font-weight:700;color:#1E4D3B;font-size:14px;padding:0 6px}
+.ap-tech-three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ap-tech-materials,.ap-tech-packaging{min-width:0;border:1px solid #dce5dd;border-radius:9px;padding:13px;display:grid;gap:12px}
+.ap-tech-material-list{display:grid;gap:12px}
+.ap-tech-material{display:grid;gap:11px;border:1px solid #d5e1d7;background:#fff;padding:14px;border-radius:10px;min-width:0}
+.ap-tech-material .ap-section-head{align-items:center}
+.ap-tech-material .ap-section-head h4{font-size:14px;margin:0;color:#1E4D3B}
+.ap-tech-material-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;min-width:0}
+.ap-tech-material label,.ap-tech-step label{display:grid;gap:5px;min-width:0}
+.ap-tech-material input,.ap-tech-step input:not([type="checkbox"]),.ap-tech-material select,.ap-tech-step select{display:block;min-height:43px;width:100%;max-width:100%;padding:9px 10px;border:1px solid #adc5b6;border-radius:8px;background:white;color:#243B36;font:400 14px Arial,Helvetica,sans-serif}
+.ap-tech-reference{display:grid;gap:5px;background:#f0f6ef;border:1px solid #cddfcf;border-radius:8px;padding:12px;color:#294d36;font-size:13px}
+.ap-tech-reference small{color:#557161}
+.ap-tech-cost,.ap-tech-subtotal{color:#1E4D3B;font-weight:650;font-size:13px;margin:0}
+.ap-tech-add-step{display:flex!important;align-items:center;flex-direction:row;gap:10px}
+.ap-tech-add-step input{accent-color:#126638;width:19px;height:19px;flex:none}
+.ap-tech-legacy{padding:11px 13px;border-left:3px solid #cbb493;background:#fcf6e9;font-size:13px;color:#574d3b}
+.ap-tech-results{display:grid;gap:9px;background:#f1f7f2;padding:16px;border-radius:10px}
+.ap-tech-results h3{margin:0;color:#1E4D3B}
+.ap-tech-detail .ap-tech-legacy{margin-top:12px}
+@media(max-width:767px){
+ .ap-tech-step{padding:11px;gap:13px}
+ .ap-tech-times,.ap-tech-material-fields{grid-template-columns:1fr}
+ .ap-tech-duration,.ap-tech-materials,.ap-tech-packaging{padding:9px}
+ .ap-tech-material{padding:10px}
+ .ap-tech-material .ap-section-head{flex-wrap:wrap}
+ .ap-tech-material .ap-section-head .ap-btn{min-height:40px}
+ .ap-tech-three{gap:5px}
+ .ap-tech-three input{padding:6px!important;font-size:13px!important}
+}
