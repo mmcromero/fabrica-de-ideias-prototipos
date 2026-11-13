@@ -413,18 +413,20 @@
       { id: '55', cliente: 'Mesa 09', items: '1x Combo Casal: 2 Burgers, 1 Batata Mega, 2 Bebidas' }
     ];
 
-    let poolIndex = 3; // Os primeiros 3 já começam na tela
+    let poolIndex = 3;
     let finishedCount = 0;
+    let orderCounter = 43; // Contador auto-incremental para senhas únicas
 
     // Sessão do KDS para isolamento
     const baseSession = localStorage.getItem('kds_session') || 'KDS-' + Math.random().toString(36).substring(2, 7).toUpperCase();
     localStorage.setItem('kds_session', baseSession);
 
-    // Lista ativa de pedidos na tela (começa com 3)
+    // Lista ativa de pedidos na tela (FIFO: mais antigos primeiro)
+    const now = Date.now();
     let activeOrders = [
-      { id: '41', items: orderPool[0].items, status: 'preparo', time: '6 min atrás' },
-      { id: '42', items: orderPool[1].items, status: 'preparo', time: '4 min atrás' },
-      { id: '43', items: orderPool[2].items, status: 'preparo', time: '1 min atrás' }
+      { id: '41', items: orderPool[0].items, status: 'preparo', createdAt: now - (6 * 60 * 1000) },
+      { id: '42', items: orderPool[1].items, status: 'preparo', createdAt: now - (4 * 60 * 1000) },
+      { id: '43', items: orderPool[2].items, status: 'preparo', createdAt: now - (1 * 60 * 1000) }
     ];
 
     // Conexão MQTT em tempo real
@@ -451,6 +453,13 @@
       return baseUrl + 'cliente.html?sessao=' + baseSession + '_' + orderId + '&pedido=' + orderId;
     }
 
+    function getElapsedText(createdAt) {
+      const minutes = Math.floor((Date.now() - createdAt) / 60000);
+      if (minutes <= 0) return 'Agora mesmo';
+      if (minutes === 1) return '1 min atrás';
+      return minutes + ' min atrás';
+    }
+
     const grid = document.getElementById('orders-grid');
 
     function renderOrders() {
@@ -471,12 +480,16 @@
         return;
       }
 
+      // Ordenação rigorosa FIFO: pedidos mais antigos (menor createdAt) sempre vêm primeiro
+      activeOrders.sort((a, b) => a.createdAt - b.createdAt);
+
       activeOrders.forEach(order => {
         const card = document.createElement('div');
         card.id = 'card-' + order.id;
         card.className = 'order-card ' + (order.status === 'pronto' ? 'ready-state' : '');
 
         const statusLabel = order.status === 'preparo' ? '🟡 Em Preparo' : '🟢 Chamando no Celular!';
+        const timeLabel = getElapsedText(order.createdAt);
 
         card.innerHTML = `
           <div>
@@ -485,7 +498,7 @@
                 <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Senha</div>
                 <div class="card-id">#${order.id}</div>
               </div>
-              <div class="card-meta">${order.time}</div>
+              <div class="card-meta">${timeLabel}</div>
             </div>
 
             <div class="status-badge ${order.status}">${statusLabel}</div>
@@ -562,28 +575,31 @@
       }, 300);
     };
 
-    // AÇÃO: Adicionar novo pedido do pool em loop (15 pedidos)
+    // AÇÃO: Adicionar novo pedido do pool em loop (senhas sequenciais 44, 45, 46... e fila FIFO)
     document.getElementById('btn-add-sim-order').addEventListener('click', () => {
+      orderCounter++;
       const template = orderPool[poolIndex % orderPool.length];
       poolIndex++;
 
-      // Gera número incremental
-      const newId = String(parseInt(activeOrders.length ? activeOrders[activeOrders.length - 1].id : '55') + 1);
-
-      activeOrders.unshift({
-        id: newId,
+      const newOrder = {
+        id: String(orderCounter),
         items: template.items,
         status: 'preparo',
-        time: 'Agora mesmo'
-      });
+        createdAt: Date.now()
+      };
 
+      // Adiciona ao final da fila (FIFO: pedidos recentes entram no final da esteira)
+      activeOrders.push(newOrder);
       renderOrders();
 
-      const newCard = document.getElementById('card-' + newId);
+      const newCard = document.getElementById('card-' + newOrder.id);
       if (newCard) {
         newCard.classList.add('fade-in');
       }
     });
+
+    // Atualiza os minutos decorridos a cada 30 segundos
+    setInterval(renderOrders, 30000);
 
     // Modal de QR Code ampliado
     window.openQrModal = function(orderId) {
