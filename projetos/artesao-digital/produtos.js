@@ -121,9 +121,9 @@ const originOf=p=>p.origin||'own';
            <option value="client" ${d.origin==='client'?'selected':''}>De cliente</option>
            <option value="consigned" ${d.origin==='consigned'?'selected':''}>Consignado</option>
          </select></label>
-         <label class="ap-full">Cliente / fornecedor (quando aplicável)<input id="ap-related" maxlength="120" value="${esc(d.relatedParty)}" placeholder="Identificação do cliente ou consignante"></label>
+         <label class="ap-full" id="ap-related-field" ${d.origin==='own'?'hidden':''}>Cliente / consignante<input id="ap-related" maxlength="120" value="${esc(d.relatedParty)}" placeholder="Identifique o cliente ou consignante"></label>
          <label class="ap-full"><input type="checkbox" id="ap-visible" ${d.catalogVisible?'checked':''}> No catálogo</label>
-         <label class="ap-full">Repasse por unidade em consignação (R$)<input id="ap-repasse" inputmode="decimal" value="${(d.repasse/100).toFixed(2)}"></label>
+         <label class="ap-full" id="ap-repasse-field" ${d.origin!=='consigned'?'hidden':''}>Repasse fixo por unidade (R$)<input id="ap-repasse" inputmode="decimal" value="${(d.repasse/100).toFixed(2)}"></label>
          <label class="ap-full">Descrição<textarea id="ap-description" rows="3" maxlength="500">${esc(d.description)}</textarea></label>
         </div></section>
         <section class="ap-panel"><div class="ap-section-head"><div><h2>Cores e quantidades</h2>
@@ -322,6 +322,7 @@ const originOf=p=>p.origin||'own';
 });
   document.addEventListener('change',function plChange(event){
   const e=event.target;
+  if(e.id==='ap-origin'){const o=e.value;$('ap-related-field').hidden=o==='own';$('ap-repasse-field').hidden=o!=='consigned';return;}
   if(e.id==='pl-origin'){originFilter=e.value;page=1;render();return;}
   if(e.id==='pl-category'){categoryFilter=e.value;page=1;render();return;}
   if(e.id==='pl-size'){pageSize=Number(e.value)||10;localStorage.setItem('ad-products-page-size',String(pageSize));page=1;render();return;}
