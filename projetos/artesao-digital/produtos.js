@@ -52,7 +52,7 @@ const originOf=p=>p.origin||'own';
   <label>Por página <select id="pl-size">${[10,20,30,40,50].map(n=>option(String(n),String(n),String(pageSize))).join('')}</select></label>
   <div><button type="button" data-pl-page="-1" ${page<=1?'disabled':''}>‹ Anterior</button><span>${page} de ${pages}</span><button type="button" data-pl-page="1" ${page>=pages?'disabled':''}>Próxima ›</button></div></div>`;
   const sheet=sheetMode?`<div class="pl-sheet-layer"><div class="pl-sheet-shade" data-pl-action="close-sheet"></div><section role="dialog" aria-modal="true" aria-label="${sheetMode==='filters'?'Filtros':'Ações em lote'}" class="pl-sheet">
-    <header><strong>${sheetMode==='filters'?'Filtros':'Ações em lote'}</strong><button type="button" data-pl-action="close-sheet" aria-label="Fechar painel">×</button></header>
+    <header><strong>${sheetMode==='filters'?'Filtros':'Ações em lote'}</strong><button type="button" data-pl-action="close-sheet" aria-label="Fechar painel">×</button></header><div class="pl-sheet-tabs"><button type="button" data-pl-action="filters-sheet" aria-pressed="${sheetMode==='filters'}">☷ Filtros</button><button type="button" data-pl-action="bulk-sheet" aria-pressed="${sheetMode==='bulk'}">☑ Ações em lote</button></div>
     ${sheetMode==='filters'?`<div class="pl-sheet-fields">${selectFilters()}<button type="button" data-pl-action="clear-filters">Limpar filtros</button><button type="button" data-pl-action="apply-filters" class="pl-primary">Aplicar filtros</button></div>`:bulkTools()}
     </section></div>`:'';
   return {body:`<section class="ap-root pl-root"><div class="ap-page-heading">
