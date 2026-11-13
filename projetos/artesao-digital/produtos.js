@@ -485,6 +485,52 @@ const originOf=p=>p.origin||'own';
     if(action==='add-color'){collect();draft.variants.push({color:'',qty:0});go('ap-editor');}
     if(action==='remove-color'&&draft?.variants.length>1){collect();draft.variants.splice(Number(id),1);go('ap-editor');}
   });
+  document.addEventListener('click',function techMaterialAction(event){
+ const b=event.target.closest('[data-tech-action]');if(!b||screen!=='ap-editor'||!draft)return;
+ event.preventDefault();collect();techOpen=true;
+ const which=b.dataset.techStep,st=draft.manufacturing[which],index=Number(b.dataset.techIndex);
+ if(!st)return;
+ if(b.dataset.techAction==='add-material')st.materials.push(newTechMaterial());
+ if(b.dataset.techAction==='remove-material')st.materials.splice(index,1);
+ render();
+ document.querySelector('.ap-tech-materials')?.scrollIntoView({block:'nearest'});
+});
+  document.addEventListener('change',function techMaterialChange(event){
+ if(screen!=='ap-editor'||!draft)return;
+ const target=event.target;
+ if(target.id==='ap-tech-add-step'){
+   collect();draft.manufacturing.base=target.checked?newTechStep():null;techOpen=true;render();return;
+ }
+ const row=target.closest('[data-tech-material]');
+ if(target.hasAttribute('data-tech-ref')&&row){
+   collect();
+   const step=draft.manufacturing[row.dataset.techStep],mat=step?.materials[Number(row.dataset.techMaterial)];
+   if(!mat)return;
+   const found=techLibrary.find(m=>String(m.id)===String(target.value));
+   if(found){
+     const unit=found.purchaseUnit==='kg'?'g':found.purchaseUnit==='m'?'cm':found.purchaseUnit==='l'?'ml':found.purchaseUnit;
+     Object.assign(mat,structuredClone(found),{referenceId:found.id,quantity:null,unit});
+   }else mat.referenceId=null;
+   techOpen=true;render();return;
+ }
+ if(target.dataset.techField==='mode'||target.dataset.techField==='purchaseUnit'){
+   collect();const step=draft.manufacturing[row.dataset.techStep],mat=step.materials[Number(row.dataset.techMaterial)];
+   if(target.dataset.techField==='mode'){
+     if(mat.mode==='direct')mat.quantity=null;
+     else {mat.quantity=null;mat.unit='g';}
+   }
+   if(target.dataset.techField==='purchaseUnit'){
+     mat.unit=mat.purchaseUnit==='kg'?'g':mat.purchaseUnit==='m'?'cm':mat.purchaseUnit==='l'?'ml':mat.purchaseUnit;
+   }
+   techOpen=true;render();return;
+ }
+ if(target.hasAttribute('data-tech-packaging-mode')||target.hasAttribute('data-tech-packaging-ref')){
+   collect();techOpen=true;render();return;
+ }
+});
+  document.addEventListener('toggle',function techDetailsToggle(event){
+ if(event.target.matches('details.ap-technical'))techOpen=event.target.open;
+},true);
   document.addEventListener('click',function plClick(event){
   const bt=event.target.closest('[data-pl-action],[data-pl-more],[data-pl-page],[data-pl-archive]');
   if(!bt)return;
