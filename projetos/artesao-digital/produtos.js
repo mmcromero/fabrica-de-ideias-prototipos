@@ -99,7 +99,7 @@ const originOf=p=>p.origin||'own';
   function startEdit(id=null){
     const p=id?products.find(x=>x.id===id):null,v=p?profile(p):null;
     chosenId=p?.id||null;
-    draft={name:p?.name||'',sku:p?.sku||'',category:p?.category||'',description:v?.description||'',
+    draft={name:p?.name||'',sku:p?.sku||'',category:p?.category||'',origin:p?.origin||'own',catalogVisible:!!p?.catalogVisible,relatedParty:p?.relatedParty||'',repasse:Number(p?.repasse)||0,description:v?.description||'',
       prices:{retail:p?.prices?.retail||0,wholesale:p?.prices?.wholesale||0,factory:p?.prices?.factory||0},
       variants:v?v.variants.map(x=>({...x})):[{color:'Padrão',qty:0}],
       manufacturing:{materials:v?.manufacturing?.materials||'',machine:v?.manufacturing?.machine||0,manual:v?.manufacturing?.manual||0,notes:v?.manufacturing?.notes||''}};
@@ -116,6 +116,14 @@ const originOf=p=>p.origin||'own';
          ${field('ap-name','Nome do produto *',d.name,'maxlength="120" required')}
          ${field('ap-sku','Código / SKU *',d.sku,'maxlength="60" required')}
          ${field('ap-category','Categoria',d.category,'maxlength="80" placeholder="Ex.: Acessórios"')}
+         <label>Origem<select id="ap-origin">
+           <option value="own" ${d.origin==='own'?'selected':''}>Próprio</option>
+           <option value="client" ${d.origin==='client'?'selected':''}>De cliente</option>
+           <option value="consigned" ${d.origin==='consigned'?'selected':''}>Consignado</option>
+         </select></label>
+         <label class="ap-full">Cliente / fornecedor (quando aplicável)<input id="ap-related" maxlength="120" value="${esc(d.relatedParty)}" placeholder="Identificação do cliente ou consignante"></label>
+         <label class="ap-full"><input type="checkbox" id="ap-visible" ${d.catalogVisible?'checked':''}> No catálogo</label>
+         <label class="ap-full">Repasse por unidade em consignação (R$)<input id="ap-repasse" inputmode="decimal" value="${(d.repasse/100).toFixed(2)}"></label>
          <label class="ap-full">Descrição<textarea id="ap-description" rows="3" maxlength="500">${esc(d.description)}</textarea></label>
         </div></section>
         <section class="ap-panel"><div class="ap-section-head"><div><h2>Cores e quantidades</h2>
@@ -124,7 +132,7 @@ const originOf=p=>p.origin||'own';
             ${field('ap-color-'+i,'Cor ou variação',v.color,'maxlength="60" required')}
             ${field('ap-qty-'+i,'Quantidade',v.qty,'type="number" min="0" step="1" max="999999" required')}
             <button class="ap-remove" type="button" data-product-action="remove-color" data-product-id="${i}" ${d.variants.length===1?'disabled':''} aria-label="Remover variação ${i+1}">×</button></div>`).join('')}</div>
-          <p class="ap-help">As quantidades desta ficha representam o saldo próprio na base principal.</p>
+          <p class="ap-help">Quantidades por cor da origem escolhida. Estoque de cliente é reservado; consignado exige controle de fornecedor, lote e repasse na implementação real.</p>
         </section>
         <section class="ap-panel"><h2>Preços de venda</h2><p class="ap-muted">Informe pelo menos uma faixa. A fabricação não altera preços automaticamente.</p>
           <div class="ap-prices">
@@ -154,6 +162,7 @@ const originOf=p=>p.origin||'own';
     if(!draft)return;const value=id=>$(id)?.value??'';
     draft.name=value('ap-name').trim();draft.sku=value('ap-sku').trim();
     draft.category=value('ap-category').trim();draft.description=value('ap-description').trim();
+    draft.origin=value('ap-origin')||'own';draft.catalogVisible=!!$('ap-visible')?.checked;draft.relatedParty=value('ap-related').trim();draft.repasse=cents(value('ap-repasse'));
     draft.prices={retail:cents(value('ap-retail')),factory:cents(value('ap-factory')),wholesale:cents(value('ap-wholesale'))};
     draft.variants=draft.variants.map((v,i)=>({color:value('ap-color-'+i).trim(),qty:Number(value('ap-qty-'+i))}));
     draft.manufacturing={materials:value('ap-materials').trim(),machine:Number(value('ap-machine'))||0,
@@ -165,18 +174,21 @@ const originOf=p=>p.origin||'own';
   function save(){
     const form=$('ap-product-form');if(!form?.reportValidity())return;
     collect();const d=draft;
-    if(products.some(p=>p.id!==chosenId&&p.sku.toLowerCase()===d.sku.toLowerCase()))return error('Já existe um produto com este SKU.');
+    if(products.some(p=>p.id!==chosenId&&p.sku.toLowerCase()===d.sku.toLowerCase()&&(p.origin||'own')===d.origin))return error('Já existe um produto com este SKU e a mesma origem.');
+    if(!['own','client','consigned'].includes(d.origin))return error('Escolha uma origem válida.');
+    if(d.origin!=='own'&&!d.relatedParty)return error('Informe o cliente ou consignante.');
+    if(d.origin==='consigned'&&d.repasse<0)return error('Revise o valor do repasse.');
     if(!Object.values(d.prices).some(p=>p>0))return error('Informe pelo menos um preço de venda.');
     if(d.variants.some(v=>!v.color||!Number.isInteger(v.qty)||v.qty<0||v.qty>999999))return error('Revise as cores e as quantidades.');
     const names=d.variants.map(v=>filterText(v.color));
     if(new Set(names).size!==names.length)return error('Cada variação precisa ter um nome diferente.');
     let p=products.find(x=>x.id===chosenId);
     if(!p){const last=Math.max(0,...products.map(x=>Number(x.id.slice(1))||0));p={id:'p'+(last+1)};products.push(p);}
-    Object.assign(p,{name:d.name,sku:d.sku,category:d.category||'Sem categoria',prices:{...d.prices}});
+    Object.assign(p,{name:d.name,sku:d.sku,category:d.category||'Sem categoria',origin:d.origin,catalogVisible:d.catalogVisible,relatedParty:d.relatedParty,repasse:d.repasse,prices:{...d.prices}});
     profiles[p.id]={description:d.description,variants:d.variants.map(v=>({...v})),manufacturing:{...d.manufacturing}};
     data.central[p.id]=d.variants.reduce((n,v)=>n+v.qty,0);
     productCategories.splice(0,productCategories.length,...new Set(products.map(p=>p.category)));
-    try{localStorage.setItem(KEY,JSON.stringify({products:products.map(p=>({...p})),profiles}));}catch{feedback('Não foi possível salvar este catálogo no navegador.');}
+    persistProducts();
     persist();chosenId=p.id;draft=null;go('ap-detail');feedback('Produto salvo.');
   }
 
@@ -278,7 +290,49 @@ const originOf=p=>p.origin||'own';
     if(action==='add-color'){collect();draft.variants.push({color:'',qty:0});go('ap-editor');}
     if(action==='remove-color'&&draft?.variants.length>1){collect();draft.variants.splice(Number(id),1);go('ap-editor');}
   });
-  function updateList(){if($('ap-cards'))$('ap-cards').innerHTML=cards();if($('ap-count'))$('ap-count').textContent=filtered().length+' produtos';}
+  document.addEventListener('click',function plClick(event){
+  const bt=event.target.closest('[data-pl-action],[data-pl-more],[data-pl-page]');
+  if(!bt)return;
+  if(bt.dataset.plPage){page+=Number(bt.dataset.plPage);render();return;}
+  if(bt.dataset.plMore){const p=products.find(p=>p.id===bt.dataset.plMore);if(p&&confirm('Arquivar '+p.name+'? O histórico será preservado.')){p.archived=true;persistProducts();render();}return;}
+  const action=bt.dataset.plAction;
+  if(action==='toggle-bulk'){bulk=!bulk;selected.clear();render();return;}
+  if(action==='filters-sheet'){sheetMode=sheetMode==='filters'?'':'filters';render();return;}
+  if(action==='bulk-sheet'){sheetMode=sheetMode==='bulk'?'':'bulk';bulk=!!sheetMode;render();return;}
+  if(action==='close-sheet'){sheetMode='';render();return;}
+  if(action==='apply-filters'){sheetMode='';page=1;render();return;}
+  if(action==='clear-filters'){filter='';originFilter='all';categoryFilter='all';page=1;sheetMode='';render();return;}
+  if(action==='page-select'){getPage().forEach(p=>selected.add(p.id));render();return;}
+  if(action==='all-select'){getFiltered().forEach(p=>selected.add(p.id));render();return;}
+  if(action==='clear-select'){selected.clear();render();return;}
+  if(['archive','include','remove','private'].includes(action)){
+    const rows=products.filter(p=>selected.has(p.id));
+    if(!rows.length)return;
+    const label={archive:'Arquivar',include:'Incluir no catálogo',remove:'Retirar do catálogo',private:'Tornar privados'}[action];
+    if(!confirm(label+' '+rows.length+' produto(s)?'))return;
+    for(const p of rows){
+      if(action==='archive')p.archived=true;
+      if(action==='include')p.catalogVisible=true;
+      if(action==='remove')p.catalogVisible=false;
+      if(action==='private')p.publicAuthorized=false;
+    }
+    selected.clear();persistProducts();render();feedback('Ação aplicada no protótipo.');return;
+  }
+});
+  document.addEventListener('change',function plChange(event){
+  const e=event.target;
+  if(e.id==='pl-origin'){originFilter=e.value;page=1;render();return;}
+  if(e.id==='pl-category'){categoryFilter=e.value;page=1;render();return;}
+  if(e.id==='pl-size'){pageSize=Number(e.value)||10;page=1;render();return;}
+  if(e.dataset.plSelect){if(e.checked)selected.add(e.dataset.plSelect);else selected.delete(e.dataset.plSelect);render();return;}
+  if(e.dataset.plCatalog){const p=products.find(p=>p.id===e.dataset.plCatalog);if(p){p.catalogVisible=e.checked;persistProducts();render();}return;}
+});
+  document.addEventListener('input',function plInput(event){
+  if(event.target.id!=='pl-search')return;
+  const index=event.target.selectionStart;filter=event.target.value;page=1;render();
+  const el=document.getElementById('pl-search');el?.focus({preventScroll:true});try{el?.setSelectionRange(index,index)}catch{}
+});
+  function updateList(){render();}
   document.addEventListener('input',event=>{
     if(event.target.id==='ap-search'){filter=event.target.value;updateList();}
   });
