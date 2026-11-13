@@ -415,6 +415,20 @@ details p{margin-top:6px}
 .public-footer-nav button[data-prototype-footer]{color:#1E4D3B;background:transparent;border:0;font-size:13px;font-weight:500;text-decoration:underline;text-underline-offset:3px;cursor:pointer;min-height:28px}
 .public-site-footer>.ap-footer-version{font-size:11px;color:#43594a}
 @media(max-width:767px){.public-footer-nav button[data-prototype-footer]{font-size:12px}}
+
+/* UX-FLOW-004: rodapés participam do fluxo normal da página. */
+html,body{min-height:100%;height:auto}
+.app{height:auto!important;min-height:100dvh;overflow:visible!important}
+.app main{flex:1 0 auto;min-height:0;overflow:visible!important;overscroll-behavior:auto}
+.app #footer,.app #ap-global-footer,.app #bottom-nav{flex-shrink:0;position:static!important}
+.system-settings-groups{display:grid;gap:14px}
+.system-settings-groups>.card{display:grid;gap:9px;padding:20px}
+.system-settings-groups h2{font-size:17px;color:var(--deep)}
+.system-settings-groups .card p{margin:0}
+.header-inner .header-action{transition:background-color .15s ease,color .15s ease,box-shadow .15s ease}
+.top .header-action:hover,.top .header-action:active,.top .header-action[aria-current="page"],.top .header-action[data-active="true"]{background:#ffffff30!important;box-shadow:inset 0 -3px 0 #e5f3e7}
+.top .header-action:focus-visible{outline:2px solid white;outline-offset:2px;background:#ffffff30!important}
+@media(max-width:767px){.system-settings-groups>.card{padding:14px}}
 </style>
 <link rel="stylesheet" href="produtos.css">
 </head>
@@ -1345,10 +1359,13 @@ function globalProductsView(){
   btn('Voltar ao PDV','entry',{style:'primary full'})};
 }
 function globalSettingsView(){
- return {body:title('Configurações gerais','Preferências do Artesão Digital','settings')+
-  card('<h2>Áreas de configuração</h2><p class="muted">Configurações próprias do PDV podem ser abertas sem mudar as outras áreas do sistema.</p>'+
-  btn('Configurações do PDV','pdv-settings',{style:'full'}))+
-  card('<h2>Personalização</h2><p class="muted">Identidade visual e preferências de aparência.</p>')};
+ return {body:moduleHeading('settings','Configurações','Preferências do Artesão Digital organizadas por área.')+
+  '<div class="system-settings-groups">'+
+  '<section class="card"><h2>Geral e identidade visual</h2><p class="muted">Dados do negócio, logotipo, cores e preferências gerais.</p><p class="muted">As edições reais serão integradas posteriormente; estes controles são demonstrativos.</p></section>'+
+  '<section class="card"><h2>Produtos e estoque</h2><p class="muted">Categorias, exibição de produtos, paginação e preferências de estoque.</p></section>'+
+  '<section class="card"><h2>PDV e pagamentos</h2><p class="muted">Sessões de venda, pagamentos, Pix e preços por sessão.</p>'+demoSettings()+'</section>'+
+  '<section class="card"><h2>Orçamentos, clientes e suporte</h2><p class="muted">Preferências de orçamentos, cadastros e chamados de suporte.</p></section>'+
+  '</div>'};
 }
 function pdvSettingsView(){
  return {body:title('Configurações do PDV','Apenas opções deste módulo','settings')+
