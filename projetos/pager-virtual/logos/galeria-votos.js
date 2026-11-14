@@ -19,7 +19,7 @@ function update(){
   const index=chosen.findIndex(x=>x.id===id);
   const btn=card.querySelector(".vote-pick");
   btn.setAttribute("aria-pressed",String(index>=0));
-  btn.textContent=index>=0?(index+1)+"º favorito · "+(3-index)+" ponto"+(index===2?"":"s"):"Escolher como favorito";
+  btn.textContent=index>=0?(index+1)+"º favorito ✓":"Escolher este logo";
   btn.disabled=index<0&&chosen.length===3;
  });
  send.disabled=chosen.length!==3||!api;
