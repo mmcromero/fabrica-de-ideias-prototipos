@@ -2,7 +2,7 @@
   "version": 1,
   "id": "pager-virtual-bipou-avisaqui",
   "title": "Bipou e Avisaqui",
-  "apiBaseUrl": null,
+  "apiBaseUrl": "https://fabrica-ideias-galeria-votos.mmcromero.workers.dev",
   "logos": [
     {
       "id": "bipou-cloche-acustica",
