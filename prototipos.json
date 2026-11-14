@@ -32,8 +32,8 @@
     },
     {
       "id": "pager-virtual",
-      "nome": "Pager Virtual",
-      "descricao": "Acompanhamento de pedidos em praça de alimentação via QR Code, com alertas sonoros e acessibilidade.",
+      "nome": "Avisaqui",
+      "descricao": "Acompanhamento de pedidos de restaurante por QR Code e aviso de retirada. Protótipo visual do produto.",
       "status": "prototipo",
       "publicado": true,
       "ordem": 40,
