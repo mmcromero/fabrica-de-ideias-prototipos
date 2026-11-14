@@ -5,7 +5,7 @@
 .vote-weights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .vote-weight{background:#0f172a;border-radius:12px;padding:14px 8px;text-align:center}
 .vote-weight strong{display:block;font-size:1.5rem}.vote-weight span{display:block;color:#cbd5e1;font-size:.85rem}
-.vote-select{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;flex-wrap:wrap}
+.vote-select{display:flex;align-items:center;justify-content:center;padding:16px 24px 20px;background:#192538;border-top:1px solid #334155}
 .vote-pick,.vote-submit{background:#0f172a;color:#f8fafc;border:1px solid #64748b;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}
 .vote-pick[aria-pressed="true"]{background:#065f46;border-color:#34d399}
 .vote-pick:disabled,.vote-submit:disabled{opacity:.5;cursor:not-allowed}
@@ -21,3 +21,11 @@
 .vote-bar span{display:block;height:100%;background:#34d399}
 .vote-status[role="status"]{min-height:1.5em}
 @media(max-width:480px){.vote-guide,.vote-controls,.vote-results{padding:16px}.vote-weight{padding:12px 4px}.vote-weight strong{font-size:1.25rem}.vote-row-line{font-size:.8rem}}
+
+/* Ação de voto integrada ao cartão: desktop e mobile */
+.card .vote-select .vote-pick{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;padding:14px 20px;border:1px solid #fb923c;border-radius:12px;background:#ea580c;color:#fff;font-size:1rem;font-weight:800;line-height:1.3;text-align:center;transition:background .15s,border-color .15s,transform .15s}
+.card .vote-select .vote-pick:hover:not(:disabled){background:#f97316;transform:translateY(-1px)}
+.card .vote-select .vote-pick:focus-visible{outline:3px solid #7dd3fc;outline-offset:3px}
+.card .vote-select .vote-pick[aria-pressed="true"]{background:#065f46;border-color:#34d399;color:#ecfdf5}
+.card .vote-select .vote-pick:disabled{background:#263449;border-color:#475569;color:#cbd5e1;opacity:.7;transform:none}
+@media(max-width:480px){.vote-select{padding:14px 16px 18px}.card .vote-select .vote-pick{min-height:52px;font-size:.95rem}}
