@@ -1,7 +1,7 @@
 // Módulo opcional: importado somente após toque em Jogar.
 import {obterCatalogo,criarSessaoJogos} from './catalogo.js?v=50';
 // Elementos e estilos são criados apenas após o clique do cliente.
-const estilo=document.createElement('link');estilo.rel='stylesheet';estilo.href=new URL('./games-ui.css?v=55',import.meta.url).href;document.head.append(estilo);
+const estilo=document.createElement('link');estilo.rel='stylesheet';estilo.href=new URL('./games-ui.css?v=56',import.meta.url).href;document.head.append(estilo);
 document.body.insertAdjacentHTML('beforeend',`
 <section id="game-screen" hidden aria-label="Jogos">
  <div class="game-top"><div><strong>🔔 Pedido #206</strong> <span id="game-order-status">⏳ Em preparo</span></div><button id="game-exit" class="secondary">✕ Sair</button><div class="game-sim"><span>Laboratório</span><button id="game-ready" class="secondary">Simular pedido pronto</button></div></div>
@@ -32,8 +32,34 @@ function encerrarPartida(){geracao++;sessao.encerrar();stage.replaceChildren();}
 function fechar(){if(!ativo)return;encerrarPartida();ativo=false;document.body.classList.remove('game-active');painel.hidden=true;painel.style.transform='';window.scrollTo(0,scrollY);}
 function cabecalho(titulo){const h=document.createElement('h2');h.textContent=titulo;return h;}
 function botao(texto,acao,classe='secondary'){const b=document.createElement('button');b.type='button';b.className=classe;b.textContent=texto;b.addEventListener('click',acao);return b;}
+function ilustracao(item){
+ const ns='http://www.w3.org/2000/svg';
+ const svg=document.createElementNS(ns,'svg');
+ svg.setAttribute('viewBox','0 0 240 144');
+ svg.setAttribute('role','img');
+ svg.setAttribute('aria-label','Ilustração do jogo '+item.title);
+ svg.classList.add('games-art');
+ const criar=(tag,atributos)=>{const el=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(atributos))el.setAttribute(k,String(v));svg.append(el);return el;};
+ criar('rect',{x:0,y:0,width:240,height:144,rx:16,fill:'#12263c'});
+ if(item.id==='pong'){
+  criar('path',{d:'M120 10 V134',stroke:'#54748a','stroke-width':3,'stroke-dasharray':'8 9'});
+  criar('rect',{x:28,y:34,width:12,height:65,rx:6,fill:'#67d4ff'});
+  criar('rect',{x:200,y:49,width:12,height:65,rx:6,fill:'#ffb66d'});
+  criar('circle',{cx:133,cy:68,r:10,fill:'#fff'});
+  criar('path',{d:'M91 82 L117 71',stroke:'#fff','stroke-width':3,'stroke-linecap':'round',opacity:'.5'});
+ }else if(item.id==='jogo-da-velha'){
+  for(const x of [95,145])criar('path',{d:`M${x} 18 V126`,stroke:'#6b89a2','stroke-width':5,'stroke-linecap':'round'});
+  for(const y of [48,96])criar('path',{d:`M47 ${y} H193`,stroke:'#6b89a2','stroke-width':5,'stroke-linecap':'round'});
+  for(const [x,y] of [[70,32],[170,112],[120,72]])criar('path',{d:`M${x-11} ${y-11} L${x+11} ${y+11} M${x+11} ${y-11} L${x-11} ${y+11}`,stroke:'#67d4ff','stroke-width':6,'stroke-linecap':'round'});
+  for(const [x,y] of [[170,32],[70,72]])criar('circle',{cx:x,cy:y,r:15,fill:'none',stroke:'#ffb66d','stroke-width':6});
+ }else{
+  criar('circle',{cx:120,cy:70,r:37,fill:'none',stroke:'#67d4ff','stroke-width':6});
+  criar('path',{d:'M110 52 L142 70 L110 88 Z',fill:'#ffb66d'});
+ }
+ return svg;
+}
 function mostrarCatalogo(){encerrarPartida();etapa='catalogo';jogo=null;stage.replaceChildren();layout();const box=document.createElement('section');box.className='games-choose';const titulo=cabecalho('🎮 Escolha um jogo');const lista=document.createElement('div');lista.className='games-list';const aviso=document.createElement('p');aviso.textContent='Carregando jogos…';box.append(titulo,lista,aviso);stage.append(box);const token=geracao;
-obterCatalogo().then(jogos=>{if(!ativo||token!==geracao)return;aviso.textContent=jogos.length+' jogos disponíveis';for(const item of jogos){const card=document.createElement('article');card.className='games-option';const h=document.createElement('h3');h.textContent=item.title;const p=document.createElement('p');p.textContent=item.description;card.append(h,p,botao('Escolher',()=>mostrarJogadores(item),'primary'));lista.append(card);}}).catch(()=>{if(token===geracao)aviso.textContent='Não foi possível carregar o catálogo. Tente novamente.';});}
+obterCatalogo().then(jogos=>{if(!ativo||token!==geracao)return;aviso.textContent=jogos.length+' jogos disponíveis';for(const item of jogos){const card=document.createElement('article');card.className='games-option';const h=document.createElement('h3');h.textContent=item.title;const p=document.createElement('p');p.textContent=item.description;card.append(ilustracao(item),h,p,botao('Escolher',()=>mostrarJogadores(item),'primary'));lista.append(card);}}).catch(()=>{if(token===geracao)aviso.textContent='Não foi possível carregar o catálogo. Tente novamente.';});}
 function mostrarJogadores(item){encerrarPartida();jogo=item;etapa='jogadores';modo='solo';stage.replaceChildren();layout();const box=document.createElement('section');box.className='games-choose';const titulo=cabecalho(item.title+' · Jogadores');const escolhas=document.createElement('div');escolhas.className='games-list';const descricao=document.createElement('p');descricao.setAttribute('role','status');const quantidade=item.playerCounts||[1,2];const opcoes=[];let selecionado=quantidade[0];function selecionar(n){selecionado=n;modo=n===1?'solo':'dupla-local';for(const [numero,b] of opcoes){const marcado=numero===n;b.setAttribute('aria-pressed',String(marcado));b.textContent=(marcado?'✓ ':'')+numero+(numero===1?' jogador':' jogadores');}descricao.textContent=n===1?'Contra o computador.':'Jogadores no mesmo aparelho.';}
 for(const n of quantidade){const b=botao('',()=>selecionar(n));opcoes.push([n,b]);escolhas.append(b);}const acoes=document.createElement('div');acoes.className='games-actions';acoes.append(botao('← Voltar aos jogos',mostrarCatalogo),botao('Começar partida',confirmar,'primary'));box.append(titulo,escolhas,descricao,acoes);stage.append(box);selecionar(selecionado);}
 function confirmar(){if(!jogo)return;encerrarPartida();etapa='rotacao';stage.replaceChildren();layout();}
