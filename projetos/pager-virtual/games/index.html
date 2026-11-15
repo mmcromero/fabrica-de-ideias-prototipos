@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Avisaqui — Laboratório de Jogos</title><style>
+:root{font-family:system-ui,sans-serif;color:#f8fafc;background:#101827}*{box-sizing:border-box}body{margin:0;padding:20px}main{max-width:720px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;gap:12px}a{color:#93c5fd}h1{font-size:clamp(25px,5vw,36px)}p{color:#cbd5e1}button,select{font:inherit;border:1px solid #64748b;border-radius:12px;padding:12px;background:#24344e;color:white;cursor:pointer}button:focus-visible{outline:3px solid #fbbf24}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.game{padding:16px;border:1px solid #475569;border-radius:16px;background:#1e293b}.game button{width:100%;margin-top:8px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:16px 0}#stage{padding:16px;border:1px solid #475569;border-radius:16px;min-height:120px}#stage button{margin:5px}#status{min-height:1.5em}small{color:#94a3b8}
+</style></head><body><main><header><a href="../">← Avisaqui</a><small>Ambiente de homologação</small></header>
+<h1>🎮 Jogos do Avisaqui</h1><p>Teste os jogos sem conectar ao sistema de pedidos. Os eventos de pedido pronto são simulados.</p>
+<div class="toolbar"><button id="refresh">Atualizar biblioteca</button><label for="mode">Modo</label><select id="mode"><option value="solo">Individual</option><option value="dupla">Dupla local</option></select></div>
+<p id="status" role="status">Carregando biblioteca…</p><div id="library" class="grid"></div>
+<h2>Área do jogo</h2><div class="toolbar"><button id="ready">Simular pedido pronto</button><button id="stop">Encerrar jogo</button></div><div id="stage" aria-label="Jogo em execução"></div>
+<script type="module">
+import { obterCatalogo, criarSessaoJogos } from './catalogo.js';
+const status=document.getElementById('status'),lista=document.getElementById('library'),stage=document.getElementById('stage'),modo=document.getElementById('mode');
+const sessao=criarSessaoJogos();
+let pedidoPronto=false,consulta=0;
+async function carregar(){const atual=++consulta;lista.replaceChildren();status.textContent='Atualizando biblioteca…';try{
+const jogos=await obterCatalogo();if(atual!==consulta)return;
+status.textContent=jogos.length+' jogo(s) disponível(is) para testes';
+for(const jogo of jogos){const card=document.createElement('section');card.className='game';
+const titulo=document.createElement('h3');titulo.textContent=jogo.title;
+const descricao=document.createElement('p');descricao.textContent=jogo.description||'Jogo experimental';
+const abrir=document.createElement('button');abrir.textContent='Jogar';abrir.addEventListener('click',async()=>{pedidoPronto=false;status.textContent='Carregando '+jogo.title+'…';try{const ok=await sessao.abrir(jogo,stage,{modo:modo.value,onExit:()=>{status.textContent='Jogo encerrado'}});if(ok&&!pedidoPronto)status.textContent='Jogando: '+jogo.title;}catch(e){status.textContent='Não foi possível abrir o jogo';console.error(e)}});
+card.append(titulo,descricao,abrir);lista.append(card)}
+}catch(e){if(atual===consulta)status.textContent='Biblioteca indisponível. Tente atualizar.';console.error(e)}}
+document.getElementById('refresh').addEventListener('click',carregar);
+document.getElementById('stop').addEventListener('click',()=>{sessao.encerrar();status.textContent='Jogo encerrado'});
+document.getElementById('ready').addEventListener('click',()=>{pedidoPronto=true;sessao.encerrar();status.textContent='🔔 Pedido pronto (simulação). Jogo interrompido.'});
+carregar();
+</script></main></body></html>
