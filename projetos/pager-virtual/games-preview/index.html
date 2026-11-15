@@ -38,11 +38,26 @@ header{background:#0005;border-bottom:1px solid #334155;padding:18px 20px;displa
 /* O comprovante não importa jogos nem catálogo antes do clique. */
 const $=id=>document.getElementById(id);
 let jogosPromise=null;
+const diagnostico=document.createElement('div');
+diagnostico.id='games-diagnostic';
+diagnostico.hidden=true;
+diagnostico.setAttribute('role','alert');
+diagnostico.style.cssText='margin:12px 20px;padding:14px;background:#3b1d26;border:2px solid #fb7185;border-radius:12px;color:white;white-space:pre-wrap;overflow-wrap:anywhere;font-size:.85rem;text-align:left';
+$('games-open').parentElement.append(diagnostico);
 $('games-open').addEventListener('click',async()=>{
-  const b=$('games-open');b.disabled=true;
-  try{jogosPromise??=import('./games-shell.js?v=52');const modulo=await jogosPromise;modulo.abrir();}
-  catch(e){console.error(e);jogosPromise=null;alert('Não foi possível abrir os jogos. O acompanhamento do pedido continua disponível.');}
-  finally{b.disabled=false;}
+ const b=$('games-open');b.disabled=true;diagnostico.hidden=true;
+ try{
+  jogosPromise??=import('./games-shell.js?v=53');
+  const modulo=await jogosPromise;
+  if(typeof modulo.abrir!=='function')throw new Error('Módulo carregado sem função abrir');
+  modulo.abrir();
+ }catch(e){
+  console.error('[Jogos v53] Falha no carregamento',e);
+  jogosPromise=null;
+  const detalhes=(e&&e.stack)||String(e);
+  diagnostico.textContent='Falha ao abrir jogos (diagnóstico v53)\\n'+detalhes+'\\n\\nO pedido continua disponível. Envie um print desta mensagem.';
+  diagnostico.hidden=false;
+ }finally{b.disabled=false;}
 });
 for(const [id,classe] of [['contrast','contrast'],['font','large-text']])$(id).addEventListener('click',()=>{const ativo=document.body.classList.toggle(classe);$(id).setAttribute('aria-pressed',String(ativo));});
 /* O pedido continua independente, inclusive se os jogos nunca forem abertos. */
