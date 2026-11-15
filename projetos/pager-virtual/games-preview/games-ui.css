@@ -108,3 +108,8 @@ body.game-active:has(#game-screen.game-portrait),#game-screen.game-portrait,#gam
 #game-screen.game-portrait .games-option p{font-size:.8rem;line-height:1.35;overflow-wrap:anywhere;flex:1}
 #game-screen.game-portrait .games-option .primary{margin-top:auto;width:100%;min-height:42px}
 #game-screen.game-portrait .games-choose{width:100%;max-width:640px;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+
+/* Ilustrações vetoriais compactas, sem downloads de imagens. */
+#game-screen .games-option .games-art{display:block;width:100%;height:auto;aspect-ratio:5/3;border-radius:10px;flex:0 0 auto;overflow:hidden}
+#game-screen.game-portrait .games-option{gap:7px}
+#game-screen.game-portrait .games-option h3{margin:0}
