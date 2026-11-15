@@ -1,0 +1,62 @@
+// Laboratório público: adaptação local do Pong experimental.
+// O Pong original depende de API/SSE do Avisaqui; esta versão não usa servidor.
+export function iniciarJogo({container,modo='solo',autoStart=false,onExit=()=>{}}) {
+  const root=document.createElement('section');
+  root.className='pong-root';
+  const title=document.createElement('h3');title.textContent='🏓 Pong · Escolha a partida';
+  let tipo=modo==='dupla'||modo==='dupla-local'?'dupla':'solo';
+  const escolha=document.createElement('fieldset');escolha.style.cssText='border:1px solid #52677e;border-radius:14px;padding:clamp(10px,2vw,18px);margin:10px 0;background:#20334b;color:#f8fafc';
+  const legenda=document.createElement('legend');legenda.textContent='Quantos jogadores?';
+  const um=document.createElement('button'),dois=document.createElement('button');
+  um.type=dois.type='button';um.textContent='1 jogador';dois.textContent='2 jogadores';
+  const opcoes=document.createElement('div');opcoes.style.cssText='display:flex;gap:10px;flex-wrap:wrap;margin:10px 0';
+  for(const b of [um,dois]){b.style.cssText='flex:1 1 140px;min-height:48px;border:2px solid #64748b;border-radius:12px;background:#263a55;color:#f8fafc;font-weight:700;padding:10px 16px;transition:background .15s,border-color .15s';}
+  const detalhe=document.createElement('p');detalhe.style.cssText='color:#cbd5e1;font-size:.9rem;margin:10px 0';
+  const iniciar=document.createElement('button');iniciar.type='button';iniciar.textContent='Começar partida';iniciar.style.cssText='width:100%;min-height:48px;border:0;border-radius:12px;background:#2563eb;color:#fff;font-weight:700;padding:10px 16px';
+  opcoes.append(um,dois);escolha.append(legenda,opcoes,detalhe,iniciar);
+  const menu=document.createElement('div');menu.append(title,escolha);
+  root.append(menu);
+  const info=document.createElement('p');info.setAttribute('role','status');info.className='pong-score';
+  const canvas=document.createElement('canvas');canvas.width=600;canvas.height=360;
+  canvas.style.cssText='display:block;width:100%;height:100%;max-width:none;max-height:none;aspect-ratio:auto;background:#102b39;border-radius:8px;touch-action:none';
+  const hint=document.createElement('p');
+  const arena=document.createElement('div');arena.className='pong-arena';arena.style.cssText='display:flex;align-items:stretch;gap:5px;width:100%;height:100%;min-height:0;min-width:0;margin:0 auto';
+  function faixa(texto){const el=document.createElement('div');el.textContent=texto;el.setAttribute('role','group');el.setAttribute('aria-label','Controle da raquete '+texto);el.style.cssText='flex:0 0 clamp(40px,8%,62px);display:flex;align-items:center;justify-content:center;background:#263e55;border:2px solid #65d4f0;border-radius:12px;color:#e0f2fe;touch-action:none;user-select:none;writing-mode:vertical-rl;font-size:12px;letter-spacing:1px';return el;}
+  const esquerda=faixa('AZUL'),direita=faixa('LARANJA');direita.style.borderColor='#ffb66d';
+  canvas.style.flex='1 1 0';canvas.style.minWidth='0';
+  arena.append(esquerda,canvas);
+  const quit=document.createElement('button');quit.type='button';quit.textContent='Sair do jogo';
+  const partida=document.createElement('div');partida.className='pong-partida';partida.hidden=true;partida.append(arena);root.append(partida);container.append(root);
+  const ctx=canvas.getContext('2d');let active=true,frame=0,last=0,rodando=false;
+  const p=[180,180],score=[0,0],ball={x:300,y:180,vx:3.2,vy:2.1};
+  const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
+  const handlers=[];
+  function configurarControle(el,side){
+    let pointerId=null;
+    function mover(e){if(!active||e.pointerId!==pointerId)return;const rect=el.getBoundingClientRect();const y=(e.clientY-rect.top)/rect.height*360;p[side]=clamp(y,35,325);e.preventDefault();}
+    function iniciar(e){if(!active||pointerId!==null)return;pointerId=e.pointerId;el.setPointerCapture?.(pointerId);mover(e);}
+    function parar(e){if(e.pointerId===pointerId)pointerId=null;}
+    el.addEventListener('pointerdown',iniciar);el.addEventListener('pointermove',mover);el.addEventListener('pointerup',parar);el.addEventListener('pointercancel',parar);
+    handlers.push(()=>{el.removeEventListener('pointerdown',iniciar);el.removeEventListener('pointermove',mover);el.removeEventListener('pointerup',parar);el.removeEventListener('pointercancel',parar);});
+  }
+  configurarControle(esquerda,0);configurarControle(direita,1);
+  function selecionar(n){tipo=n===1?'solo':'dupla';for(const [botao,selecionado] of [[um,n===1],[dois,n===2]]){botao.setAttribute('aria-pressed',String(selecionado));botao.style.background=selecionado?'#1459b8':'#263a55';botao.style.borderColor=selecionado?'#67d4ff':'#64748b';botao.style.boxShadow=selecionado?'0 0 0 2px #67d4ff33':'none';botao.textContent=(selecionado?'✓ ':'')+(botao===um?'1 jogador':'2 jogadores');}detalhe.textContent=n===1?'Selecionado: contra o computador, com uma faixa de controle.':'Selecionado: dois jogadores no mesmo aparelho, cada um com sua faixa de controle.';}
+  um.addEventListener('click',()=>selecionar(1));dois.addEventListener('click',()=>selecionar(2));selecionar(tipo==='solo'?1:2);
+  iniciar.addEventListener('click',()=>{if(rodando||!active)return;rodando=true;menu.hidden=true;partida.hidden=false;direita.remove();if(tipo==='dupla')arena.append(direita);hint.textContent='';last=0;frame=requestAnimationFrame(tick);});
+  function reset(direction){ball.x=300;ball.y=180;ball.vx=3.2*direction;ball.vy=(Math.random()-.5)*4;}
+  function draw(){ctx.fillStyle='#102b39';ctx.fillRect(0,0,600,360);ctx.strokeStyle='#4b7581';ctx.setLineDash([8,8]);ctx.beginPath();ctx.moveTo(300,0);ctx.lineTo(300,360);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#fff';ctx.font='24px sans-serif';ctx.fillText(String(score[0]),255,32);ctx.fillText(String(score[1]),330,32);
+    ctx.fillStyle='#65d4f0';ctx.fillRect(18,p[0]-35,12,70);ctx.fillStyle='#ffb66d';ctx.fillRect(570,p[1]-35,12,70);
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(ball.x,ball.y,8,0,Math.PI*2);ctx.fill();}
+  function tick(time){if(!active)return;const dt=Math.min(2,(time-last)/16.67||1);last=time;
+    if(tipo==='solo')p[1]=clamp(p[1]+clamp(ball.y-p[1],-2.6*dt,2.6*dt),35,325);
+    ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;
+    if(ball.y<=8||ball.y>=352){ball.y=clamp(ball.y,8,352);ball.vy*=-1;}
+    if(ball.vx<0&&ball.x<=38&&ball.x>=24&&Math.abs(ball.y-p[0])<=43){ball.x=38;ball.vx=Math.abs(ball.vx)*1.025;ball.vy+=(ball.y-p[0])*.025;}
+    if(ball.vx>0&&ball.x>=562&&ball.x<=576&&Math.abs(ball.y-p[1])<=43){ball.x=562;ball.vx=-Math.abs(ball.vx)*1.025;ball.vy+=(ball.y-p[1])*.025;}
+    if(ball.x<0){score[1]++;reset(1);}if(ball.x>600){score[0]++;reset(-1);}
+    info.textContent='Azul '+score[0]+' × '+score[1]+' Laranja';draw();frame=requestAnimationFrame(tick);}
+  function destroy(){if(!active)return;active=false;cancelAnimationFrame(frame);handlers.forEach(remover=>remover());root.remove();onExit();}
+  if(autoStart)iniciar.click();
+  quit.addEventListener('click',destroy);return destroy;
+}
