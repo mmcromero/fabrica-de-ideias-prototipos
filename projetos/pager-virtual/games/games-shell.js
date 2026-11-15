@@ -7,7 +7,7 @@ const orientacao=()=>matchMedia('(orientation:landscape)').matches?'landscape':'
 const painel=el('game-screen'),stage=el('stage');
 const info=el('game-order-status');
 function dimensoes(){if(!ativo)return;const vp=window.visualViewport;painel.style.width=Math.floor(vp?.width||innerWidth)+'px';painel.style.height=Math.floor(vp?.height||innerHeight)+'px';painel.style.transform=vp?'translate('+Math.round(vp.offsetLeft)+'px,'+Math.round(vp.offsetTop)+'px)':'none';}
-function layout(){painel.classList.toggle('landscape',etapa==='partida'&&jogo?.orientation==='landscape');painel.classList.toggle('game-portrait',etapa!=='partida'||jogo?.orientation!=='landscape');const precisa=etapa==='rotacao'&&orientacao()!==jogo.orientation;el('rotate-hint').hidden=!precisa;el('game-body').hidden=precisa;dimensoes();if(etapa==='rotacao'&&!precisa)iniciarPartida();}
+function layout(){painel.classList.toggle('landscape',(etapa==='partida'||etapa==='rotacao')&&jogo?.orientation==='landscape');painel.classList.toggle('game-portrait',(etapa!=='partida'&&etapa!=='rotacao')||jogo?.orientation!=='landscape');const precisa=etapa==='rotacao'&&orientacao()!==jogo.orientation;el('rotate-hint').hidden=!precisa;el('game-body').hidden=precisa;dimensoes();if(etapa==='rotacao'&&!precisa)iniciarPartida();}
 function encerrarPartida(){geracao++;sessao.encerrar();stage.replaceChildren();}
 function fechar(){if(!ativo)return;encerrarPartida();ativo=false;document.body.classList.remove('game-active');painel.hidden=true;painel.style.transform='';window.scrollTo(0,scrollY);}
 function cabecalho(titulo){const h=document.createElement('h2');h.textContent=titulo;return h;}
