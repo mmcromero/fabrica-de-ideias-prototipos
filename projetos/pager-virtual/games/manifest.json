@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "0.1.0",
+  "games": [
+    {
+      "id": "jogo-da-velha",
+      "title": "Jogo da Velha",
+      "description": "Três ingredientes em linha vencem a partida.",
+      "theme": "gastronomia-leve",
+      "modes": [
+        "solo",
+        "dupla-local"
+      ],
+      "module": "./jogo-da-velha.js",
+      "status": "experimental"
+    }
+  ]
+}
