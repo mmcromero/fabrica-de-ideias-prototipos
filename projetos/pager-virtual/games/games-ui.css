@@ -89,3 +89,7 @@ body.game-active{position:fixed;inset:0;width:100%;height:var(--game-viewport-he
 #game-screen.landscape #rotate-hint:not([hidden]){display:flex}
 #game-screen.landscape #rotate-hint:not([hidden])~.game-body{display:none}
 @media(orientation:portrait){#game-screen.landscape .game-top{display:flex;position:relative;width:100%;flex:0 0 auto}}
+
+/* Catálogo em retrato pode rolar internamente; a página do pedido permanece fixa. */
+body.game-active:has(#game-screen.game-portrait),#game-screen.game-portrait,#game-screen.game-portrait .game-body,#game-screen.game-portrait #stage{touch-action:pan-y}
+#game-screen.game-portrait .games-choose{overscroll-behavior:contain}
