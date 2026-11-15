@@ -118,3 +118,8 @@ body.game-active:has(#game-screen.game-portrait),#game-screen.game-portrait,#gam
 #game-screen .games-option.games-unavailable .primary:disabled{background:#34465e;color:#cbd5e1;border:1px solid #64748b;cursor:not-allowed;opacity:1}
 #game-screen .games-option.games-unavailable .games-art{opacity:.85}
 #game-screen .games-option.games-unavailable h3{color:#e2e8f0}
+
+/* Etiquetas compactas de capacidade, sem prometer modos futuros. */
+#game-screen .games-tags{display:flex;flex-wrap:wrap;gap:5px;align-content:flex-start}
+#game-screen .games-tag{display:inline-flex;align-items:center;max-width:100%;padding:4px 7px;border:1px solid #57708b;border-radius:999px;background:#263b53;color:#e1efff;font-size:.68rem;font-weight:650;line-height:1.2;overflow-wrap:anywhere}
+#game-screen .games-unavailable .games-tag{background:#2d3747;color:#cbd5e1}
