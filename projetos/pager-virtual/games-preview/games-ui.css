@@ -113,3 +113,8 @@ body.game-active:has(#game-screen.game-portrait),#game-screen.game-portrait,#gam
 #game-screen .games-option .games-art{display:block;width:100%;height:auto;aspect-ratio:5/3;border-radius:10px;flex:0 0 auto;overflow:hidden}
 #game-screen.game-portrait .games-option{gap:7px}
 #game-screen.game-portrait .games-option h3{margin:0}
+
+/* Cards em construção: mesma estrutura, botão sem interação. */
+#game-screen .games-option.games-unavailable .primary:disabled{background:#34465e;color:#cbd5e1;border:1px solid #64748b;cursor:not-allowed;opacity:1}
+#game-screen .games-option.games-unavailable .games-art{opacity:.85}
+#game-screen .games-option.games-unavailable h3{color:#e2e8f0}
