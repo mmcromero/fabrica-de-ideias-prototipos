@@ -1,0 +1,102 @@
+#game-screen{position:fixed;inset:0;z-index:1000;background:#071320;display:flex;flex-direction:column;width:100vw;height:100vh;height:100dvh;overflow:hidden}
+#game-screen .game-top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(6px + env(safe-area-inset-top,0px)) 12px 7px;background:#111d2d;border-bottom:1px solid #334155;font-size:.85rem}
+#game-screen .game-top strong{font-size:.9rem}#game-screen .game-top .secondary{padding:7px 12px;font-size:.85rem}
+#game-screen .game-body{flex:1 1 auto;min-height:0;min-width:0;display:flex;align-items:center;justify-content:center;padding:6px;overflow:auto}
+#game-screen #stage{width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center}
+#game-screen #stage>section{width:100%;max-width:100%;max-height:100%;overflow:auto}
+#game-screen #stage>section>div:not([hidden]){max-width:100%}
+#game-screen #stage canvas{width:100%;height:auto;max-height:calc(100dvh - 115px);object-fit:contain}
+#game-screen .game-foot{display:flex;justify-content:center;gap:8px;align-items:center;flex:0 0 auto;padding:5px 10px calc(5px + env(safe-area-inset-bottom,0px));font-size:.75rem;color:#94a3b8}
+#rotate-hint{display:none;text-align:center;padding:12px;background:#182b3d;color:#fff}
+@media(orientation:portrait){#game-screen.landscape #rotate-hint{display:block}#game-screen.landscape .game-body{display:none}}
+body.game-active{overflow:hidden}
+#game-screen #stage canvas{max-width:none!important}#game-screen #stage>section h3{margin:3px 0;font-size:1rem}#game-screen #stage>section p{margin:5px 0;font-size:.85rem}#game-screen #stage>section button{padding:8px 12px}#game-screen #stage>section>div{max-width:100%}
+#game-screen .game-body{overflow:hidden;padding:4px}
+#game-screen #stage{overflow:hidden;align-items:stretch;justify-content:stretch}
+#game-screen #stage>.pong-root{height:100%;width:100%;max-height:100%;overflow:hidden;display:flex;flex-direction:column}
+#game-screen #stage>.pong-root>.pong-partida:not([hidden]){flex:1 1 auto;min-height:0;min-width:0;display:flex;flex-direction:column;overflow:hidden}
+#game-screen #stage .pong-arena{flex:1 1 auto;max-width:none!important;min-height:0;height:100%}
+#game-screen #stage .pong-arena canvas{width:100%!important;height:100%!important;max-height:none!important;max-width:none!important;object-fit:fill}
+#game-screen #stage>.pong-root>div:first-child:not([hidden]){margin:auto;width:min(420px,100%);padding:12px}
+#game-screen .game-foot{display:none}
+#game-screen .game-top{padding:calc(4px + env(safe-area-inset-top,0px)) 10px 4px}
+#game-screen .game-top .secondary{padding:5px 10px}
+@media(orientation:portrait){#game-screen.landscape .game-body{display:none}}
+/* Pong: a arena e o painel ocupam a mesma faixa horizontal, sem barras acima/abaixo. */
+#game-screen.landscape{flex-direction:row;align-items:stretch}
+#game-screen.landscape .game-top{order:2;flex:0 0 clamp(132px,18vw,205px);width:clamp(132px,18vw,205px);min-width:0;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:10px;padding:10px 8px;background:#152237;border:0;border-left:1px solid #334155;overflow-y:auto}
+#game-screen.landscape .game-top>div{display:flex;flex-direction:column;gap:6px;overflow-wrap:anywhere}
+#game-screen.landscape .game-top .secondary{width:100%;min-height:40px}
+#game-screen.landscape .game-body{order:1;flex:1 1 auto;min-width:0;min-height:0;padding:3px;overflow:hidden}
+#game-screen.landscape #stage,#game-screen.landscape .pong-root,#game-screen.landscape .pong-partida{height:100%;min-height:0}
+#game-screen.landscape .pong-arena{height:100%;min-height:0}
+#game-screen.landscape .pong-arena canvas{height:100%!important;max-height:none!important}
+#game-screen.landscape .game-sim{display:block}
+.game-sim{display:none}
+#game-screen .game-sim{margin-top:auto;font-size:.75rem;color:#94a3b8}
+#game-screen .game-sim button{font-size:.75rem;line-height:1.15;padding:8px 5px;white-space:normal}
+#rotate-hint{position:absolute;inset:0;z-index:5;align-items:center;justify-content:center;flex-direction:column;gap:18px;padding:24px;text-align:center;background:#091626;color:white}
+#rotate-hint .rotate-icon{font-size:clamp(65px,17vw,110px);line-height:1}
+#rotate-hint strong{font-size:clamp(1.6rem,7vw,2.5rem)}
+#rotate-hint p{font-size:1.05rem;max-width:330px;line-height:1.5;margin:0}
+#rotate-hint button{font-size:1rem;padding:12px 22px}
+@media(orientation:portrait){#game-screen.landscape #rotate-hint{display:flex}#game-screen.landscape .game-body{display:none}#game-screen.landscape .game-top{position:static;flex:0 0 auto;width:auto;order:1;display:none}}
+@media(orientation:landscape){#game-screen.landscape #rotate-hint{display:none}}
+/* Isolamento de rolagem somente durante a partida. */
+html:has(body.game-active),body.game-active{overflow:hidden!important;overscroll-behavior:none!important}
+body.game-active{position:fixed;inset:0;width:100%;height:var(--game-viewport-height,100dvh);touch-action:none}
+#game-screen{top:0;left:0;right:auto;bottom:auto;width:var(--game-viewport-width,100vw);height:var(--game-viewport-height,100dvh);max-width:100%;max-height:100%;overflow:hidden!important;overscroll-behavior:none;touch-action:none}
+#game-screen .game-body,#game-screen #stage,#game-screen .pong-root,#game-screen .pong-partida,#game-screen .pong-arena{overscroll-behavior:none;touch-action:none}
+#game-screen.landscape .game-top{overflow:hidden;min-height:0;gap:clamp(3px,1.4vh,10px);padding:clamp(3px,1.4vh,10px) 6px}
+#game-screen.landscape .game-top .secondary{min-height:0;padding:clamp(4px,1vh,9px) 5px}
+#game-screen.landscape .game-sim{margin-top:auto}
+#game-screen .hub{height:100%;width:100%;display:flex;flex-direction:column;min-height:0;gap:8px;padding:8px;overflow:hidden}
+#game-screen .hub h2{font-size:clamp(1.1rem,3vw,1.6rem);margin:0}
+#game-screen .hub .hub-list{flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:center}
+#game-screen .hub .hub-card{display:flex;flex-direction:column;justify-content:space-between;gap:6px;min-width:0;min-height:0;padding:clamp(8px,2vw,16px);border:1px solid #52677e;border-radius:14px;background:#20334b}
+#game-screen .hub .hub-card h3{margin:0;font-size:clamp(1rem,2.5vw,1.4rem)}
+#game-screen .hub .hub-card p{margin:0;font-size:clamp(.75rem,1.6vw,.95rem);color:#cbd5e1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+#game-screen .hub .hub-card button{width:100%;padding:9px}
+#game-screen .hub .hub-status{font-size:.8rem;color:#cbd5e1;min-height:1em}
+#game-screen.landscape #stage>.hub{max-height:100%;overflow:hidden}
+#game-screen.landscape .game-top{touch-action:manipulation}
+#game-screen.landscape .game-body{touch-action:manipulation}
+#game-screen.landscape .pong-arena{touch-action:none}
+@media(max-width:550px) and (orientation:landscape){#game-screen .hub .hub-card p{display:none}}
+[hidden]{display:none!important}
+#game-screen #stage>.velha-root{height:100%;width:100%;min-height:0;max-height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}
+#game-screen #stage .velha-root>div:not([hidden]){max-height:100%;min-height:0;box-sizing:border-box}
+#game-screen #stage .velha-root button{touch-action:manipulation}
+/* Fluxo compartilhado: catálogo e escolha sempre em retrato, sem forçar rotação. */
+#game-screen.game-portrait{flex-direction:column}
+#game-screen.game-portrait .game-top{order:0;flex:0 0 auto;width:100%;display:flex;flex-direction:row;align-items:center;justify-content:space-between;padding:8px 12px;overflow:hidden}
+#game-screen.game-portrait .game-top .game-sim{display:none}
+#game-screen.game-portrait .game-body{order:1;flex:1;min-height:0;padding:12px;overflow:hidden}
+#game-screen.game-portrait #stage{align-items:center;justify-content:center}
+#game-screen .games-choose{width:min(560px,100%);max-height:100%;overflow:auto;padding:12px;touch-action:pan-y}
+#game-screen .games-choose h2{font-size:1.35rem;margin:0 0 14px}
+#game-screen .games-list{display:grid;grid-template-columns:1fr;gap:12px}
+#game-screen .games-option{padding:14px;background:#20334b;border:1px solid #52677e;border-radius:14px}
+#game-screen .games-option h3{margin:0 0 8px}
+#game-screen .games-option p{color:#cbd5e1;font-size:.9rem;line-height:1.35}
+#game-screen .games-option .primary{margin-top:10px}
+#game-screen .games-list button[aria-pressed=true]{background:#1459b8;color:white;border:2px solid #67d4ff;font-weight:700}
+#game-screen .games-list button[aria-pressed=false]{background:#263a55;color:white;border:2px solid #64748b}
+#game-screen .games-actions{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+#game-screen .games-actions button{flex:1;min-width:130px}
+#rotate-hint[hidden]{display:none!important}
+#game-screen.game-portrait #rotate-hint{display:none}
+#game-screen.landscape #rotate-hint:not([hidden]){display:flex}
+#game-screen.landscape #rotate-hint:not([hidden])~.game-body{display:none}
+@media(orientation:portrait){#game-screen.landscape .game-top{display:flex;position:relative;width:100%;flex:0 0 auto}}
+
+/* Catálogo em retrato pode rolar internamente; a página do pedido permanece fixa. */
+body.game-active:has(#game-screen.game-portrait),#game-screen.game-portrait,#game-screen.game-portrait .game-body,#game-screen.game-portrait #stage{touch-action:pan-y}
+#game-screen.game-portrait .games-choose{overscroll-behavior:contain}
+
+/* O aviso de orientação é exibido em qualquer etapa e para ambos os sentidos. */
+#game-screen #rotate-hint:not([hidden]){display:flex!important;position:absolute;inset:0;z-index:10;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;background:#091626;padding:24px}
+#game-screen #rotate-hint:not([hidden])~.game-body{display:none!important}
+#game-screen #rotate-hint .rotate-icon{font-size:clamp(64px,15vw,110px)}
+#game-screen #rotate-hint strong{font-size:clamp(1.5rem,5vw,2.4rem)}
+#game-screen #rotate-hint p{font-size:1.1rem}
