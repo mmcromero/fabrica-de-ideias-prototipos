@@ -123,3 +123,25 @@ body.game-active:has(#game-screen.game-portrait),#game-screen.game-portrait,#gam
 #game-screen .games-tags{display:flex;flex-wrap:wrap;gap:5px;align-content:flex-start}
 #game-screen .games-tag{display:inline-flex;align-items:center;max-width:100%;padding:4px 7px;border:1px solid #57708b;border-radius:999px;background:#263b53;color:#e1efff;font-size:.68rem;font-weight:650;line-height:1.2;overflow-wrap:anywhere}
 #game-screen .games-unavailable .games-tag{background:#2d3747;color:#cbd5e1}
+
+/* Retorno ao catálogo: mensagem própria, horizontal, sem rolagem. */
+#game-screen #return-portrait[hidden]{display:none!important}
+#game-screen #return-portrait:not([hidden]){
+ position:absolute;inset:0;z-index:11;display:flex;flex-direction:row;
+ align-items:center;justify-content:center;gap:clamp(14px,4vw,48px);
+ padding:clamp(16px,5vh,40px);box-sizing:border-box;
+ background:radial-gradient(ellipse at 20% 50%,#193c58 0%,#091626 75%);
+ color:#f8fafc;text-align:left;overflow:hidden;
+}
+#game-screen #return-portrait .return-portrait-art{
+ flex:0 0 auto;display:grid;place-items:center;width:clamp(80px,20vw,160px);
+ height:clamp(80px,20vw,160px);font-size:clamp(62px,14vw,112px);
+ transform:rotate(-15deg);background:#203e59;border-radius:24px;
+}
+#game-screen #return-portrait .return-portrait-copy{max-width:440px;min-width:0}
+#game-screen #return-portrait strong{display:block;font-size:clamp(1.1rem,3.8vw,2rem);line-height:1.2}
+#game-screen #return-portrait p{font-size:clamp(.85rem,2.2vw,1.1rem);margin:12px 0}
+#game-screen #return-portrait span{font-size:clamp(.75rem,1.8vw,.95rem);color:#a9d5ee}
+@media(orientation:portrait){
+ #game-screen #return-portrait:not([hidden]){flex-direction:column;text-align:center}
+}
