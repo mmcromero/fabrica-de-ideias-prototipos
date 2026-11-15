@@ -47,7 +47,7 @@ $('games-open').parentElement.append(diagnostico);
 $('games-open').addEventListener('click',async()=>{
  const b=$('games-open');b.disabled=true;diagnostico.hidden=true;
  try{
-  jogosPromise??=import('./games-shell.js?v=54');
+  jogosPromise??=import('./games-shell.js?v=56');
   const modulo=await jogosPromise;
   if(typeof modulo.abrir!=='function')throw new Error('Módulo carregado sem função abrir');
   modulo.abrir();
