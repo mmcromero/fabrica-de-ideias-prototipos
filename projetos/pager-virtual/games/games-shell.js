@@ -15,7 +15,19 @@ const orientacao=()=>matchMedia('(orientation:landscape)').matches?'landscape':'
 const painel=el('game-screen'),stage=el('stage');
 const info=el('game-order-status');
 function dimensoes(){if(!ativo)return;const vp=window.visualViewport;painel.style.width=Math.floor(vp?.width||innerWidth)+'px';painel.style.height=Math.floor(vp?.height||innerHeight)+'px';painel.style.transform=vp?'translate('+Math.round(vp.offsetLeft)+'px,'+Math.round(vp.offsetTop)+'px)':'none';}
-function layout(){painel.classList.toggle('landscape',(etapa==='partida'||etapa==='rotacao')&&jogo?.orientation==='landscape');painel.classList.toggle('game-portrait',(etapa!=='partida'&&etapa!=='rotacao')||jogo?.orientation!=='landscape');const precisa=etapa==='rotacao'&&orientacao()!==jogo.orientation;el('rotate-hint').hidden=!precisa;el('game-body').hidden=precisa;dimensoes();if(etapa==='rotacao'&&!precisa)iniciarPartida();}
+function layout(){
+ const naPartida=etapa==='partida'||etapa==='rotacao';
+ const desejada=naPartida?(jogo?.orientation||'portrait'):'portrait';
+ const precisa=orientacao()!==desejada;
+ painel.classList.toggle('landscape',naPartida&&desejada==='landscape');
+ painel.classList.toggle('game-portrait',!naPartida||desejada==='portrait');
+ const aviso=el('rotate-hint');
+ aviso.hidden=!precisa;
+ aviso.querySelector('p').textContent=desejada==='landscape'?'Gire o celular para a horizontal antes de jogar.':'Coloque o celular em pé para continuar.';
+ el('game-body').hidden=precisa;
+ dimensoes();
+ if(etapa==='rotacao'&&!precisa)iniciarPartida();
+}
 function encerrarPartida(){geracao++;sessao.encerrar();stage.replaceChildren();}
 function fechar(){if(!ativo)return;encerrarPartida();ativo=false;document.body.classList.remove('game-active');painel.hidden=true;painel.style.transform='';window.scrollTo(0,scrollY);}
 function cabecalho(titulo){const h=document.createElement('h2');h.textContent=titulo;return h;}
@@ -27,8 +39,6 @@ for(const n of quantidade){const b=botao('',()=>selecionar(n));opcoes.push([n,b]
 function confirmar(){if(!jogo)return;encerrarPartida();etapa='rotacao';stage.replaceChildren();layout();}
 async function iniciarPartida(){if(!ativo||etapa!=='rotacao')return;etapa='partida';layout();stage.replaceChildren();const token=++geracao;try{const ok=await sessao.abrir(jogo,stage,{modo,autoStart:true,onExit:()=>{if(token===geracao)mostrarCatalogo();}});if(!ativo||token!==geracao)return;if(!ok)mostrarCatalogo();}catch(e){console.error(e);if(token===geracao){mostrarCatalogo();}}}
 function abrir(){if(ativo||document.body.dataset.pedidoPronto==='true')return;ativo=true;scrollY=window.scrollY;document.body.classList.add('game-active');painel.hidden=false;info.textContent='⏳ Em preparo';mostrarCatalogo();}
-function pedidoPronto(){document.body.dataset.pedidoPronto='true';fechar();el('badge').classList.add('ready');el('status-icon').textContent='✅';el('status-text').textContent='Pedido Pronto';el('message').textContent='Seu pedido está pronto para retirada!';el('sub').textContent='Dirija-se ao balcão para retirar seu pedido.';el('sound').textContent='🔔 Pedido pronto (simulação)';window.scrollTo(0,0);}
-function reiniciarPedido(){document.body.dataset.pedidoPronto='false';fechar();el('badge').classList.remove('ready');el('status-icon').textContent='⏳';el('status-text').textContent='Em Preparo';el('message').textContent='Sua comida está sendo preparada com todo cuidado pelo nosso chef!';el('sub').textContent='Você receberá um aviso quando o pedido estiver pronto.';el('sound').textContent='🔔 Toque para ativar alerta sonoro e vibração';}
 el('game-exit').addEventListener('click',()=>etapa==='partida'?mostrarCatalogo():fechar());
 el('rotate-exit').addEventListener('click',mostrarCatalogo);
 window.addEventListener('avisaqui:pedido-pronto',fechar);
