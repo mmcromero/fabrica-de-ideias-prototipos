@@ -16,6 +16,19 @@ header{background:#0005;border-bottom:1px solid #334155;padding:18px 20px;displa
 .lab-controls{max-width:480px;margin:16px auto;padding:12px 16px;border:1px dashed #64748b;border-radius:12px;background:#0b1120}.lab-controls summary{cursor:pointer}.lab-controls button{margin:8px 5px 0 0}
 @media(min-width:768px){main{max-width:480px}}@media(max-width:380px){.library{grid-template-columns:1fr}.game-panel{padding:12px}}
  .a11y-bar{width:100%;max-width:480px;margin:0 auto 12px;display:flex;justify-content:flex-end;gap:8px}.chip{background:#1e293b;border:1px solid #334155;color:#f8fafc;border-radius:999px;padding:6px 12px;font-size:.8rem}.chip[aria-pressed=true]{background:#2563eb}.notice{margin-top:14px;padding:12px;border:1px solid #64748b;border-radius:12px;text-align:left;background:#162238;font-size:.9rem;line-height:1.5}.diagnostics{border-top:1px solid #64748b;padding:14px;font-size:.9rem}.diagnostics summary{cursor:pointer;font-weight:700}body.contrast{background:#000;color:#fff}body.contrast main{border-color:#fff}body.contrast .order,body.contrast .game-panel{background:#121212}body.large-text{font-size:1.15rem}
+#game-screen{position:fixed;inset:0;z-index:1000;background:#071320;display:flex;flex-direction:column;width:100vw;height:100vh;height:100dvh;overflow:hidden}
+#game-screen .game-top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(6px + env(safe-area-inset-top,0px)) 12px 7px;background:#111d2d;border-bottom:1px solid #334155;font-size:.85rem}
+#game-screen .game-top strong{font-size:.9rem}#game-screen .game-top .secondary{padding:7px 12px;font-size:.85rem}
+#game-screen .game-body{flex:1 1 auto;min-height:0;min-width:0;display:flex;align-items:center;justify-content:center;padding:6px;overflow:auto}
+#game-screen #stage{width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center}
+#game-screen #stage>section{width:100%;max-width:100%;max-height:100%;overflow:auto}
+#game-screen #stage>section>div:not([hidden]){max-width:100%}
+#game-screen #stage canvas{width:100%;height:auto;max-height:calc(100dvh - 115px);object-fit:contain}
+#game-screen .game-foot{display:flex;justify-content:center;gap:8px;align-items:center;flex:0 0 auto;padding:5px 10px calc(5px + env(safe-area-inset-bottom,0px));font-size:.75rem;color:#94a3b8}
+#rotate-hint{display:none;text-align:center;padding:12px;background:#182b3d;color:#fff}
+@media(orientation:portrait){#game-screen.landscape #rotate-hint{display:block}#game-screen.landscape .game-body{display:none}}
+body.game-active{overflow:hidden}
+#game-screen #stage .arena{max-width:none}
 </style></head><body>
 <aside class="a11y-bar"><button id="contrast" class="chip" aria-pressed="false">Alto Contraste</button><button id="font" class="chip" aria-pressed="false">Texto A+</button></aside>
 <main>
@@ -33,17 +46,25 @@ header{background:#0005;border-bottom:1px solid #334155;padding:18px 20px;displa
 <div class="actions"><button id="games-back" class="secondary">← Voltar à comanda</button><button id="refresh" class="secondary">Atualizar jogos</button></div>
 <h2>Escolha um jogo</h2><p>Os jogos não alteram seu pedido.</p>
 <p id="status" role="status"></p><div id="library" class="library"></div>
-<section id="playing" hidden><div class="actions"><button id="stop" class="secondary">Encerrar jogo</button></div><div id="stage"></div></section>
+
 </section>
 </main>
+<section id="game-screen" hidden aria-label="Jogo em tela cheia">
+<div class="game-top"><div><strong>🔔 Pedido #206</strong> <span id="game-order-status">· ⏳ Em preparo</span></div><button id="game-exit" class="secondary">✕ Sair</button></div>
+<div id="rotate-hint">↻ Gire o celular para jogar na horizontal. O botão Sair continua disponível.</div>
+<div class="game-body"><div id="stage"></div></div>
+<div class="game-foot"><span id="game-caption">Jogo em andamento</span><button id="game-ready" class="secondary" title="Somente laboratório">Simular pedido pronto</button></div>
+</section>
 <details class="lab-controls"><summary>Ferramentas de simulação (fora da comanda)</summary><p>Esta comanda é uma reprodução visual baseada na página real. Não há pedido, servidor ou notificação conectados.</p>
 <button id="ready" class="secondary">Simular pedido pronto</button><button id="reset" class="secondary">Reiniciar comanda</button></details>
 <script type="module">
 import {obterCatalogo,criarSessaoJogos} from './catalogo.js';
 const $=id=>document.getElementById(id),sessao=criarSessaoJogos();
 let pronto=false,consulta=0,ativo=false;
+let abertura=0;
+function telaJogo(abrir,jogo){$('game-screen').hidden=!abrir;document.body.classList.toggle('game-active',abrir);$('game-screen').classList.toggle('landscape',abrir&&jogo?.id==='pong');if(abrir)$('game-caption').textContent=jogo.title;}
 for(const [id,cls] of [['contrast','contrast'],['font','large-text']])$(id).addEventListener('click',()=>{const on=document.body.classList.toggle(cls);$(id).setAttribute('aria-pressed',String(on));});
-function parar(){sessao.encerrar();$('stage').replaceChildren();$('playing').hidden=true;ativo=false;}
+function parar(){abertura++;sessao.encerrar();$('stage').replaceChildren();telaJogo(false);ativo=false;}
 function fechar(){parar();$('games').hidden=true;$('games-open').hidden=pronto;}
 async function carregar(){const n=++consulta;$('library').replaceChildren();$('status').textContent='Carregando jogos…';try{
 const jogos=await obterCatalogo();if(n!==consulta)return;$('status').textContent=jogos.length+' jogos disponíveis';
@@ -51,17 +72,21 @@ for(const jogo of jogos){const card=document.createElement('article');card.class
 const titulo=document.createElement('h3');titulo.textContent=jogo.title;
 const descricao=document.createElement('p');descricao.textContent=jogo.description||'';
 const btn=document.createElement('button');btn.className='secondary';btn.textContent='Jogar';
-btn.addEventListener('click',async()=>{if(pronto)return;parar();$('playing').hidden=false;$('status').textContent='Abrindo '+jogo.title+'…';try{
-const ok=await sessao.abrir(jogo,$('stage'),{modo:'solo',onExit:()=>{ativo=false;$('playing').hidden=true;}});
-if(ok&&!pronto){ativo=true;$('status').textContent='Jogo: '+jogo.title;}else if(!pronto){$('playing').hidden=true;}
-}catch(e){$('playing').hidden=true;$('status').textContent='Falha ao abrir jogo';console.error(e)}});
+btn.addEventListener('click',async()=>{if(pronto)return;parar();const ticket=++abertura;telaJogo(true,jogo);$('game-caption').textContent='Carregando '+jogo.title+'…';$('status').textContent='Abrindo '+jogo.title+'…';try{
+const ok=await sessao.abrir(jogo,$('stage'),{modo:'solo',onExit:()=>{if(ticket!==abertura)return;ativo=false;telaJogo(false);$('status').textContent='Jogo encerrado';}});
+if(ticket!==abertura)return;
+if(ok&&!pronto){ativo=true;$('status').textContent='Jogo: '+jogo.title;$('game-caption').textContent=jogo.title;}
+else if(!pronto){telaJogo(false);}
+}catch(e){if(ticket!==abertura)return;telaJogo(false);$('status').textContent='Falha ao abrir jogo';console.error(e)}});
 card.append(titulo,descricao,btn);$('library').append(card)}
 }catch(e){if(n===consulta)$('status').textContent='Não foi possível carregar os jogos';console.error(e)}}
 $('games-open').addEventListener('click',()=>{if(pronto)return;$('games').hidden=false;$('games-open').hidden=true;carregar();$('games').scrollIntoView({behavior:'smooth',block:'nearest'});});
 $('games-back').addEventListener('click',()=>{fechar();});
 $('refresh').addEventListener('click',carregar);
-$('stop').addEventListener('click',()=>{parar();$('status').textContent='Jogo encerrado';});
-$('ready').addEventListener('click',()=>{pronto=true;fechar();$('badge').classList.add('ready');$('status-icon').textContent='✅';$('status-text').textContent='Pedido Pronto';$('message').textContent='Seu pedido está pronto para retirada!';$('sub').textContent='Dirija-se ao balcão para retirar seu pedido.';$('sound').textContent='🔔 Pedido pronto (simulação)';window.scrollTo({top:0,behavior:'smooth'});});
+$('game-exit').addEventListener('click',()=>{parar();$('status').textContent='Jogo encerrado';});
+function pedidoPronto(){pronto=true;fechar();$('badge').classList.add('ready');$('status-icon').textContent='✅';$('status-text').textContent='Pedido Pronto';$('message').textContent='Seu pedido está pronto para retirada!';$('sub').textContent='Dirija-se ao balcão para retirar seu pedido.';$('sound').textContent='🔔 Pedido pronto (simulação)';window.scrollTo({top:0,behavior:'smooth'});}
+$('ready').addEventListener('click',pedidoPronto);
+$('game-ready').addEventListener('click',pedidoPronto);
 $('reset').addEventListener('click',()=>{pronto=false;fechar();$('badge').classList.remove('ready');$('status-icon').textContent='⏳';$('status-text').textContent='Em Preparo';$('message').textContent='Sua comida está sendo preparada com todo cuidado pelo nosso chef!';$('sub').textContent='Você receberá um aviso quando o pedido estiver pronto.';$('sound').textContent='🔔 Toque para ativar alerta sonoro e vibração';$('sound').setAttribute('aria-pressed','false');$('games-open').hidden=false;});
 $('sound').addEventListener('click',()=>{if(pronto)return;const on=$('sound').getAttribute('aria-pressed')!=='true';$('sound').setAttribute('aria-pressed',String(on));$('sound').textContent=on?'🔊 Alerta visual habilitado nesta simulação':'🔔 Toque para ativar alerta sonoro e vibração';});
 </script></body></html>
