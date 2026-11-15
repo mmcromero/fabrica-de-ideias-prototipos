@@ -1,5 +1,13 @@
 // Módulo opcional: importado somente após toque em Jogar.
 import {obterCatalogo,criarSessaoJogos} from './catalogo.js?v=50';
+// Elementos e estilos são criados apenas após o clique do cliente.
+const estilo=document.createElement('link');estilo.rel='stylesheet';estilo.href=new URL('./games-ui.css?v=50',import.meta.url).href;document.head.append(estilo);
+document.body.insertAdjacentHTML('beforeend',`
+<section id="game-screen" hidden aria-label="Jogos">
+ <div class="game-top"><div><strong>🔔 Pedido #206</strong> <span id="game-order-status">⏳ Em preparo</span></div><button id="game-exit" class="secondary">✕ Sair</button><div class="game-sim"><span>Laboratório</span><button id="game-ready" class="secondary">Simular pedido pronto</button></div></div>
+ <div id="rotate-hint" hidden><span class="rotate-icon" aria-hidden="true">📱↻</span><strong>Gire o celular</strong><p>Este jogo funciona melhor com o celular na horizontal.</p><button id="rotate-exit" class="secondary">← Voltar aos jogos</button></div>
+ <div class="game-body"><div id="stage"></div></div>
+</section>`);
 const el=id=>document.getElementById(id);
 const sessao=criarSessaoJogos();
 let ativo=false,etapa='catalogo',jogo=null,modo='solo',geracao=0,scrollY=0;
