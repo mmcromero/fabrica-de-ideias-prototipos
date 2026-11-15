@@ -1,0 +1,98 @@
+// AVISAQUI-GAMES-001 — jogo local sem acesso a pedidos ou rede.
+export function vencedor(casas) {
+  const linhas = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  for (const [a,b,c] of linhas) if (casas[a] && casas[a] === casas[b] && casas[b] === casas[c]) return casas[a];
+  return casas.every(Boolean) ? 'empate' : null;
+}
+export function jogar(casas, indice, simbolo) {
+  if (!Number.isInteger(indice) || indice < 0 || indice > 8 || casas.length !== 9 || casas[indice] || vencedor(casas) || !['X','O'].includes(simbolo)) return null;
+  const novas = [...casas]; novas[indice] = simbolo; return novas;
+}
+export function escolhaComputador(casas) {
+  const avaliar = (estado, turno, profundidade) => {
+    const fim = vencedor(estado);
+    if (fim) return fim === 'O' ? 10 - profundidade : fim === 'X' ? profundidade - 10 : 0;
+    const valores = estado.map((v,i) => v ? null : avaliar(jogar(estado,i,turno),turno === 'O' ? 'X' : 'O',profundidade+1)).filter(v => v !== null);
+    return turno === 'O' ? Math.max(...valores) : Math.min(...valores);
+  };
+  let melhor = -Infinity, indice = -1;
+  casas.forEach((v,i) => {
+    if (v) return;
+    const nota = avaliar(jogar(casas,i,'O'),'X',1);
+    if (nota > melhor) { melhor = nota; indice = i; }
+  });
+  return indice;
+}
+export function iniciarJogoDaVelha({container,onExit=()=>{},modo='solo',autoStart=false}) {
+  if (!(container instanceof HTMLElement)) throw new TypeError('Container inválido');
+  let casas=Array(9).fill(null),turno='X',encerrado=false,partidaIniciada=false;
+  let tipo=modo==='dupla'||modo==='dupla-local'?'dupla':'solo';
+  const raiz=document.createElement('section');
+  raiz.className='velha-root';
+  raiz.setAttribute('aria-label','Jogo da Velha');
+  raiz.style.cssText='width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#f8fafc';
+  const menu=document.createElement('div');
+  menu.style.cssText='width:min(460px,100%);max-height:100%;overflow:hidden;padding:clamp(8px,2vw,18px);box-sizing:border-box';
+  const titulo=document.createElement('h2');titulo.textContent='❎ Jogo da Velha · Escolha a partida';titulo.style.cssText='font-size:clamp(1.05rem,2.6vw,1.5rem);margin:0 0 12px';
+  const escolha=document.createElement('fieldset');
+  escolha.style.cssText='border:1px solid #52677e;border-radius:14px;padding:clamp(10px,2vw,18px);margin:0;background:#20334b;color:#f8fafc';
+  const legenda=document.createElement('legend');legenda.textContent='Quantos jogadores?';
+  const opcoes=document.createElement('div');opcoes.style.cssText='display:flex;gap:10px;flex-wrap:wrap;margin:10px 0';
+  const um=document.createElement('button'),dois=document.createElement('button');
+  for(const botao of [um,dois]){botao.type='button';botao.style.cssText='flex:1 1 140px;min-height:48px;border:2px solid #64748b;border-radius:12px;background:#263a55;color:#f8fafc;font-weight:700;padding:10px 16px';opcoes.append(botao);}
+  const detalhe=document.createElement('p');detalhe.style.cssText='color:#cbd5e1;font-size:.9rem;margin:10px 0';
+  const iniciar=document.createElement('button');iniciar.type='button';iniciar.textContent='Começar partida';
+  iniciar.style.cssText='width:100%;min-height:48px;border:0;border-radius:12px;background:#2563eb;color:#fff;font-weight:700;padding:10px 16px';
+  escolha.append(legenda,opcoes,detalhe,iniciar);menu.append(titulo,escolha);
+  const jogo=document.createElement('div');
+  jogo.hidden=true;
+  jogo.style.cssText='width:100%;height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(5px,1.5vh,12px);padding:6px;overflow:hidden';
+  const status=document.createElement('p');status.setAttribute('role','status');
+  status.style.cssText='margin:0;font-weight:700;text-align:center;font-size:clamp(.95rem,2.5vw,1.3rem)';
+  const grade=document.createElement('div');
+  grade.style.cssText='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:clamp(4px,1vw,8px);width:min(65dvh,58vw,420px);height:min(65dvh,58vw,420px);max-height:calc(100% - 85px);aspect-ratio:1;flex:0 1 auto;min-height:0;min-width:0';
+  const botoes=Array.from({length:9},(_,i)=>{
+    const botao=document.createElement('button');botao.type='button';
+    botao.style.cssText='min-height:0;min-width:0;border:2px solid #52677e;border-radius:12px;background:#20334b;color:#f8fafc;font-weight:800;font-size:clamp(1.5rem,7vh,3.5rem);touch-action:manipulation';
+    botao.addEventListener('click',()=>{
+      if(encerrado||!partidaIniciada||vencedor(casas)||(tipo==='solo'&&turno!=='X'))return;
+      const novas=jogar(casas,i,turno);if(!novas)return;
+      casas=novas;turno=turno==='X'?'O':'X';atualizar();
+      if(tipo==='solo'&&!vencedor(casas)){
+        const cpu=escolhaComputador(casas);
+        if(cpu>=0){casas=jogar(casas,cpu,'O');turno='X';atualizar();}
+      }
+    });
+    grade.append(botao);return botao;
+  });
+  const reiniciar=document.createElement('button');reiniciar.type='button';reiniciar.textContent='Nova partida';
+  reiniciar.style.cssText='padding:9px 22px;border:1px solid #64748b;border-radius:12px;background:#263a55;color:#fff;font-weight:700';
+  reiniciar.addEventListener('click',()=>{if(encerrado)return;casas=Array(9).fill(null);turno='X';atualizar();});
+  function selecionar(n){
+    tipo=n===1?'solo':'dupla';
+    for(const [botao,ativo] of [[um,n===1],[dois,n===2]]){
+      botao.setAttribute('aria-pressed',String(ativo));
+      botao.style.background=ativo?'#1459b8':'#263a55';
+      botao.style.borderColor=ativo?'#67d4ff':'#64748b';
+      botao.style.boxShadow=ativo?'0 0 0 2px #67d4ff33':'none';
+      botao.textContent=(ativo?'✓ ':'')+(botao===um?'1 jogador':'2 jogadores');
+    }
+    detalhe.textContent=n===1?'Selecionado: você joga com X contra o computador (O).':'Selecionado: dois jogadores no mesmo aparelho, alternando X e O.';
+  }
+  um.addEventListener('click',()=>selecionar(1));
+  dois.addEventListener('click',()=>selecionar(2));
+  selecionar(tipo==='solo'?1:2);
+  iniciar.addEventListener('click',()=>{if(encerrado||partidaIniciada)return;partidaIniciada=true;menu.hidden=true;jogo.hidden=false;atualizar();});
+  function atualizar(){
+    const fim=vencedor(casas);
+    status.textContent=fim==='empate'?'Empate!':fim?'Vitória de '+fim:tipo==='solo'?(turno==='X'?'Sua vez (X)':'Vez do computador (O)'):'Vez do jogador '+turno;
+    botoes.forEach((b,i)=>{b.textContent=casas[i]||'·';b.disabled=!!fim||!!casas[i]||(tipo==='solo'&&turno!=='X');b.style.color=casas[i]==='X'?'#67d4ff':casas[i]==='O'?'#ffb66d':'#94a3b8';b.setAttribute('aria-label','Casa '+(i+1)+': '+(casas[i]||'vazia'));});
+  }
+  jogo.append(status,grade,reiniciar);raiz.append(menu,jogo);container.append(raiz);
+  if(autoStart)iniciar.click();
+  const destruir=()=>{if(encerrado)return;encerrado=true;raiz.remove();onExit();};
+  return destruir;
+}
+
+// Contrato uniforme para o carregador independente.
+export const iniciarJogo = iniciarJogoDaVelha;

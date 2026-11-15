@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f172a"><title>Avisaqui — Comanda e Jogos</title>
+<style>
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#f8fafc;background:#0b1120}*{box-sizing:border-box}body{margin:0;padding:16px;min-height:100vh;min-height:100dvh}button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid #60a5fa;outline-offset:3px}[hidden]{display:none!important}
+main{width:100%;max-width:480px;margin:0 auto;background:#1e293b;border:2px solid #334155;border-radius:24px;overflow:hidden;box-shadow:0 10px 25px #0006}
+header{background:#0005;border-bottom:1px solid #334155;padding:18px 20px;display:flex;align-items:center;gap:12px}
+.logo{background:#f97316;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:24px}h1{font-size:1.15rem;margin:0}header p{font-size:.85rem;color:#94a3b8;margin:4px 0 0}
+.order{text-align:center;padding:24px 20px}.tag{font-size:.85rem;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;font-weight:600}.number{font-size:3.8rem;font-weight:900;letter-spacing:-.04em;margin:0 0 16px}.badge{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:999px;background:#f59e0b26;color:#f59e0b;border:1px solid #f59e0b;font-size:1.1rem;font-weight:700;margin-bottom:20px}.badge.ready{background:#10b98133;color:#6ee7b7;border-color:#10b981}
+.message{font-size:1.1rem;line-height:1.5;margin:0 0 8px}.sub{font-size:.9rem;color:#94a3b8;margin:0 0 20px}
+.sound{width:100%;background:#0f172a;border:2px dashed #475569;color:#f8fafc;padding:14px 18px;border-radius:12px;font-weight:600}
+.games-entry{padding:0 20px 22px;text-align:center;margin-top:12px}.primary{width:100%;padding:15px;border:0;border-radius:12px;background:#2563eb;color:white;font-weight:700}.secondary{padding:11px 14px;border:1px solid #64748b;border-radius:12px;background:#24344e;color:white}.actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.game-panel{padding:18px;border-top:1px solid #475569;background:#101827}.game-panel h2{font-size:1.15rem;margin:0 0 8px}.game-panel p{color:#cbd5e1;font-size:.9rem}
+.library{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.game-card{padding:12px;border:1px solid #475569;border-radius:14px;background:#1e293b}.game-card h3{margin:0 0 8px;font-size:1rem}.game-card p{font-size:.8rem}.game-card button{width:100%}
+#stage{min-width:0}#stage canvas{max-width:100%}#status{min-height:1.5em;font-size:.9rem;color:#cbd5e1}
+.lab-controls{max-width:480px;margin:16px auto;padding:12px 16px;border:1px dashed #64748b;border-radius:12px;background:#0b1120}.lab-controls summary{cursor:pointer}.lab-controls button{margin:8px 5px 0 0}
+@media(min-width:768px){main{max-width:480px}}@media(max-width:380px){.library{grid-template-columns:1fr}.game-panel{padding:12px}}
+ .a11y-bar{width:100%;max-width:480px;margin:0 auto 12px;display:flex;justify-content:flex-end;gap:8px}.chip{background:#1e293b;border:1px solid #334155;color:#f8fafc;border-radius:999px;padding:6px 12px;font-size:.8rem}.chip[aria-pressed=true]{background:#2563eb}.notice{margin-top:14px;padding:12px;border:1px solid #64748b;border-radius:12px;text-align:left;background:#162238;font-size:.9rem;line-height:1.5}.diagnostics{border-top:1px solid #64748b;padding:14px;font-size:.9rem}.diagnostics summary{cursor:pointer;font-weight:700}body.contrast{background:#000;color:#fff}body.contrast main{border-color:#fff}body.contrast .order,body.contrast .game-panel{background:#121212}body.large-text{font-size:1.15rem}
+</style></head><body>
+<aside class="a11y-bar"><button id="contrast" class="chip" aria-pressed="false">Alto Contraste</button><button id="font" class="chip" aria-pressed="false">Texto A+</button></aside>
+<main>
+<header><div class="logo" aria-hidden="true">🔔</div><div><h1>Pager Virtual</h1><p>Acompanhamento do seu pedido</p></div></header>
+<section class="order" aria-label="Acompanhamento do pedido">
+<div class="tag">Sua Senha de Retirada</div><div class="number">#206</div>
+<div id="badge" class="badge"><span id="status-icon">⏳</span><span id="status-text">Em Preparo</span></div>
+<p id="message" class="message">Sua comida está sendo preparada com todo cuidado pelo nosso chef!</p>
+<p id="sub" class="sub">Você receberá um aviso quando o pedido estiver pronto.</p>
+<button id="sound" class="sound" aria-pressed="false">🔔 Toque para ativar alerta sonoro e vibração</button><div class="notice">As notificações estão bloqueadas no navegador. Libere nas configurações ou mantenha esta tela aberta e ativa enquanto espera seu pedido para não perder o aviso.</div>
+</section>
+<section class="diagnostics"><details><summary>Diagnóstico do aparelho (testes)</summary><p>Recursos de diagnóstico não conectados nesta simulação.</p></details></section>
+<section class="games-entry"><button id="games-open" class="primary">🎮 Jogar enquanto aguarda</button></section>
+
+</main>
+
+<details class="lab-controls"><summary>Ferramentas de simulação (fora da comanda)</summary><p>Esta comanda é uma reprodução visual baseada na página real. Não há pedido, servidor ou notificação conectados.</p>
+<button id="ready" class="secondary">Simular pedido pronto</button><button id="reset" class="secondary">Reiniciar comanda</button></details>
+<script>
+/* O comprovante não importa jogos nem catálogo antes do clique. */
+const $=id=>document.getElementById(id);
+let jogosPromise=null;
+$('games-open').addEventListener('click',async()=>{
+  const b=$('games-open');b.disabled=true;
+  try{jogosPromise??=import('./games-shell.js?v=50');const modulo=await jogosPromise;modulo.abrir();}
+  catch(e){console.error(e);jogosPromise=null;alert('Não foi possível abrir os jogos. O acompanhamento do pedido continua disponível.');}
+  finally{b.disabled=false;}
+});
+for(const [id,classe] of [['contrast','contrast'],['font','large-text']])$(id).addEventListener('click',()=>{const ativo=document.body.classList.toggle(classe);$(id).setAttribute('aria-pressed',String(ativo));});
+/* O pedido continua independente, inclusive se os jogos nunca forem abertos. */
+$('ready').addEventListener('click',()=>{
+ document.body.dataset.pedidoPronto='true';
+ $('badge').classList.add('ready');$('status-icon').textContent='✅';$('status-text').textContent='Pedido Pronto';
+ $('message').textContent='Seu pedido está pronto para retirada!';
+ $('sub').textContent='Dirija-se ao balcão para retirar seu pedido.';
+ $('sound').textContent='🔔 Pedido pronto (simulação)';
+ window.dispatchEvent(new Event('avisaqui:pedido-pronto'));window.scrollTo(0,0);
+});
+$('reset').addEventListener('click',()=>{
+ document.body.dataset.pedidoPronto='false';
+ $('badge').classList.remove('ready');$('status-icon').textContent='⏳';$('status-text').textContent='Em Preparo';
+ $('message').textContent='Sua comida está sendo preparada com todo cuidado pelo nosso chef!';
+ $('sub').textContent='Você receberá um aviso quando o pedido estiver pronto.';
+ $('sound').textContent='🔔 Toque para ativar alerta sonoro e vibração';
+ window.dispatchEvent(new Event('avisaqui:pedido-reiniciado'));
+});
+$('sound').addEventListener('click',()=>{const b=$('sound');const ativo=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(ativo));b.textContent=ativo?'🔊 Alerta visual habilitado nesta simulação':'🔔 Toque para ativar alerta sonoro e vibração';});
+</script></body></html>
