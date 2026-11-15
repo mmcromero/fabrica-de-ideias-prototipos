@@ -24,7 +24,7 @@ function layout(){
  const aviso=el('rotate-hint');
  aviso.hidden=!precisa;
  aviso.querySelector('p').textContent=desejada==='landscape'?'Gire o celular para a horizontal antes de jogar.':'Coloque o celular em pé para continuar.';
- el('game-body').hidden=precisa;
+ painel.querySelector('.game-body').hidden=precisa;
  dimensoes();
  if(etapa==='rotacao'&&!precisa)iniciarPartida();
 }
