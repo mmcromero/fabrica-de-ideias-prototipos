@@ -31,9 +31,9 @@ function pedidoPronto(){document.body.dataset.pedidoPronto='true';fechar();el('b
 function reiniciarPedido(){document.body.dataset.pedidoPronto='false';fechar();el('badge').classList.remove('ready');el('status-icon').textContent='⏳';el('status-text').textContent='Em Preparo';el('message').textContent='Sua comida está sendo preparada com todo cuidado pelo nosso chef!';el('sub').textContent='Você receberá um aviso quando o pedido estiver pronto.';el('sound').textContent='🔔 Toque para ativar alerta sonoro e vibração';}
 el('game-exit').addEventListener('click',()=>etapa==='partida'?mostrarCatalogo():fechar());
 el('rotate-exit').addEventListener('click',mostrarCatalogo);
-el('ready').addEventListener('click',pedidoPronto);
-el('game-ready').addEventListener('click',pedidoPronto);
-el('reset').addEventListener('click',reiniciarPedido);
+window.addEventListener('avisaqui:pedido-pronto',fechar);
+el('game-ready').addEventListener('click',()=>el('ready').click());
+window.addEventListener('avisaqui:pedido-reiniciado',fechar);
 window.addEventListener('resize',()=>{dimensoes();if(ativo)layout();},{passive:true});
 window.addEventListener('orientationchange',layout,{passive:true});
 window.visualViewport?.addEventListener('resize',dimensoes,{passive:true});
