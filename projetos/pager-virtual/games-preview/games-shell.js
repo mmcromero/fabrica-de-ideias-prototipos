@@ -1,11 +1,12 @@
 // Módulo opcional: importado somente após toque em Jogar.
 import {obterCatalogo,criarSessaoJogos} from './catalogo.js?v=58';
 // Elementos e estilos são criados apenas após o clique do cliente.
-const estilo=document.createElement('link');estilo.rel='stylesheet';estilo.href=new URL('./games-ui.css?v=58',import.meta.url).href;document.head.append(estilo);
+const estilo=document.createElement('link');estilo.rel='stylesheet';estilo.href=new URL('./games-ui.css?v=59',import.meta.url).href;document.head.append(estilo);
 document.body.insertAdjacentHTML('beforeend',`
 <section id="game-screen" hidden aria-label="Jogos">
  <div class="game-top"><div><strong>🔔 Pedido #206</strong> <span id="game-order-status">⏳ Em preparo</span></div><button id="game-exit" class="secondary">✕ Sair</button><div class="game-sim"><span>Laboratório</span><button id="game-ready" class="secondary">Simular pedido pronto</button></div></div>
  <div id="rotate-hint" hidden><span class="rotate-icon" aria-hidden="true">📱↻</span><strong>Gire o celular</strong><p>Este jogo funciona melhor com o celular na horizontal.</p><button id="rotate-exit" class="secondary">← Voltar aos jogos</button></div>
+ <div id="return-portrait" hidden role="status" aria-live="polite"><div class="return-portrait-art" aria-hidden="true">📱</div><div class="return-portrait-copy"><strong>Volte o celular para a posição vertical</strong><p>O catálogo de jogos fica melhor com o celular em pé.</p><span>Assim que você girar, os jogos aparecem automaticamente.</span></div></div>
  <div class="game-body"><div id="stage"></div></div>
 </section>`);
 const el=id=>document.getElementById(id);
@@ -19,10 +20,12 @@ function layout(){
  const naPartida=etapa==='partida'||etapa==='rotacao';
  const desejada=naPartida?(jogo?.orientation||'portrait'):'portrait';
  const precisa=orientacao()!==desejada;
+ const voltarRetrato=precisa&&desejada==='portrait'&&!naPartida;
  painel.classList.toggle('landscape',naPartida&&desejada==='landscape');
  painel.classList.toggle('game-portrait',!naPartida||desejada==='portrait');
  const aviso=el('rotate-hint');
- aviso.hidden=!precisa;
+ aviso.hidden=!precisa||voltarRetrato;
+ el('return-portrait').hidden=!voltarRetrato;
  aviso.querySelector('p').textContent=desejada==='landscape'?'Gire o celular para a horizontal antes de jogar.':'Coloque o celular em pé para continuar.';
  painel.querySelector('.game-body').hidden=precisa;
  dimensoes();
