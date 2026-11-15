@@ -2,6 +2,7 @@
 // O Pong original depende de API/SSE do Avisaqui; esta versão não usa servidor.
 export function iniciarJogo({container,modo='solo',onExit=()=>{}}) {
   const root=document.createElement('section');
+  root.className='pong-root';
   const title=document.createElement('h3');title.textContent='Pong — laboratório local';
   let tipo=modo==='dupla'?'dupla':'solo';
   const escolha=document.createElement('fieldset');escolha.style.cssText='border:1px solid #64748b;border-radius:12px;padding:12px;margin:12px 0';
@@ -13,17 +14,17 @@ export function iniciarJogo({container,modo='solo',onExit=()=>{}}) {
   escolha.append(legenda,um,dois,detalhe,iniciar);
   const menu=document.createElement('div');menu.append(title,escolha);
   root.append(menu);
-  const info=document.createElement('p');info.setAttribute('role','status');
+  const info=document.createElement('p');info.setAttribute('role','status');info.className='pong-score';
   const canvas=document.createElement('canvas');canvas.width=600;canvas.height=360;
-  canvas.style.cssText='display:block;width:100%;max-width:600px;aspect-ratio:5/3;background:#102b39;border-radius:12px;touch-action:none';
+  canvas.style.cssText='display:block;width:100%;height:100%;max-width:none;max-height:none;aspect-ratio:auto;background:#102b39;border-radius:8px;touch-action:none';
   const hint=document.createElement('p');
-  const arena=document.createElement('div');arena.style.cssText='display:flex;align-items:stretch;gap:4px;width:100%;max-width:720px;margin:0 auto';
-  function faixa(texto){const el=document.createElement('div');el.textContent=texto;el.setAttribute('role','group');el.setAttribute('aria-label','Controle da raquete '+texto);el.style.cssText='flex:0 0 clamp(44px,13%,76px);display:flex;align-items:center;justify-content:center;background:#263e55;border:2px solid #65d4f0;border-radius:12px;color:#e0f2fe;touch-action:none;user-select:none;writing-mode:vertical-rl;font-size:12px;letter-spacing:1px';return el;}
+  const arena=document.createElement('div');arena.className='pong-arena';arena.style.cssText='display:flex;align-items:stretch;gap:5px;width:100%;height:100%;min-height:0;min-width:0;margin:0 auto';
+  function faixa(texto){const el=document.createElement('div');el.textContent=texto;el.setAttribute('role','group');el.setAttribute('aria-label','Controle da raquete '+texto);el.style.cssText='flex:0 0 clamp(40px,8%,62px);display:flex;align-items:center;justify-content:center;background:#263e55;border:2px solid #65d4f0;border-radius:12px;color:#e0f2fe;touch-action:none;user-select:none;writing-mode:vertical-rl;font-size:12px;letter-spacing:1px';return el;}
   const esquerda=faixa('AZUL'),direita=faixa('LARANJA');direita.style.borderColor='#ffb66d';
   canvas.style.flex='1 1 0';canvas.style.minWidth='0';
   arena.append(esquerda,canvas);
   const quit=document.createElement('button');quit.type='button';quit.textContent='Sair do jogo';
-  const partida=document.createElement('div');partida.hidden=true;partida.append(info,arena,hint,quit);root.append(partida);container.append(root);
+  const partida=document.createElement('div');partida.className='pong-partida';partida.hidden=true;partida.append(arena);root.append(partida);container.append(root);
   const ctx=canvas.getContext('2d');let active=true,frame=0,last=0,rodando=false;
   const p=[180,180],score=[0,0],ball={x:300,y:180,vx:3.2,vy:2.1};
   const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
@@ -39,7 +40,7 @@ export function iniciarJogo({container,modo='solo',onExit=()=>{}}) {
   configurarControle(esquerda,0);configurarControle(direita,1);
   function selecionar(n){tipo=n===1?'solo':'dupla';um.setAttribute('aria-pressed',String(n===1));dois.setAttribute('aria-pressed',String(n===2));detalhe.textContent=n===1?'Contra o computador. Uma faixa de controle.':'Dois jogadores no mesmo aparelho. Duas faixas de controle. O modo em celulares separados exige servidor.';}
   um.addEventListener('click',()=>selecionar(1));dois.addEventListener('click',()=>selecionar(2));selecionar(tipo==='solo'?1:2);
-  iniciar.addEventListener('click',()=>{if(rodando||!active)return;rodando=true;menu.hidden=true;partida.hidden=false;direita.remove();if(tipo==='dupla')arena.append(direita);hint.textContent=tipo==='solo'?'Arraste o dedo na faixa azul fora do campo.':'Cada pessoa controla sua faixa lateral fora do campo.';last=0;frame=requestAnimationFrame(tick);});
+  iniciar.addEventListener('click',()=>{if(rodando||!active)return;rodando=true;menu.hidden=true;partida.hidden=false;direita.remove();if(tipo==='dupla')arena.append(direita);hint.textContent='';last=0;frame=requestAnimationFrame(tick);});
   function reset(direction){ball.x=300;ball.y=180;ball.vx=3.2*direction;ball.vy=(Math.random()-.5)*4;}
   function draw(){ctx.fillStyle='#102b39';ctx.fillRect(0,0,600,360);ctx.strokeStyle='#4b7581';ctx.setLineDash([8,8]);ctx.beginPath();ctx.moveTo(300,0);ctx.lineTo(300,360);ctx.stroke();ctx.setLineDash([]);
     ctx.fillStyle='#fff';ctx.font='24px sans-serif';ctx.fillText(String(score[0]),255,32);ctx.fillText(String(score[1]),330,32);
