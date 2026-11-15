@@ -1,7 +1,7 @@
 // Módulo opcional: importado somente após toque em Jogar.
-import {obterCatalogo,criarSessaoJogos} from './catalogo.js?v=57';
+import {obterCatalogo,criarSessaoJogos} from './catalogo.js?v=58';
 // Elementos e estilos são criados apenas após o clique do cliente.
-const estilo=document.createElement('link');estilo.rel='stylesheet';estilo.href=new URL('./games-ui.css?v=57',import.meta.url).href;document.head.append(estilo);
+const estilo=document.createElement('link');estilo.rel='stylesheet';estilo.href=new URL('./games-ui.css?v=58',import.meta.url).href;document.head.append(estilo);
 document.body.insertAdjacentHTML('beforeend',`
 <section id="game-screen" hidden aria-label="Jogos">
  <div class="game-top"><div><strong>🔔 Pedido #206</strong> <span id="game-order-status">⏳ Em preparo</span></div><button id="game-exit" class="secondary">✕ Sair</button><div class="game-sim"><span>Laboratório</span><button id="game-ready" class="secondary">Simular pedido pronto</button></div></div>
@@ -66,12 +66,24 @@ function ilustracao(item){
  }
  return svg;
 }
+function etiquetas(item){
+ const grupo=document.createElement('div');grupo.className='games-tags';
+ const adicionar=(texto)=>{const tag=document.createElement('span');tag.className='games-tag';tag.textContent=texto;grupo.append(tag);};
+ const numeros=Array.isArray(item.playerCounts)?item.playerCounts:[];
+ if(numeros.length)adicionar((item.status==='construction'?'Previsto: ':'')+(numeros.length===1?String(numeros[0]):Math.min(...numeros)+'–'+Math.max(...numeros))+' jogador'+(numeros.length===1&&numeros[0]===1?'':'es'));
+ if(item.status==='construction'){adicionar('Modo a definir');return grupo;}
+ const modos=Array.isArray(item.modes)?item.modes:[];
+ if(modos.includes('solo'))adicionar('Solo / CPU');
+ if(modos.includes('dupla-local'))adicionar('Multiplayer local');
+ if(modos.includes('multiplayer-online'))adicionar('Cada um no seu celular');
+ return grupo;
+}
 function mostrarCatalogo(){encerrarPartida();etapa='catalogo';jogo=null;stage.replaceChildren();layout();const box=document.createElement('section');box.className='games-choose';const titulo=cabecalho('🎮 Escolha um jogo');const lista=document.createElement('div');lista.className='games-list';const aviso=document.createElement('p');aviso.textContent='Carregando jogos…';box.append(titulo,lista,aviso);stage.append(box);const token=geracao;
 obterCatalogo().then(jogos=>{if(!ativo||token!==geracao)return;aviso.textContent=jogos.length+' jogos disponíveis';for(const item of jogos){const card=document.createElement('article');card.className='games-option';const h=document.createElement('h3');h.textContent=item.title;const p=document.createElement('p');p.textContent=item.description;const indisponivel=item.status==='construction';
 const acao=botao(indisponivel?'Em construção':'Escolher',()=>mostrarJogadores(item),'primary');
 acao.disabled=indisponivel;
 if(indisponivel){acao.setAttribute('aria-label',item.title+' em construção');card.classList.add('games-unavailable');}
-card.append(ilustracao(item),h,p,acao);lista.append(card);}}).catch(()=>{if(token===geracao)aviso.textContent='Não foi possível carregar o catálogo. Tente novamente.';});}
+card.append(ilustracao(item),h,p,etiquetas(item),acao);lista.append(card);}}).catch(()=>{if(token===geracao)aviso.textContent='Não foi possível carregar o catálogo. Tente novamente.';});}
 function mostrarJogadores(item){encerrarPartida();jogo=item;etapa='jogadores';modo='solo';stage.replaceChildren();layout();const box=document.createElement('section');box.className='games-choose';const titulo=cabecalho(item.title+' · Jogadores');const escolhas=document.createElement('div');escolhas.className='games-list';const descricao=document.createElement('p');descricao.setAttribute('role','status');const quantidade=item.playerCounts||[1,2];const opcoes=[];let selecionado=quantidade[0];function selecionar(n){selecionado=n;modo=n===1?'solo':'dupla-local';for(const [numero,b] of opcoes){const marcado=numero===n;b.setAttribute('aria-pressed',String(marcado));b.textContent=(marcado?'✓ ':'')+numero+(numero===1?' jogador':' jogadores');}descricao.textContent=n===1?'Contra o computador.':'Jogadores no mesmo aparelho.';}
 for(const n of quantidade){const b=botao('',()=>selecionar(n));opcoes.push([n,b]);escolhas.append(b);}const acoes=document.createElement('div');acoes.className='games-actions';acoes.append(botao('← Voltar aos jogos',mostrarCatalogo),botao('Começar partida',confirmar,'primary'));box.append(titulo,escolhas,descricao,acoes);stage.append(box);selecionar(selecionado);}
 function confirmar(){if(!jogo)return;encerrarPartida();etapa='rotacao';stage.replaceChildren();layout();}
