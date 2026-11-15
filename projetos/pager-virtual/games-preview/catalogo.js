@@ -8,7 +8,7 @@ export function validarCatalogo(dados) {
   return dados.games.map(jogo => {
     if (!jogo || typeof jogo.id !== 'string' || !ID_VALIDO.test(jogo.id) ||
         typeof jogo.title !== 'string' || !jogo.title.trim() ||
-        typeof jogo.module !== 'string' || !ARQUIVO_VALIDO.test(jogo.module) ||
+        (jogo.status === 'construction' ? jogo.module !== undefined : (typeof jogo.module !== 'string' || !ARQUIVO_VALIDO.test(jogo.module))) ||
         ids.has(jogo.id)) throw new Error('Entrada de jogo inválida');
     ids.add(jogo.id);
     return Object.freeze({ ...jogo });
