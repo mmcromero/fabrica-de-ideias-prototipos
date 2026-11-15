@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "0.4.0",
+  "catalogVersion": "0.5.0",
   "games": [
     {
       "id": "pong",
       "title": "Pong",
-      "description": "Primeiro jogo do Avisaqui. Versão de homologação local: solo ou dupla no mesmo aparelho; multiplayer em celulares diferentes depende do servidor.",
+      "description": "Rebata a bola e marque pontos.",
       "theme": "arcade",
       "modes": [
         "solo",
@@ -22,7 +22,7 @@
     {
       "id": "jogo-da-velha",
       "title": "Jogo da Velha",
-      "description": "Três ingredientes em linha vencem a partida.",
+      "description": "Alinhe três símbolos para vencer.",
       "theme": "gastronomia-leve",
       "modes": [
         "solo",
