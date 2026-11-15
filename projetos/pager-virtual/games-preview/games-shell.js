@@ -48,4 +48,4 @@ window.addEventListener('resize',()=>{dimensoes();if(ativo)layout();},{passive:t
 window.addEventListener('orientationchange',layout,{passive:true});
 window.visualViewport?.addEventListener('resize',dimensoes,{passive:true});
 window.visualViewport?.addEventListener('scroll',dimensoes,{passive:true});
-export {abrir,fechar,pedidoPronto};
+export {abrir,fechar};
