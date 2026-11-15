@@ -100,3 +100,11 @@ body.game-active:has(#game-screen.game-portrait),#game-screen.game-portrait,#gam
 #game-screen #rotate-hint .rotate-icon{font-size:clamp(64px,15vw,110px)}
 #game-screen #rotate-hint strong{font-size:clamp(1.5rem,5vw,2.4rem)}
 #game-screen #rotate-hint p{font-size:1.1rem}
+
+/* Catálogo: duas colunas no celular, novas linhas para mais jogos. */
+#game-screen.game-portrait .games-choose .games-list:has(.games-option){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-items:stretch}
+#game-screen.game-portrait .games-option{min-width:0;display:flex;flex-direction:column;gap:8px;padding:12px}
+#game-screen.game-portrait .games-option h3{font-size:1rem;line-height:1.2;overflow-wrap:anywhere}
+#game-screen.game-portrait .games-option p{font-size:.8rem;line-height:1.35;overflow-wrap:anywhere;flex:1}
+#game-screen.game-portrait .games-option .primary{margin-top:auto;width:100%;min-height:42px}
+#game-screen.game-portrait .games-choose{width:100%;max-width:640px;min-height:0;overflow-y:auto;overscroll-behavior:contain}
