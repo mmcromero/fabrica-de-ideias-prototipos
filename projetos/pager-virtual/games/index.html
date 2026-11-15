@@ -68,6 +68,19 @@ body.game-active{position:fixed;inset:0;width:100%;height:var(--game-viewport-he
 #game-screen.landscape .game-top{overflow:hidden;min-height:0;gap:clamp(3px,1.4vh,10px);padding:clamp(3px,1.4vh,10px) 6px}
 #game-screen.landscape .game-top .secondary{min-height:0;padding:clamp(4px,1vh,9px) 5px}
 #game-screen.landscape .game-sim{margin-top:auto}
+#game-screen .hub{height:100%;width:100%;display:flex;flex-direction:column;min-height:0;gap:8px;padding:8px;overflow:hidden}
+#game-screen .hub h2{font-size:clamp(1.1rem,3vw,1.6rem);margin:0}
+#game-screen .hub .hub-list{flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:center}
+#game-screen .hub .hub-card{display:flex;flex-direction:column;justify-content:space-between;gap:6px;min-width:0;min-height:0;padding:clamp(8px,2vw,16px);border:1px solid #52677e;border-radius:14px;background:#20334b}
+#game-screen .hub .hub-card h3{margin:0;font-size:clamp(1rem,2.5vw,1.4rem)}
+#game-screen .hub .hub-card p{margin:0;font-size:clamp(.75rem,1.6vw,.95rem);color:#cbd5e1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+#game-screen .hub .hub-card button{width:100%;padding:9px}
+#game-screen .hub .hub-status{font-size:.8rem;color:#cbd5e1;min-height:1em}
+#game-screen.landscape #stage>.hub{max-height:100%;overflow:hidden}
+#game-screen.landscape .game-top{touch-action:manipulation}
+#game-screen.landscape .game-body{touch-action:manipulation}
+#game-screen.landscape .pong-arena{touch-action:none}
+@media(max-width:550px) and (orientation:landscape){#game-screen .hub .hub-card p{display:none}}
 </style></head><body>
 <aside class="a11y-bar"><button id="contrast" class="chip" aria-pressed="false">Alto Contraste</button><button id="font" class="chip" aria-pressed="false">Texto A+</button></aside>
 <main>
@@ -90,7 +103,7 @@ body.game-active{position:fixed;inset:0;width:100%;height:var(--game-viewport-he
 </main>
 <section id="game-screen" hidden aria-label="Jogo em tela cheia">
 <div class="game-top"><div><strong>🔔 Pedido #206</strong> <span id="game-order-status">⏳ Em preparo</span></div><button id="game-exit" class="secondary">✕ Sair</button><div class="game-sim"><span>Laboratório</span><button id="game-ready" class="secondary">Simular pedido pronto</button></div></div>
-<div id="rotate-hint"><span class="rotate-icon" aria-hidden="true">📱↻</span><strong>Gire o celular</strong><p>Para jogar Pong, coloque o aparelho na horizontal.</p><button id="rotate-exit" class="secondary">✕ Sair do jogo</button></div>
+<div id="rotate-hint"><span class="rotate-icon" aria-hidden="true">📱↻</span><strong>Gire o celular</strong><p>Vire o aparelho para escolher um jogo e começar a diversão.</p><button id="rotate-exit" class="secondary">✕ Sair do jogo</button></div>
 <div class="game-body"><div id="stage"></div></div>
 
 </section>
@@ -99,8 +112,8 @@ body.game-active{position:fixed;inset:0;width:100%;height:var(--game-viewport-he
 <script type="module">
 import {obterCatalogo,criarSessaoJogos} from './catalogo.js';
 const $=id=>document.getElementById(id),sessao=criarSessaoJogos();
-let pronto=false,consulta=0,ativo=false;
-let abertura=0,scrollAnterior=0;
+let pronto=false,ativo=false;
+let abertura=0,scrollAnterior=0,hubAberto=false;
 function ajustarViewport(){
   if(!document.body.classList.contains('game-active'))return;
   const vp=window.visualViewport;
@@ -115,7 +128,7 @@ function telaJogo(abrir,jogo){
   if(abrir&&!document.body.classList.contains('game-active'))scrollAnterior=window.scrollY;
   $('game-screen').hidden=!abrir;
   document.body.classList.toggle('game-active',abrir);
-  $('game-screen').classList.toggle('landscape',abrir&&jogo?.id==='pong');
+  $('game-screen').classList.toggle('landscape',abrir);
   if(abrir)ajustarViewport();
   else{$('game-screen').style.transform='';window.scrollTo(0,scrollAnterior);}
 }
@@ -124,31 +137,49 @@ window.addEventListener('orientationchange',ajustarViewport,{passive:true});
 window.visualViewport?.addEventListener('resize',ajustarViewport,{passive:true});
 window.visualViewport?.addEventListener('scroll',ajustarViewport,{passive:true});
 for(const [id,cls] of [['contrast','contrast'],['font','large-text']])$(id).addEventListener('click',()=>{const on=document.body.classList.toggle(cls);$(id).setAttribute('aria-pressed',String(on));});
-function parar(){abertura++;sessao.encerrar();$('stage').replaceChildren();telaJogo(false);ativo=false;}
-function fechar(){parar();$('games').hidden=true;$('games-open').hidden=pronto;}
-async function carregar(){const n=++consulta;$('library').replaceChildren();$('status').textContent='Carregando jogos…';try{
-const jogos=await obterCatalogo();if(n!==consulta)return;$('status').textContent=jogos.length+' jogos disponíveis';
-for(const jogo of jogos){const card=document.createElement('article');card.className='game-card';
-const titulo=document.createElement('h3');titulo.textContent=jogo.title;
-const descricao=document.createElement('p');descricao.textContent=jogo.description||'';
-const btn=document.createElement('button');btn.className='secondary';btn.textContent='Jogar';
-btn.addEventListener('click',async()=>{if(pronto)return;parar();const ticket=++abertura;telaJogo(true,jogo);$('status').textContent='Abrindo '+jogo.title+'…';try{
-const ok=await sessao.abrir(jogo,$('stage'),{modo:'solo',onExit:()=>{if(ticket!==abertura)return;ativo=false;telaJogo(false);$('status').textContent='Jogo encerrado';}});
-if(ticket!==abertura)return;
-if(ok&&!pronto){ativo=true;$('status').textContent='Jogo: '+jogo.title;}
-else if(!pronto){telaJogo(false);}
-}catch(e){if(ticket!==abertura)return;telaJogo(false);$('status').textContent='Falha ao abrir jogo';console.error(e)}});
-card.append(titulo,descricao,btn);$('library').append(card)}
-}catch(e){if(n===consulta)$('status').textContent='Não foi possível carregar os jogos';console.error(e)}}
-$('games-open').addEventListener('click',()=>{if(pronto)return;$('games').hidden=false;$('games-open').hidden=true;carregar();$('games').scrollIntoView({behavior:'smooth',block:'nearest'});});
-$('games-back').addEventListener('click',()=>{fechar();});
-$('refresh').addEventListener('click',carregar);
-$('game-exit').addEventListener('click',()=>{parar();$('status').textContent='Jogo encerrado';});
-$('rotate-exit').addEventListener('click',()=>{parar();$('status').textContent='Jogo encerrado';});
-function pedidoPronto(){pronto=true;fechar();$('badge').classList.add('ready');$('status-icon').textContent='✅';$('status-text').textContent='Pedido Pronto';$('message').textContent='Seu pedido está pronto para retirada!';$('sub').textContent='Dirija-se ao balcão para retirar seu pedido.';$('sound').textContent='🔔 Pedido pronto (simulação)';window.scrollTo({top:0,behavior:'smooth'});}
+function parar(){abertura++;sessao.encerrar();$('stage').replaceChildren();hubAberto=false;telaJogo(false);ativo=false;}
+
+async function abrirHub(){
+ if(pronto)return;
+ parar();hubAberto=true;telaJogo(true);
+ const ticket=abertura;
+ const hub=document.createElement('section');hub.className='hub';
+ const title=document.createElement('h2');title.textContent='🎮 Escolha um jogo';
+ const status=document.createElement('div');status.className='hub-status';status.setAttribute('role','status');status.textContent='Carregando jogos…';
+ const lista=document.createElement('div');lista.className='hub-list';
+ hub.append(title,lista,status);$('stage').replaceChildren(hub);
+ try{
+ const jogos=await obterCatalogo();
+ if(ticket!==abertura||!hubAberto)return;
+ status.textContent=jogos.length+' jogos disponíveis';
+ for(const jogo of jogos){
+  const card=document.createElement('article');card.className='hub-card';
+  const titulo=document.createElement('h3');titulo.textContent=jogo.title;
+  const descricao=document.createElement('p');descricao.textContent=jogo.description||'';
+  const btn=document.createElement('button');btn.className='secondary';btn.textContent='Jogar';
+  btn.addEventListener('click',()=>abrirPartida(jogo));
+  card.append(titulo,descricao,btn);lista.append(card);
+ }
+ }catch(e){if(ticket===abertura)status.textContent='Não foi possível carregar os jogos';console.error(e)}
+}
+async function abrirPartida(jogo){
+ if(pronto||!hubAberto)return;
+ hubAberto=false;abertura++;sessao.encerrar();$('stage').replaceChildren();
+ const ticket=abertura;
+ try{
+  const ok=await sessao.abrir(jogo,$('stage'),{modo:'solo',onExit:()=>{if(ticket!==abertura)return;abertura++;abrirHub();}});
+  if(ticket!==abertura)return;
+  if(!ok||pronto)abrirHub();
+  else ativo=true;
+ }catch(e){if(ticket!==abertura)return;console.error(e);abrirHub();}
+}
+$('games-open').addEventListener('click',abrirHub);
+$('game-exit').addEventListener('click',parar);
+$('rotate-exit').addEventListener('click',parar);
+function pedidoPronto(){pronto=true;parar();$('badge').classList.add('ready');$('status-icon').textContent='✅';$('status-text').textContent='Pedido Pronto';$('message').textContent='Seu pedido está pronto para retirada!';$('sub').textContent='Dirija-se ao balcão para retirar seu pedido.';$('sound').textContent='🔔 Pedido pronto (simulação)';window.scrollTo({top:0,behavior:'smooth'});}
 $('ready').addEventListener('click',pedidoPronto);
 $('game-ready').addEventListener('click',pedidoPronto);
 
-$('reset').addEventListener('click',()=>{pronto=false;fechar();$('badge').classList.remove('ready');$('status-icon').textContent='⏳';$('status-text').textContent='Em Preparo';$('message').textContent='Sua comida está sendo preparada com todo cuidado pelo nosso chef!';$('sub').textContent='Você receberá um aviso quando o pedido estiver pronto.';$('sound').textContent='🔔 Toque para ativar alerta sonoro e vibração';$('sound').setAttribute('aria-pressed','false');$('games-open').hidden=false;});
+$('reset').addEventListener('click',()=>{pronto=false;parar();$('badge').classList.remove('ready');$('status-icon').textContent='⏳';$('status-text').textContent='Em Preparo';$('message').textContent='Sua comida está sendo preparada com todo cuidado pelo nosso chef!';$('sub').textContent='Você receberá um aviso quando o pedido estiver pronto.';$('sound').textContent='🔔 Toque para ativar alerta sonoro e vibração';$('sound').setAttribute('aria-pressed','false');$('games-open').hidden=false;});
 $('sound').addEventListener('click',()=>{if(pronto)return;const on=$('sound').getAttribute('aria-pressed')!=='true';$('sound').setAttribute('aria-pressed',String(on));$('sound').textContent=on?'🔊 Alerta visual habilitado nesta simulação':'🔔 Toque para ativar alerta sonoro e vibração';});
 </script></body></html>
