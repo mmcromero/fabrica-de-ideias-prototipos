@@ -31,10 +31,21 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 .print-container{max-width:850px;margin:auto}.print-container h1{font-size:1.6rem;line-height:1.4;margin:12px 0 28px}.print-container>button{margin-bottom:18px}.print-container>p{font-size:1rem;line-height:1.6;margin:14px 0 18px}.print-card{background:#131c2e;border:1px solid #30435f;border-radius:16px;padding:20px;margin:16px 0 24px}.print-card h2{font-size:1.15rem;margin:8px 0 16px}.print-card p{margin:12px 0;line-height:1.6}.print-card button{margin:10px 0;font-size:.95rem;padding:12px 16px}.print-card .print-subheading{margin:32px 0 18px}.print-credentials{padding:12px 0;border-bottom:1px solid #334155;display:flex;gap:16px;flex-wrap:wrap;align-items:center;justify-content:space-between}.print-credentials button.danger{background:#9f2432}.print-events{padding:0;list-style:none;margin-top:18px}.print-events li{padding:12px 0;border-bottom:1px solid #334155;overflow-wrap:anywhere}
 #modal .form-hint{color:#b1c0d7;margin-bottom:15px;text-align:center}#modal:has(input[name="number"]){background:#1e293b;text-align:center}#modal:has(input[name="number"]) #modal-title{font-size:1.5rem}#modal:has(input[name="number"]) label{text-align:left}#modal:has(input[name="number"]) input[name="number"]{font-size:1.6rem;text-align:center;min-height:62px}#modal:has(input[name="number"]) .dialog-actions{flex-direction:column}#modal:has(input[name="number"]) .dialog-actions button{width:100%}
 @media(min-width:701px){.kds-actions button{flex:0 1 auto}}@media(max-width:700px){.kds-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.kds-actions button{min-width:0;white-space:normal;justify-content:center;min-height:54px;padding:11px 8px}.kds-actions button:nth-child(3){grid-column:1/-1;justify-self:start}.kds-actions button:nth-child(4){min-width:0}.orders-grid{grid-template-columns:1fr}.print-container h1{margin-top:12px}.print-card{padding:18px}}@media(max-width:350px){.kds-actions button{font-size:.85rem}}
+
+/* Pareamento integrado ao navegador principal do laboratório */
+.print-step{display:flex;align-items:flex-start;gap:13px}
+.print-step h2{margin:0 0 4px}.print-step p{margin:0}
+.step-number{display:grid;place-items:center;width:34px;height:34px;flex:none;background:#26466e;color:#dbeafe;border:1px solid #4b78a8;border-radius:10px;font-weight:800}
+.print-legacy{border:1px solid #334964;border-radius:12px;margin:16px 0;overflow:hidden}
+.print-legacy summary{cursor:pointer;padding:14px 15px;color:#cbd5e1;font-weight:600;background:#182538}
+.print-legacy .print-card{margin:0;border:none;border-top:1px solid #334964;border-radius:0}
+.pairing-parent-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin:0 0 12px}
+#pairing-frame{width:100%;min-height:820px;height:900px;border:0;display:block;background:#090e17;border-radius:13px}
+@media(max-width:700px){.print-step{gap:9px}.pairing-parent-heading h2{font-size:1.05rem}.pairing-parent-heading button{font-size:.82rem;padding:8px 10px}#pairing-frame{min-height:900px}}
 </style>
 </head>
 <body>
-<details class="preview"><summary>Prévia UX · trocar de tela</summary><div class="preview-inner"><label for="screen" style="margin:0">Tela</label><select id="screen"><option value="master">Master Admin</option><option value="manager">Gerente</option><option value="kds">KDS</option><option value="client">Cliente</option><option value="landing">Landing</option><option value="login">Login</option><option value="setup">Primeiro acesso</option><option value="printing">Impressão</option></select><button class="secondary" data-action="reset">Reiniciar demo</button></div></details>
+<details class="preview"><summary>Prévia UX · trocar de tela</summary><div class="preview-inner"><label for="screen" style="margin:0">Tela</label><select id="screen"><option value="master">Master Admin</option><option value="manager">Gerente</option><option value="kds">KDS</option><option value="client">Cliente</option><option value="landing">Landing</option><option value="login">Login</option><option value="setup">Primeiro acesso</option><option value="printing">Integração de impressão</option><option value="pairing">Pareamento de caixas</option></select><button class="secondary" data-action="reset">Reiniciar demo</button></div></details>
 <div class="shell">
 <section class="page" id="master">
 <header class="header"><div><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"><p class="identity">Painel Master · Administrador Demo</p></div><div class="actions"><button class="secondary" data-go="login">Sair</button></div></header>
@@ -44,7 +55,7 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 <div id="master-interests" hidden><div class="section-heading"><h2>Interessados no piloto</h2><button class="secondary" data-action="refresh">Atualizar</button></div><div class="card"><div id="interest-list" class="rows"></div></div></div>
 <div id="master-settings" hidden><h2 style="margin-bottom:12px">Configurações</h2><div class="card"><h3>Minha conta</h3><p class="muted small" style="margin:8px 0">Configurações da conta de administrador.</p><button data-modal="password">Alterar senha</button></div></div>
 </section>
-<section class="page" id="manager" hidden><header class="header"><div><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"><p class="identity">Painel do gerente · Restaurante Exemplo</p></div><div class="actions"><button class="secondary" data-go="kds">KDS</button><button class="secondary" data-go="login">Sair</button></div></header><div class="section-heading"><h2>Terminais</h2><button data-modal="terminal">+ Novo</button></div><div class="card"><div class="rows" id="terminals"></div></div><div class="toolbar"><button class="secondary" data-go="kds">Abrir KDS</button><a href="./pareamento.html" style="display:inline-flex;align-items:center;justify-content:center;min-height:46px;border-radius:10px;background:#3b82f6;color:white;padding:11px 15px;font-weight:700;text-decoration:none">Computadores vinculados</a><button class="secondary" data-modal="password">Minha conta</button></div></section>
+<section class="page" id="manager" hidden><header class="header"><div><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"><p class="identity">Painel do gerente · Restaurante Exemplo</p></div><div class="actions"><button class="secondary" data-go="kds">KDS</button><button class="secondary" data-go="login">Sair</button></div></header><div class="section-heading"><h2>Terminais</h2><button data-modal="terminal">+ Novo</button></div><div class="card"><div class="rows" id="terminals"></div></div><div class="toolbar"><button class="secondary" data-go="kds">Abrir KDS</button><button data-go="pairing" data-pair-view="devices">Computadores vinculados</button><button class="secondary" data-modal="password">Minha conta</button></div></section>
 <section class="page" id="kds" hidden>
 <header class="kds-header"><div class="kds-brand"><span class="kds-symbol" aria-hidden="true">🍳</span><div><h2>Pager Virtual · KDS</h2><span>Painel de Atendimento da Cozinha &amp; Balcão</span></div></div></header>
 <div class="kds-metrics"><span class="kds-metric active"><b id="active-count">0</b> Pedidos Ativos</span><span class="kds-metric finished"><b id="finished-count">0</b> Finalizados</span></div>
@@ -57,21 +68,36 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 <section class="page" id="setup" hidden><div class="formview"><form class="card" id="setup-form"><h2>Primeiro acesso</h2><label>Nome<input class="field" name="name" required></label><label>Login<input class="field" name="login" required></label><label>Senha fictícia<input class="field" name="password" type="password" minlength="12" required></label><button type="submit">Continuar</button></form></div></section>
 <section class="page" id="printing" hidden>
 <div class="print-container">
-<h1>🔔 Avisaqui · Integração de impressão</h1>
-<button class="secondary" data-go="kds">Voltar ao KDS</button>
-<p>Configure o agente Windows para enviar números de pedidos ao KDS. A impressão física continua independente.</p>
-<section class="print-card"><h2>1. Credencial do agente</h2>
-<p>Crie uma credencial exclusiva para este restaurante. Ela será exibida apenas uma vez.</p>
-<button data-action="credential">Gerar credencial</button><p id="credential-result" class="muted"></p>
-<h2 class="print-subheading">Credenciais existentes</h2>
-<div class="print-credentials" id="print-credentials"><div><span class="print-key-code">exemplo-01</span> · 15/11/2026, 14:47 · Ativa</div><button class="danger" data-action="revoke">Revogar</button></div>
+<header class="header"><div><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"><p class="identity">Integração de impressão · Restaurante Exemplo</p></div><div class="actions"><button type="button" class="secondary" data-go="kds">Voltar ao KDS</button></div></header>
+<h2>Integração de impressão</h2>
+<p class="muted" style="margin:8px 0 15px">Os computadores de caixa enviam pedidos ao Avisaqui. A impressora física continua funcionando de forma independente.</p>
+<section class="print-card">
+<div class="print-step"><span class="step-number">1</span><div><h2>Vincular computador</h2><p>Abra o agente no caixa. Peça ao gerente para ler o QR Code e autorizar o computador pelo celular. O código numérico é uma alternativa.</p></div></div>
+<div class="flow"><button type="button" data-go="pairing" data-pair-view="computer">Vincular um computador</button><button type="button" class="secondary" data-go="pairing" data-pair-view="devices">Computadores vinculados</button></div>
+<p class="muted small">O pareamento é uma proposta visual em revisão. Não gera credenciais reais.</p>
 </section>
-<section class="print-card"><h2>2. Últimos recebimentos</h2><p class="muted">A tela atualiza enquanto estiver aberta. Os novos pedidos aparecem automaticamente no KDS via SSE.</p>
-<button class="secondary" data-action="refresh">Atualizar agora</button>
+<section class="print-card">
+<div class="print-step"><span class="step-number">2</span><div><h2>Últimos recebimentos</h2><p>Consulte os pedidos recebidos pelo agente. Eventos duplicados ficam pendentes para revisão, sem criar duas chamadas idênticas no KDS.</p></div></div>
+<button id="print-refresh" type="button" class="secondary" data-action="refresh">Atualizar agora</button>
 <ul class="print-events" id="print-events"><li>#208 · CRIADO · 15/11/2026, 14:41:07 · evento simulado</li><li>#207 · CRIADO · 15/11/2026, 12:15:23 · evento simulado</li><li>#206 · CRIADO · 15/11/2026, 12:15:22 · evento simulado</li><li>#205 · PENDENTE_DUPLICADO · 15/11/2026, 10:40:23 · evento simulado</li><li>#205 · CRIADO · 15/11/2026, 10:38:54 · evento simulado</li><li>#204 · CRIADO · 15/11/2026, 10:37:56 · evento simulado</li><li>#203 · CRIADO · 15/11/2026, 02:19:02 · evento simulado</li></ul>
+<div class="flow"><button type="button" data-go="pairing" data-pair-view="pending" class="secondary">Revisar pendências</button></div>
 </section>
-<section class="print-card"><h2>3. Agente Windows</h2><p>Na configuração do agente, informe a URL HTTPS do seu Avisaqui e a credencial copiada. O monitor deverá estar aberto para observar novas impressões de teste. Não envie notas fiscais reais nesta fase.</p></section>
+<section class="print-card"><div class="print-step"><span class="step-number">3</span><div><h2>Agente Windows</h2><p>O agente identifica números de pedidos e envia os eventos. No fluxo proposto, não exige CMD nem cópia manual de credenciais no uso comercial.</p></div></div>
+<p class="muted small">A configuração e a captura atuais do agente pertencem à integração existente. Pareamento não resolve falhas de captura, e nenhuma impressora é alterada no protótipo.</p>
+</section>
+<details class="print-legacy" id="print-legacy"><summary>Administração de credenciais existente (legado)</summary>
+<div class="print-card">
+<h2>Credenciais atuais</h2><p>Este fluxo já existe na aplicação. Está preservado aqui para análise e migração futura, sem ser o método principal proposto para novos caixas.</p>
+<button type="button" data-action="credential">Gerar credencial fictícia</button><p id="credential-result" class="muted" aria-live="polite"></p>
+<h3 class="print-subheading">Credenciais existentes</h3>
+<div class="print-credentials" id="print-credentials"><div><span class="print-key-code">exemplo-01</span> · 15/11/2026, 14:47 · Ativa</div><button type="button" class="danger" data-action="revoke">Revogar</button></div>
+<p class="muted small">Sem copiar, exibir ou criar credenciais válidas neste laboratório.</p>
+</div></details>
 </div></section>
+<section class="page" id="pairing" hidden>
+<div class="pairing-parent-heading"><div><h2>Pareamento de computadores</h2><p class="muted small">Fluxo visual de impressão · QR, autorização pelo celular, computadores e pendências</p></div><button type="button" class="secondary" data-go="printing">Voltar à impressão</button></div>
+<iframe id="pairing-frame" title="Fluxo demonstrativo de pareamento de computadores de caixa" src="./pareamento.html?incorporado=1#computer" loading="lazy" referrerpolicy="same-origin"></iframe>
+</section>
 <footer>Protótipo visual público · Dados fictícios · Sem conexão com o Avisaqui ou com produção.</footer>
 </div>
 <dialog id="modal"><div class="dialog-head"><h2 id="modal-title">Ação</h2><button class="secondary" id="modal-x" type="button" aria-label="Fechar">×</button></div><form id="modal-form"><div id="modal-fields"></div><div class="dialog-actions"><button type="button" class="secondary" id="modal-cancel">Cancelar</button><button type="submit" id="modal-submit">Salvar</button></div></form></dialog>
@@ -93,7 +119,8 @@ interest:['Interesse no piloto','<label>Nome fictício<input class="field" name=
 };
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e}
 function toast(message){$('toast').textContent=message;$('toast').hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').hidden=true,3000)}
-function navigate(id){if(!$(id)||!$(id).classList.contains('page'))id='master';document.querySelectorAll('.page').forEach(e=>e.hidden=e.id!==id);$('screen').value=id;history.replaceState(null,'','#'+id);window.scrollTo(0,0)}
+function navigate(id){if(!$(id)||!$(id).classList.contains('page'))id='master';document.querySelectorAll('.page').forEach(e=>e.hidden=e.id!==id);$('screen').value=id;history.replaceState(null,'','#'+id);window.scrollTo(0,0);if(id==='pairing')requestAnimationFrame(()=>{const f=$('pairing-frame');if(f&&f.contentWindow){f.contentWindow.postMessage({avisaquiPreview:'view',view:f.dataset.pairView||'computer'},location.origin);f.contentWindow.postMessage({avisaquiPreview:'measure'},location.origin)}})}
+window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==$('pairing-frame').contentWindow)return;const data=e.data;if(data?.avisaquiPreview!=='height'||!Number.isFinite(data.height))return;const h=Math.min(12000,Math.max(760,Math.ceil(data.height)));$('pairing-frame').style.height=h+'px'})
 function renderRestaurants(){
 $('rest-count').textContent=state.restaurants.length;
 const root=$('restaurant-list');root.replaceChildren();
@@ -137,8 +164,9 @@ if(modalType==='sequence')state.seq=Number(data.number);
 if(modalType==='interest'){state.interests.push({name:data.name,phone:data.phone});renderInterests()}
 dirty=false;$('modal').close();toast('Ação realizada somente na simulação.')});
 $('modal-cancel').onclick=closeModal;$('modal-x').onclick=closeModal;$('modal').addEventListener('cancel',e=>{e.preventDefault();closeModal()});
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.go)navigate(b.dataset.go);if(b.dataset.modal)openModal(b.dataset.modal);if(b.dataset.master){document.querySelectorAll('[data-master]').forEach(x=>x.classList.toggle('current',x===b));['restaurants','interests','settings'].forEach(k=>$('master-'+k).hidden=k!==b.dataset.master)}if(b.dataset.action==='refresh')toast('Lista de demonstração atualizada.');if(b.dataset.action==='credential'){$('credential-result').textContent='Credencial fictícia gerada somente nesta demonstração.'}if(b.dataset.action==='revoke'){if(confirm('Revogar esta credencial demonstrativa?')){$('print-credentials').textContent='Nenhuma credencial ativa';toast('Credencial demonstrativa revogada.')}}if(b.dataset.action==='sound'){state.sound=!state.sound;b.textContent=state.sound?'🔔 Som ligado':'🔔 Som desligado'}if(b.dataset.action==='games')toast('Jogos em estudo separado.');if(b.dataset.action==='reset'){if(confirm('Reiniciar a demonstração?'))location.reload()}});
-$('screen').addEventListener('change',e=>navigate(e.target.value));
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.go){if(b.dataset.go==='pairing')$('pairing-frame').dataset.pairView=b.dataset.pairView||'computer';navigate(b.dataset.go);}if(b.dataset.modal)openModal(b.dataset.modal);if(b.dataset.master){document.querySelectorAll('[data-master]').forEach(x=>x.classList.toggle('current',x===b));['restaurants','interests','settings'].forEach(k=>$('master-'+k).hidden=k!==b.dataset.master)}if(b.dataset.action==='refresh')toast('Lista de demonstração atualizada.');if(b.dataset.action==='credential'){$('credential-result').textContent='Credencial fictícia gerada somente nesta demonstração.'}if(b.dataset.action==='revoke'){if(confirm('Revogar esta credencial demonstrativa?')){$('print-credentials').textContent='Nenhuma credencial ativa';toast('Credencial demonstrativa revogada.')}}if(b.dataset.action==='sound'){state.sound=!state.sound;b.textContent=state.sound?'🔔 Som ligado':'🔔 Som desligado'}if(b.dataset.action==='games')toast('Jogos em estudo separado.');if(b.dataset.action==='reset'){if(confirm('Reiniciar a demonstração?'))location.reload()}});
+$('screen').addEventListener('change',e=>{if(e.target.value==='pairing')$('pairing-frame').dataset.pairView='computer';navigate(e.target.value)});
+$('pairing-frame').addEventListener('load',()=>{if(!$('pairing').hidden)$('pairing-frame').contentWindow?.postMessage({avisaquiPreview:'view',view:$('pairing-frame').dataset.pairView||'computer'},location.origin)});
 $('login-form').addEventListener('submit',e=>{e.preventDefault();const role=new FormData(e.currentTarget).get('role');e.currentTarget.reset();navigate(role);toast('Acesso demonstrativo, sem autenticação real.')});
 $('setup-form').addEventListener('submit',e=>{e.preventDefault();e.currentTarget.reset();navigate('login');toast('Nenhum usuário real foi criado.')});
 $('qr-close').onclick=()=>$('qr-dialog').close();$('qr-print').onclick=()=>toast('Prévia de impressão simulada. Nada foi enviado à impressora.');renderRestaurants();renderInterests();renderTerminals();renderOrders();navigate(location.hash.slice(1)||'master');

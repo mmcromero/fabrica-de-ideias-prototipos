@@ -15,6 +15,9 @@ dialog{width:min(470px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overfl
 #feedback{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);max-width:430px;width:calc(100% - 24px);padding:11px 14px;border:1px solid #4e789e;background:#214264;border-radius:11px;z-index:20}
 footer{margin-top:28px;border-top:1px solid #30435f;padding-top:18px;color:#8fa0bc;font-size:.8rem}
 @media(max-width:680px){.split{grid-template-columns:1fr}.number{font-size:1.8rem}.card{padding:15px}.tabs button{font-size:.77rem}header .sub{font-size:.76rem}}@media(max-width:340px){.tabs button{font-size:.7rem;padding:7px 3px}.keyvalue{display:block}}.tabs button{font-size:clamp(.68rem,2.3vw,.84rem)}
+/* Dentro do navegador UX principal, preservar apenas o fluxo de pareamento. */
+html.embedded .wrap{max-width:none;padding:2px 2px 18px}html.embedded header,html.embedded .demo,html.embedded footer{display:none}
+html.embedded .tabs{margin-top:2px}html.embedded .card{padding:15px}
 </style></head>
 <body><main class="wrap">
 <header><div><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"><p class="sub">UX · Pareamento de computadores de caixa</p></div><a href="./" class="small">← Voltar ao laboratório</a></header>
@@ -52,9 +55,10 @@ footer{margin-top:28px;border-top:1px solid #30435f;padding-top:18px;color:#8fa0
 const $=id=>document.getElementById(id);
 const state={pending:[{id:'EV-DEMO-001',restaurant:'Restaurante Exemplo',device:'Caixa Balcão',number:'205',captured:'15/11/2026 10:38',received:'15/11/2026 10:39',status:'Número ativo em revisão'},{id:'EV-DEMO-002',restaurant:'Restaurante Exemplo',device:'Caixa 2',number:'205',captured:'15/11/2026 10:40',received:'15/11/2026 10:41',status:'Possível duplicidade'}],serverDown:false,seq:1,ref:'DEMO-A1',code:'48273146',name:'Caixa 1',phase:'waiting',devices:[{id:'CAIXA-DEMO-001',name:'Caixa Balcão',last:'Última comunicação: exemplo ilustrativo',approvedBy:'Gerente demonstrativo',status:'vinculado',pending:0}],offline:false};
 let onConfirm=null;
+function reportHeight(){if(window.parent!==window&&document.documentElement.classList.contains('embedded')){const height=Math.ceil(Math.max(document.body.scrollHeight,document.documentElement.scrollHeight))+16;window.parent.postMessage({avisaquiPreview:'height',height},location.origin)}}
 function notify(txt){const f=$('feedback');f.textContent=txt;f.hidden=false;clearTimeout(notify.timer);notify.timer=setTimeout(()=>f.hidden=true,3500)}
-function view(id){document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!==id);document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===id)));history.replaceState(null,'',location.pathname+location.search+'#'+id);window.scrollTo(0,0)}
-function refreshQr(){const target=$('qr');target.replaceChildren();const url=new URL(location.href);url.searchParams.set('solicitacao',state.ref);url.hash='mobile';try {new QRCode(target,{text:url.toString(),width:210,height:210,correctLevel:QRCode.CorrectLevel.M})}catch(e){target.textContent='QR indisponível. Use o código alternativo.'}}
+function view(id){document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!==id);document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===id)));history.replaceState(null,'',location.pathname+location.search+'#'+id);window.scrollTo(0,0);reportHeight()}
+function refreshQr(){const target=$('qr');target.replaceChildren();const url=new URL(location.href);url.searchParams.delete('incorporado');url.searchParams.set('solicitacao',state.ref);url.hash='mobile';try {new QRCode(target,{text:url.toString(),width:210,height:210,correctLevel:QRCode.CorrectLevel.M})}catch(e){target.textContent='QR indisponível. Use o código alternativo.'}}
 function reset(){state.seq++;state.ref='DEMO-A'+state.seq;state.code=String(48273145+state.seq);state.phase='waiting';state.offline=false;$('code-input').value='';$('mobile-request').hidden=true;$('mobile-result').hidden=true;$('mobile-step-code').hidden=false;refresh()}
 function refresh(){
 $('pair-code').textContent=state.code.slice(0,4)+' '+state.code.slice(4);
@@ -116,7 +120,10 @@ card.append(flow)}list.append(card)}
 }
 $('scenario-disconnect').onclick=()=>{const d=state.devices.find(x=>x.status==='vinculado');if(!d){notify('Nenhum dispositivo vinculado');return}d.last='Última comunicação confirmada: há 2 horas (fictício)';d.connection='Sem comunicação';renderDevices();notify('Vínculo mantido, mas sem comunicação na simulação.')};
 $('scenario-server').onclick=()=>{state.serverDown=!state.serverDown;notify(state.serverDown?'Servidor indisponível (simulação).':'Servidor simulado disponível.')};
-const deep=new URLSearchParams(location.search);if(deep.has('solicitacao')){state.ref=deep.get('solicitacao').slice(0,30);if(state.ref!=='DEMO-A1')state.phase='expired'}
+const deep=new URLSearchParams(location.search);if(deep.get('incorporado')==='1')document.documentElement.classList.add('embedded');if(deep.has('solicitacao')){state.ref=deep.get('solicitacao').slice(0,30);if(state.ref!=='DEMO-A1')state.phase='expired'}
 refresh();view(['computer','mobile','devices','pending'].includes(location.hash.slice(1))?location.hash.slice(1):'computer');
+window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==window.parent)return;if(e.data?.avisaquiPreview==='measure')reportHeight();if(e.data?.avisaquiPreview==='view'&&['computer','mobile','devices','pending'].includes(e.data.view))view(e.data.view)});
+if(window.parent!==window){new ResizeObserver(reportHeight).observe(document.body);window.addEventListener('load',reportHeight);reportHeight()}
+
 })();
 </script></body></html>
