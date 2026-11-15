@@ -1,28 +1,63 @@
 <!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Avisaqui — Laboratório de Jogos</title><style>
-:root{font-family:system-ui,sans-serif;color:#f8fafc;background:#101827}*{box-sizing:border-box}body{margin:0;padding:20px}main{max-width:720px;margin:auto}header{display:flex;justify-content:space-between;align-items:center;gap:12px}a{color:#93c5fd}h1{font-size:clamp(25px,5vw,36px)}p{color:#cbd5e1}button,select{font:inherit;border:1px solid #64748b;border-radius:12px;padding:12px;background:#24344e;color:white;cursor:pointer}button:focus-visible{outline:3px solid #fbbf24}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.game{padding:16px;border:1px solid #475569;border-radius:16px;background:#1e293b}.game button{width:100%;margin-top:8px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:16px 0}#stage{padding:16px;border:1px solid #475569;border-radius:16px;min-height:120px}#stage button{margin:5px}#status{min-height:1.5em}small{color:#94a3b8}
-</style></head><body><main><header><a href="../">← Avisaqui</a><small>Ambiente de homologação</small></header>
-<h1>🎮 Jogos do Avisaqui</h1><p>Teste os jogos sem conectar ao sistema de pedidos. Os eventos de pedido pronto são simulados.</p>
-<div class="toolbar"><button id="refresh">Atualizar biblioteca</button><label for="mode">Modo inicial (outros jogos)</label><select id="mode"><option value="solo">Individual</option><option value="dupla">Dupla local</option></select></div>
-<p id="status" role="status">Carregando biblioteca…</p><div id="library" class="grid"></div>
-<h2>Área do jogo</h2><div class="toolbar"><button id="ready">Simular pedido pronto</button><button id="stop">Encerrar jogo</button></div><div id="stage" aria-label="Jogo em execução"></div>
+<meta name="theme-color" content="#0f172a"><title>Avisaqui — Comanda e Jogos</title>
+<style>
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#f8fafc;background:#0b1120}*{box-sizing:border-box}body{margin:0;padding:16px;min-height:100vh}button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid #60a5fa;outline-offset:3px}[hidden]{display:none!important}
+main{max-width:480px;margin:0 auto;background:#1e293b;border:2px solid #334155;border-radius:24px;overflow:hidden;box-shadow:0 10px 25px #0006}
+header{background:#0005;border-bottom:1px solid #334155;padding:18px 20px;display:flex;align-items:center;gap:12px}
+.logo{background:#f97316;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:24px}h1{font-size:1.15rem;margin:0}header p{font-size:.85rem;color:#94a3b8;margin:4px 0 0}
+.order{text-align:center;padding:24px 20px}.tag{font-size:.85rem;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;font-weight:600}.number{font-size:3.8rem;font-weight:900;letter-spacing:-.04em;margin:0 0 16px}.badge{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:999px;background:#f59e0b26;color:#f59e0b;border:1px solid #f59e0b;font-size:1.1rem;font-weight:700;margin-bottom:20px}.badge.ready{background:#10b98133;color:#6ee7b7;border-color:#10b981}
+.message{font-size:1.1rem;line-height:1.5;margin:0 0 8px}.sub{font-size:.9rem;color:#94a3b8;margin:0 0 20px}
+.sound{width:100%;background:#0f172a;border:2px dashed #475569;color:#f8fafc;padding:14px 18px;border-radius:12px;font-weight:600}
+.games-entry{padding:0 20px 22px;text-align:center}.primary{width:100%;padding:15px;border:0;border-radius:12px;background:#2563eb;color:white;font-weight:700}.secondary{padding:11px 14px;border:1px solid #64748b;border-radius:12px;background:#24344e;color:white}.actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.game-panel{padding:18px;border-top:1px solid #475569;background:#101827}.game-panel h2{font-size:1.15rem;margin:0 0 8px}.game-panel p{color:#cbd5e1;font-size:.9rem}
+.library{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.game-card{padding:12px;border:1px solid #475569;border-radius:14px;background:#1e293b}.game-card h3{margin:0 0 8px;font-size:1rem}.game-card p{font-size:.8rem}.game-card button{width:100%}
+#stage{min-width:0}#stage canvas{max-width:100%}#status{min-height:1.5em;font-size:.9rem;color:#cbd5e1}
+.lab-controls{max-width:480px;margin:14px auto;padding:12px;border:1px dashed #64748b;border-radius:14px}.lab-controls summary{cursor:pointer}.lab-controls button{margin:8px 5px 0 0}
+@media(max-width:380px){.library{grid-template-columns:1fr}.game-panel{padding:12px}}
+</style></head><body>
+<main>
+<header><div class="logo" aria-hidden="true">🔔</div><div><h1>Pager Virtual</h1><p>Acompanhamento do seu pedido</p></div></header>
+<section class="order" aria-label="Acompanhamento do pedido">
+<div class="tag">Sua Senha de Retirada</div><div class="number">#206</div>
+<div id="badge" class="badge"><span id="status-icon">⏳</span><span id="status-text">Em Preparo</span></div>
+<p id="message" class="message">Sua comida está sendo preparada com todo cuidado pelo nosso chef!</p>
+<p id="sub" class="sub">Você receberá um aviso quando o pedido estiver pronto.</p>
+<button id="sound" class="sound" aria-pressed="false">🔔 Toque para ativar alerta sonoro e vibração</button>
+</section>
+<section class="games-entry"><button id="games-open" class="primary">🎮 Jogar enquanto aguarda</button></section>
+<section id="games" class="game-panel" hidden>
+<div class="actions"><button id="games-back" class="secondary">← Voltar à comanda</button><button id="refresh" class="secondary">Atualizar jogos</button></div>
+<h2>Escolha um jogo</h2><p>Os jogos não alteram seu pedido.</p>
+<p id="status" role="status"></p><div id="library" class="library"></div>
+<section id="playing" hidden><div class="actions"><button id="stop" class="secondary">Encerrar jogo</button></div><div id="stage"></div></section>
+</section>
+</main>
+<details class="lab-controls"><summary>Controles do laboratório (simulação)</summary><p>Esta comanda é uma reprodução visual baseada na página real. Não há pedido, servidor ou notificação conectados.</p>
+<button id="ready" class="secondary">Simular pedido pronto</button><button id="reset" class="secondary">Reiniciar comanda</button></details>
 <script type="module">
-import { obterCatalogo, criarSessaoJogos } from './catalogo.js';
-const status=document.getElementById('status'),lista=document.getElementById('library'),stage=document.getElementById('stage'),modo=document.getElementById('mode');
-const sessao=criarSessaoJogos();
-let pedidoPronto=false,consulta=0;
-async function carregar(){const atual=++consulta;lista.replaceChildren();status.textContent='Atualizando biblioteca…';try{
-const jogos=await obterCatalogo();if(atual!==consulta)return;
-status.textContent=jogos.length+' jogo(s) disponível(is) para testes';
-for(const jogo of jogos){const card=document.createElement('section');card.className='game';
+import {obterCatalogo,criarSessaoJogos} from './catalogo.js';
+const $=id=>document.getElementById(id),sessao=criarSessaoJogos();
+let pronto=false,consulta=0,ativo=false;
+function parar(){sessao.encerrar();$('stage').replaceChildren();$('playing').hidden=true;ativo=false;}
+function fechar(){parar();$('games').hidden=true;$('games-open').hidden=pronto;}
+async function carregar(){const n=++consulta;$('library').replaceChildren();$('status').textContent='Carregando jogos…';try{
+const jogos=await obterCatalogo();if(n!==consulta)return;$('status').textContent=jogos.length+' jogos disponíveis';
+for(const jogo of jogos){const card=document.createElement('article');card.className='game-card';
 const titulo=document.createElement('h3');titulo.textContent=jogo.title;
-const descricao=document.createElement('p');descricao.textContent=jogo.description||'Jogo experimental';
-const abrir=document.createElement('button');abrir.textContent='Jogar';abrir.addEventListener('click',async()=>{pedidoPronto=false;status.textContent='Carregando '+jogo.title+'…';try{const ok=await sessao.abrir(jogo,stage,{modo:modo.value,onExit:()=>{status.textContent='Jogo encerrado'}});if(ok&&!pedidoPronto)status.textContent='Jogando: '+jogo.title;}catch(e){status.textContent='Não foi possível abrir o jogo';console.error(e)}});
-card.append(titulo,descricao,abrir);lista.append(card)}
-}catch(e){if(atual===consulta)status.textContent='Biblioteca indisponível. Tente atualizar.';console.error(e)}}
-document.getElementById('refresh').addEventListener('click',carregar);
-document.getElementById('stop').addEventListener('click',()=>{sessao.encerrar();status.textContent='Jogo encerrado'});
-document.getElementById('ready').addEventListener('click',()=>{pedidoPronto=true;sessao.encerrar();status.textContent='🔔 Pedido pronto (simulação). Jogo interrompido.'});
-carregar();
-</script></main></body></html>
+const descricao=document.createElement('p');descricao.textContent=jogo.description||'';
+const btn=document.createElement('button');btn.className='secondary';btn.textContent='Jogar';
+btn.addEventListener('click',async()=>{if(pronto)return;parar();$('playing').hidden=false;$('status').textContent='Abrindo '+jogo.title+'…';try{
+const ok=await sessao.abrir(jogo,$('stage'),{modo:'solo',onExit:()=>{ativo=false;$('playing').hidden=true;}});
+if(ok&&!pronto){ativo=true;$('status').textContent='Jogo: '+jogo.title;}else if(!pronto){$('playing').hidden=true;}
+}catch(e){$('playing').hidden=true;$('status').textContent='Falha ao abrir jogo';console.error(e)}});
+card.append(titulo,descricao,btn);$('library').append(card)}
+}catch(e){if(n===consulta)$('status').textContent='Não foi possível carregar os jogos';console.error(e)}}
+$('games-open').addEventListener('click',()=>{if(pronto)return;$('games').hidden=false;$('games-open').hidden=true;carregar();$('games').scrollIntoView({behavior:'smooth',block:'nearest'});});
+$('games-back').addEventListener('click',()=>{fechar();});
+$('refresh').addEventListener('click',carregar);
+$('stop').addEventListener('click',()=>{parar();$('status').textContent='Jogo encerrado';});
+$('ready').addEventListener('click',()=>{pronto=true;fechar();$('badge').classList.add('ready');$('status-icon').textContent='✅';$('status-text').textContent='Pedido Pronto';$('message').textContent='Seu pedido está pronto para retirada!';$('sub').textContent='Dirija-se ao balcão para retirar seu pedido.';$('sound').textContent='🔔 Pedido pronto (simulação)';window.scrollTo({top:0,behavior:'smooth'});});
+$('reset').addEventListener('click',()=>{pronto=false;fechar();$('badge').classList.remove('ready');$('status-icon').textContent='⏳';$('status-text').textContent='Em Preparo';$('message').textContent='Sua comida está sendo preparada com todo cuidado pelo nosso chef!';$('sub').textContent='Você receberá um aviso quando o pedido estiver pronto.';$('sound').textContent='🔔 Toque para ativar alerta sonoro e vibração';$('sound').setAttribute('aria-pressed','false');$('games-open').hidden=false;});
+$('sound').addEventListener('click',()=>{if(pronto)return;const on=$('sound').getAttribute('aria-pressed')!=='true';$('sound').setAttribute('aria-pressed',String(on));$('sound').textContent=on?'🔊 Alerta visual habilitado nesta simulação':'🔔 Toque para ativar alerta sonoro e vibração';});
+</script></body></html>
