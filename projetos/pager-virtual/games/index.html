@@ -81,6 +81,10 @@ body.game-active{position:fixed;inset:0;width:100%;height:var(--game-viewport-he
 #game-screen.landscape .game-body{touch-action:manipulation}
 #game-screen.landscape .pong-arena{touch-action:none}
 @media(max-width:550px) and (orientation:landscape){#game-screen .hub .hub-card p{display:none}}
+[hidden]{display:none!important}
+#game-screen #stage>.velha-root{height:100%;width:100%;min-height:0;max-height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}
+#game-screen #stage .velha-root>div:not([hidden]){max-height:100%;min-height:0;box-sizing:border-box}
+#game-screen #stage .velha-root button{touch-action:manipulation}
 </style></head><body>
 <aside class="a11y-bar"><button id="contrast" class="chip" aria-pressed="false">Alto Contraste</button><button id="font" class="chip" aria-pressed="false">Texto A+</button></aside>
 <main>
@@ -110,7 +114,7 @@ body.game-active{position:fixed;inset:0;width:100%;height:var(--game-viewport-he
 <details class="lab-controls"><summary>Ferramentas de simulação (fora da comanda)</summary><p>Esta comanda é uma reprodução visual baseada na página real. Não há pedido, servidor ou notificação conectados.</p>
 <button id="ready" class="secondary">Simular pedido pronto</button><button id="reset" class="secondary">Reiniciar comanda</button></details>
 <script type="module">
-import {obterCatalogo,criarSessaoJogos} from './catalogo.js';
+import {obterCatalogo,criarSessaoJogos} from './catalogo.js?v=49';
 const $=id=>document.getElementById(id),sessao=criarSessaoJogos();
 let pronto=false,ativo=false;
 let abertura=0,scrollAnterior=0,hubAberto=false;
