@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "0.2.0",
+  "catalogVersion": "0.3.0",
   "games": [
     {
       "id": "pong",
@@ -12,7 +12,12 @@
         "dupla-local"
       ],
       "module": "./pong-lab.js",
-      "status": "experimental"
+      "status": "experimental",
+      "playerCounts": [
+        1,
+        2
+      ],
+      "orientation": "landscape"
     },
     {
       "id": "jogo-da-velha",
@@ -24,7 +29,12 @@
         "dupla-local"
       ],
       "module": "./jogo-da-velha.js",
-      "status": "experimental"
+      "status": "experimental",
+      "playerCounts": [
+        1,
+        2
+      ],
+      "orientation": "portrait"
     }
   ]
 }
