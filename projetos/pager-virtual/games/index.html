@@ -45,5 +45,22 @@ $('games-open').addEventListener('click',async()=>{
   finally{b.disabled=false;}
 });
 for(const [id,classe] of [['contrast','contrast'],['font','large-text']])$(id).addEventListener('click',()=>{const ativo=document.body.classList.toggle(classe);$(id).setAttribute('aria-pressed',String(ativo));});
+/* O pedido continua independente, inclusive se os jogos nunca forem abertos. */
+$('ready').addEventListener('click',()=>{
+ document.body.dataset.pedidoPronto='true';
+ $('badge').classList.add('ready');$('status-icon').textContent='✅';$('status-text').textContent='Pedido Pronto';
+ $('message').textContent='Seu pedido está pronto para retirada!';
+ $('sub').textContent='Dirija-se ao balcão para retirar seu pedido.';
+ $('sound').textContent='🔔 Pedido pronto (simulação)';
+ window.dispatchEvent(new Event('avisaqui:pedido-pronto'));window.scrollTo(0,0);
+});
+$('reset').addEventListener('click',()=>{
+ document.body.dataset.pedidoPronto='false';
+ $('badge').classList.remove('ready');$('status-icon').textContent='⏳';$('status-text').textContent='Em Preparo';
+ $('message').textContent='Sua comida está sendo preparada com todo cuidado pelo nosso chef!';
+ $('sub').textContent='Você receberá um aviso quando o pedido estiver pronto.';
+ $('sound').textContent='🔔 Toque para ativar alerta sonoro e vibração';
+ window.dispatchEvent(new Event('avisaqui:pedido-reiniciado'));
+});
 $('sound').addEventListener('click',()=>{const b=$('sound');const ativo=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(ativo));b.textContent=ativo?'🔊 Alerta visual habilitado nesta simulação':'🔔 Toque para ativar alerta sonoro e vibração';});
 </script></body></html>
