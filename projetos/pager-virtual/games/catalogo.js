@@ -30,7 +30,9 @@ export function criarSessaoJogos({ importar = caminho => import(caminho) } = {})
       const atual = ++geracao;
       if (destruirAtual) { destruirAtual(); destruirAtual = null; }
       if (!jogo || !ARQUIVO_VALIDO.test(jogo.module)) throw new Error('Jogo inválido');
-      const caminho = new URL(jogo.module, import.meta.url).href;
+      const endereco = new URL(jogo.module, import.meta.url);
+      endereco.searchParams.set('v','49');
+      const caminho = endereco.href;
       const modulo = await importar(caminho);
       if (atual !== geracao) return false;
       if (typeof modulo.iniciarJogoDaVelha !== 'function' && typeof modulo.iniciarJogo !== 'function') throw new Error('Módulo incompatível');

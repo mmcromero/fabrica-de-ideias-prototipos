@@ -32,7 +32,7 @@ export function iniciarJogoDaVelha({container,onExit=()=>{},modo='solo'}) {
   raiz.setAttribute('aria-label','Jogo da Velha');
   raiz.style.cssText='width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#f8fafc';
   const menu=document.createElement('div');
-  menu.style.cssText='width:min(460px,100%);max-height:100%;overflow:auto;padding:clamp(8px,2vw,18px)';
+  menu.style.cssText='width:min(460px,100%);max-height:100%;overflow:hidden;padding:clamp(8px,2vw,18px);box-sizing:border-box';
   const titulo=document.createElement('h2');titulo.textContent='❎ Jogo da Velha · Escolha a partida';titulo.style.cssText='font-size:clamp(1.05rem,2.6vw,1.5rem);margin:0 0 12px';
   const escolha=document.createElement('fieldset');
   escolha.style.cssText='border:1px solid #52677e;border-radius:14px;padding:clamp(10px,2vw,18px);margin:0;background:#20334b;color:#f8fafc';
@@ -50,7 +50,7 @@ export function iniciarJogoDaVelha({container,onExit=()=>{},modo='solo'}) {
   const status=document.createElement('p');status.setAttribute('role','status');
   status.style.cssText='margin:0;font-weight:700;text-align:center;font-size:clamp(.95rem,2.5vw,1.3rem)';
   const grade=document.createElement('div');
-  grade.style.cssText='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:clamp(4px,1vw,8px);width:min(72vh,65vw,420px);height:min(72vh,65vw,420px);max-height:calc(100% - 88px);aspect-ratio:1;flex:0 1 auto';
+  grade.style.cssText='display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:clamp(4px,1vw,8px);width:min(65dvh,58vw,420px);height:min(65dvh,58vw,420px);max-height:calc(100% - 85px);aspect-ratio:1;flex:0 1 auto;min-height:0;min-width:0';
   const botoes=Array.from({length:9},(_,i)=>{
     const botao=document.createElement('button');botao.type='button';
     botao.style.cssText='min-height:0;min-width:0;border:2px solid #52677e;border-radius:12px;background:#20334b;color:#f8fafc;font-weight:800;font-size:clamp(1.5rem,7vh,3.5rem);touch-action:manipulation';
