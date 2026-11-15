@@ -85,6 +85,28 @@ body.game-active{position:fixed;inset:0;width:100%;height:var(--game-viewport-he
 #game-screen #stage>.velha-root{height:100%;width:100%;min-height:0;max-height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}
 #game-screen #stage .velha-root>div:not([hidden]){max-height:100%;min-height:0;box-sizing:border-box}
 #game-screen #stage .velha-root button{touch-action:manipulation}
+/* Fluxo compartilhado: catálogo e escolha sempre em retrato, sem forçar rotação. */
+#game-screen.game-portrait{flex-direction:column}
+#game-screen.game-portrait .game-top{order:0;flex:0 0 auto;width:100%;display:flex;flex-direction:row;align-items:center;justify-content:space-between;padding:8px 12px;overflow:hidden}
+#game-screen.game-portrait .game-top .game-sim{display:none}
+#game-screen.game-portrait .game-body{order:1;flex:1;min-height:0;padding:12px;overflow:hidden}
+#game-screen.game-portrait #stage{align-items:center;justify-content:center}
+#game-screen .games-choose{width:min(560px,100%);max-height:100%;overflow:auto;padding:12px;touch-action:pan-y}
+#game-screen .games-choose h2{font-size:1.35rem;margin:0 0 14px}
+#game-screen .games-list{display:grid;grid-template-columns:1fr;gap:12px}
+#game-screen .games-option{padding:14px;background:#20334b;border:1px solid #52677e;border-radius:14px}
+#game-screen .games-option h3{margin:0 0 8px}
+#game-screen .games-option p{color:#cbd5e1;font-size:.9rem;line-height:1.35}
+#game-screen .games-option .primary{margin-top:10px}
+#game-screen .games-list button[aria-pressed=true]{background:#1459b8;color:white;border:2px solid #67d4ff;font-weight:700}
+#game-screen .games-list button[aria-pressed=false]{background:#263a55;color:white;border:2px solid #64748b}
+#game-screen .games-actions{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+#game-screen .games-actions button{flex:1;min-width:130px}
+#rotate-hint[hidden]{display:none!important}
+#game-screen.game-portrait #rotate-hint{display:none}
+#game-screen.landscape #rotate-hint:not([hidden]){display:flex}
+#game-screen.landscape #rotate-hint:not([hidden])~.game-body{display:none}
+@media(orientation:portrait){#game-screen.landscape .game-top{display:flex;position:relative;width:100%;flex:0 0 auto}}
 </style></head><body>
 <aside class="a11y-bar"><button id="contrast" class="chip" aria-pressed="false">Alto Contraste</button><button id="font" class="chip" aria-pressed="false">Texto A+</button></aside>
 <main>
@@ -107,83 +129,22 @@ body.game-active{position:fixed;inset:0;width:100%;height:var(--game-viewport-he
 </main>
 <section id="game-screen" hidden aria-label="Jogo em tela cheia">
 <div class="game-top"><div><strong>🔔 Pedido #206</strong> <span id="game-order-status">⏳ Em preparo</span></div><button id="game-exit" class="secondary">✕ Sair</button><div class="game-sim"><span>Laboratório</span><button id="game-ready" class="secondary">Simular pedido pronto</button></div></div>
-<div id="rotate-hint"><span class="rotate-icon" aria-hidden="true">📱↻</span><strong>Gire o celular</strong><p>Vire o aparelho para escolher um jogo e começar a diversão.</p><button id="rotate-exit" class="secondary">✕ Sair do jogo</button></div>
+<div id="rotate-hint"><span class="rotate-icon" aria-hidden="true">📱↻</span><strong>Gire o celular</strong><p>Este jogo funciona melhor com o celular na horizontal.</p><button id="rotate-exit" class="secondary">✕ Sair do jogo</button></div>
 <div class="game-body"><div id="stage"></div></div>
 
 </section>
 <details class="lab-controls"><summary>Ferramentas de simulação (fora da comanda)</summary><p>Esta comanda é uma reprodução visual baseada na página real. Não há pedido, servidor ou notificação conectados.</p>
 <button id="ready" class="secondary">Simular pedido pronto</button><button id="reset" class="secondary">Reiniciar comanda</button></details>
-<script type="module">
-import {obterCatalogo,criarSessaoJogos} from './catalogo.js?v=49';
-const $=id=>document.getElementById(id),sessao=criarSessaoJogos();
-let pronto=false,ativo=false;
-let abertura=0,scrollAnterior=0,hubAberto=false;
-function ajustarViewport(){
-  if(!document.body.classList.contains('game-active'))return;
-  const vp=window.visualViewport;
-  const largura=Math.max(1,Math.floor(vp?.width||window.innerWidth));
-  const altura=Math.max(1,Math.floor(vp?.height||window.innerHeight));
-  const tela=$('game-screen');
-  tela.style.setProperty('--game-viewport-width',largura+'px');
-  tela.style.setProperty('--game-viewport-height',altura+'px');
-  tela.style.transform=vp?'translate('+Math.round(vp.offsetLeft)+'px,'+Math.round(vp.offsetTop)+'px)':'none';
-}
-function telaJogo(abrir,jogo){
-  if(abrir&&!document.body.classList.contains('game-active'))scrollAnterior=window.scrollY;
-  $('game-screen').hidden=!abrir;
-  document.body.classList.toggle('game-active',abrir);
-  $('game-screen').classList.toggle('landscape',abrir);
-  if(abrir)ajustarViewport();
-  else{$('game-screen').style.transform='';window.scrollTo(0,scrollAnterior);}
-}
-window.addEventListener('resize',ajustarViewport,{passive:true});
-window.addEventListener('orientationchange',ajustarViewport,{passive:true});
-window.visualViewport?.addEventListener('resize',ajustarViewport,{passive:true});
-window.visualViewport?.addEventListener('scroll',ajustarViewport,{passive:true});
-for(const [id,cls] of [['contrast','contrast'],['font','large-text']])$(id).addEventListener('click',()=>{const on=document.body.classList.toggle(cls);$(id).setAttribute('aria-pressed',String(on));});
-function parar(){abertura++;sessao.encerrar();$('stage').replaceChildren();hubAberto=false;telaJogo(false);ativo=false;}
-
-async function abrirHub(){
- if(pronto)return;
- parar();hubAberto=true;telaJogo(true);
- const ticket=abertura;
- const hub=document.createElement('section');hub.className='hub';
- const title=document.createElement('h2');title.textContent='🎮 Escolha um jogo';
- const status=document.createElement('div');status.className='hub-status';status.setAttribute('role','status');status.textContent='Carregando jogos…';
- const lista=document.createElement('div');lista.className='hub-list';
- hub.append(title,lista,status);$('stage').replaceChildren(hub);
- try{
- const jogos=await obterCatalogo();
- if(ticket!==abertura||!hubAberto)return;
- status.textContent=jogos.length+' jogos disponíveis';
- for(const jogo of jogos){
-  const card=document.createElement('article');card.className='hub-card';
-  const titulo=document.createElement('h3');titulo.textContent=jogo.title;
-  const descricao=document.createElement('p');descricao.textContent=jogo.description||'';
-  const btn=document.createElement('button');btn.className='secondary';btn.textContent='Jogar';
-  btn.addEventListener('click',()=>abrirPartida(jogo));
-  card.append(titulo,descricao,btn);lista.append(card);
- }
- }catch(e){if(ticket===abertura)status.textContent='Não foi possível carregar os jogos';console.error(e)}
-}
-async function abrirPartida(jogo){
- if(pronto||!hubAberto)return;
- hubAberto=false;abertura++;sessao.encerrar();$('stage').replaceChildren();
- const ticket=abertura;
- try{
-  const ok=await sessao.abrir(jogo,$('stage'),{modo:'solo',onExit:()=>{if(ticket!==abertura)return;abertura++;abrirHub();}});
-  if(ticket!==abertura)return;
-  if(!ok||pronto)abrirHub();
-  else ativo=true;
- }catch(e){if(ticket!==abertura)return;console.error(e);abrirHub();}
-}
-$('games-open').addEventListener('click',abrirHub);
-$('game-exit').addEventListener('click',parar);
-$('rotate-exit').addEventListener('click',parar);
-function pedidoPronto(){pronto=true;parar();$('badge').classList.add('ready');$('status-icon').textContent='✅';$('status-text').textContent='Pedido Pronto';$('message').textContent='Seu pedido está pronto para retirada!';$('sub').textContent='Dirija-se ao balcão para retirar seu pedido.';$('sound').textContent='🔔 Pedido pronto (simulação)';window.scrollTo({top:0,behavior:'smooth'});}
-$('ready').addEventListener('click',pedidoPronto);
-$('game-ready').addEventListener('click',pedidoPronto);
-
-$('reset').addEventListener('click',()=>{pronto=false;parar();$('badge').classList.remove('ready');$('status-icon').textContent='⏳';$('status-text').textContent='Em Preparo';$('message').textContent='Sua comida está sendo preparada com todo cuidado pelo nosso chef!';$('sub').textContent='Você receberá um aviso quando o pedido estiver pronto.';$('sound').textContent='🔔 Toque para ativar alerta sonoro e vibração';$('sound').setAttribute('aria-pressed','false');$('games-open').hidden=false;});
-$('sound').addEventListener('click',()=>{if(pronto)return;const on=$('sound').getAttribute('aria-pressed')!=='true';$('sound').setAttribute('aria-pressed',String(on));$('sound').textContent=on?'🔊 Alerta visual habilitado nesta simulação':'🔔 Toque para ativar alerta sonoro e vibração';});
+<script>
+/* O comprovante não importa jogos nem catálogo antes do clique. */
+const $=id=>document.getElementById(id);
+let jogosPromise=null;
+$('games-open').addEventListener('click',async()=>{
+  const b=$('games-open');b.disabled=true;
+  try{jogosPromise??=import('./games-shell.js?v=50');const modulo=await jogosPromise;modulo.abrir();}
+  catch(e){console.error(e);jogosPromise=null;alert('Não foi possível abrir os jogos. O acompanhamento do pedido continua disponível.');}
+  finally{b.disabled=false;}
+});
+for(const [id,classe] of [['contrast','contrast'],['font','large-text']])$(id).addEventListener('click',()=>{const ativo=document.body.classList.toggle(classe);$(id).setAttribute('aria-pressed',String(ativo));});
+$('sound').addEventListener('click',()=>{const b=$('sound');const ativo=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(ativo));b.textContent=ativo?'🔊 Alerta visual habilitado nesta simulação':'🔔 Toque para ativar alerta sonoro e vibração';});
 </script></body></html>
