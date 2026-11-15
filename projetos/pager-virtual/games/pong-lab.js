@@ -1,10 +1,10 @@
 // Laboratório público: adaptação local do Pong experimental.
 // O Pong original depende de API/SSE do Avisaqui; esta versão não usa servidor.
-export function iniciarJogo({container,modo='solo',onExit=()=>{}}) {
+export function iniciarJogo({container,modo='solo',autoStart=false,onExit=()=>{}}) {
   const root=document.createElement('section');
   root.className='pong-root';
   const title=document.createElement('h3');title.textContent='🏓 Pong · Escolha a partida';
-  let tipo=modo==='dupla'?'dupla':'solo';
+  let tipo=modo==='dupla'||modo==='dupla-local'?'dupla':'solo';
   const escolha=document.createElement('fieldset');escolha.style.cssText='border:1px solid #52677e;border-radius:14px;padding:clamp(10px,2vw,18px);margin:10px 0;background:#20334b;color:#f8fafc';
   const legenda=document.createElement('legend');legenda.textContent='Quantos jogadores?';
   const um=document.createElement('button'),dois=document.createElement('button');
@@ -57,5 +57,6 @@ export function iniciarJogo({container,modo='solo',onExit=()=>{}}) {
     if(ball.x<0){score[1]++;reset(1);}if(ball.x>600){score[0]++;reset(-1);}
     info.textContent='Azul '+score[0]+' × '+score[1]+' Laranja';draw();frame=requestAnimationFrame(tick);}
   function destroy(){if(!active)return;active=false;cancelAnimationFrame(frame);handlers.forEach(remover=>remover());root.remove();onExit();}
+  if(autoStart)iniciar.click();
   quit.addEventListener('click',destroy);return destroy;
 }
