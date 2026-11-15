@@ -3,15 +3,17 @@
 export function iniciarJogo({container,modo='solo',onExit=()=>{}}) {
   const root=document.createElement('section');
   root.className='pong-root';
-  const title=document.createElement('h3');title.textContent='Pong — laboratório local';
+  const title=document.createElement('h3');title.textContent='🏓 Pong · Escolha a partida';
   let tipo=modo==='dupla'?'dupla':'solo';
-  const escolha=document.createElement('fieldset');escolha.style.cssText='border:1px solid #64748b;border-radius:12px;padding:12px;margin:12px 0';
+  const escolha=document.createElement('fieldset');escolha.style.cssText='border:1px solid #52677e;border-radius:14px;padding:clamp(10px,2vw,18px);margin:10px 0;background:#20334b;color:#f8fafc';
   const legenda=document.createElement('legend');legenda.textContent='Quantos jogadores?';
   const um=document.createElement('button'),dois=document.createElement('button');
   um.type=dois.type='button';um.textContent='1 jogador';dois.textContent='2 jogadores';
-  const detalhe=document.createElement('p');
-  const iniciar=document.createElement('button');iniciar.type='button';iniciar.textContent='Começar partida';
-  escolha.append(legenda,um,dois,detalhe,iniciar);
+  const opcoes=document.createElement('div');opcoes.style.cssText='display:flex;gap:10px;flex-wrap:wrap;margin:10px 0';
+  for(const b of [um,dois]){b.style.cssText='flex:1 1 140px;min-height:48px;border:2px solid #64748b;border-radius:12px;background:#263a55;color:#f8fafc;font-weight:700;padding:10px 16px;transition:background .15s,border-color .15s';}
+  const detalhe=document.createElement('p');detalhe.style.cssText='color:#cbd5e1;font-size:.9rem;margin:10px 0';
+  const iniciar=document.createElement('button');iniciar.type='button';iniciar.textContent='Começar partida';iniciar.style.cssText='width:100%;min-height:48px;border:0;border-radius:12px;background:#2563eb;color:#fff;font-weight:700;padding:10px 16px';
+  opcoes.append(um,dois);escolha.append(legenda,opcoes,detalhe,iniciar);
   const menu=document.createElement('div');menu.append(title,escolha);
   root.append(menu);
   const info=document.createElement('p');info.setAttribute('role','status');info.className='pong-score';
@@ -38,7 +40,7 @@ export function iniciarJogo({container,modo='solo',onExit=()=>{}}) {
     handlers.push(()=>{el.removeEventListener('pointerdown',iniciar);el.removeEventListener('pointermove',mover);el.removeEventListener('pointerup',parar);el.removeEventListener('pointercancel',parar);});
   }
   configurarControle(esquerda,0);configurarControle(direita,1);
-  function selecionar(n){tipo=n===1?'solo':'dupla';um.setAttribute('aria-pressed',String(n===1));dois.setAttribute('aria-pressed',String(n===2));detalhe.textContent=n===1?'Contra o computador. Uma faixa de controle.':'Dois jogadores no mesmo aparelho. Duas faixas de controle. O modo em celulares separados exige servidor.';}
+  function selecionar(n){tipo=n===1?'solo':'dupla';for(const [botao,selecionado] of [[um,n===1],[dois,n===2]]){botao.setAttribute('aria-pressed',String(selecionado));botao.style.background=selecionado?'#1459b8':'#263a55';botao.style.borderColor=selecionado?'#67d4ff':'#64748b';botao.style.boxShadow=selecionado?'0 0 0 2px #67d4ff33':'none';botao.textContent=(selecionado?'✓ ':'')+(botao===um?'1 jogador':'2 jogadores');}detalhe.textContent=n===1?'Selecionado: contra o computador, com uma faixa de controle.':'Selecionado: dois jogadores no mesmo aparelho, cada um com sua faixa de controle.';}
   um.addEventListener('click',()=>selecionar(1));dois.addEventListener('click',()=>selecionar(2));selecionar(tipo==='solo'?1:2);
   iniciar.addEventListener('click',()=>{if(rodando||!active)return;rodando=true;menu.hidden=true;partida.hidden=false;direita.remove();if(tipo==='dupla')arena.append(direita);hint.textContent='';last=0;frame=requestAnimationFrame(tick);});
   function reset(direction){ball.x=300;ball.y=180;ball.vx=3.2*direction;ball.vy=(Math.random()-.5)*4;}
