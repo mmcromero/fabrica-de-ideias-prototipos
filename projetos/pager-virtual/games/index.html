@@ -40,6 +40,26 @@ body.game-active{overflow:hidden}
 #game-screen .game-top{padding:calc(4px + env(safe-area-inset-top,0px)) 10px 4px}
 #game-screen .game-top .secondary{padding:5px 10px}
 @media(orientation:portrait){#game-screen.landscape .game-body{display:none}}
+/* Pong: a arena e o painel ocupam a mesma faixa horizontal, sem barras acima/abaixo. */
+#game-screen.landscape{flex-direction:row;align-items:stretch}
+#game-screen.landscape .game-top{order:2;flex:0 0 clamp(132px,18vw,205px);width:clamp(132px,18vw,205px);min-width:0;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:10px;padding:10px 8px;background:#152237;border:0;border-left:1px solid #334155;overflow-y:auto}
+#game-screen.landscape .game-top>div{display:flex;flex-direction:column;gap:6px;overflow-wrap:anywhere}
+#game-screen.landscape .game-top .secondary{width:100%;min-height:40px}
+#game-screen.landscape .game-body{order:1;flex:1 1 auto;min-width:0;min-height:0;padding:3px;overflow:hidden}
+#game-screen.landscape #stage,#game-screen.landscape .pong-root,#game-screen.landscape .pong-partida{height:100%;min-height:0}
+#game-screen.landscape .pong-arena{height:100%;min-height:0}
+#game-screen.landscape .pong-arena canvas{height:100%!important;max-height:none!important}
+#game-screen.landscape .game-sim{display:block}
+.game-sim{display:none}
+#game-screen .game-sim{margin-top:auto;font-size:.75rem;color:#94a3b8}
+#game-screen .game-sim button{font-size:.75rem;line-height:1.15;padding:8px 5px;white-space:normal}
+#rotate-hint{position:absolute;inset:0;z-index:5;align-items:center;justify-content:center;flex-direction:column;gap:18px;padding:24px;text-align:center;background:#091626;color:white}
+#rotate-hint .rotate-icon{font-size:clamp(65px,17vw,110px);line-height:1}
+#rotate-hint strong{font-size:clamp(1.6rem,7vw,2.5rem)}
+#rotate-hint p{font-size:1.05rem;max-width:330px;line-height:1.5;margin:0}
+#rotate-hint button{font-size:1rem;padding:12px 22px}
+@media(orientation:portrait){#game-screen.landscape #rotate-hint{display:flex}#game-screen.landscape .game-body{display:none}#game-screen.landscape .game-top{position:static;flex:0 0 auto;width:auto;order:1;display:none}}
+@media(orientation:landscape){#game-screen.landscape #rotate-hint{display:none}}
 </style></head><body>
 <aside class="a11y-bar"><button id="contrast" class="chip" aria-pressed="false">Alto Contraste</button><button id="font" class="chip" aria-pressed="false">Texto A+</button></aside>
 <main>
@@ -61,8 +81,8 @@ body.game-active{overflow:hidden}
 </section>
 </main>
 <section id="game-screen" hidden aria-label="Jogo em tela cheia">
-<div class="game-top"><div><strong>🔔 Pedido #206</strong> <span id="game-order-status">· ⏳ Em preparo</span></div><button id="game-exit" class="secondary">✕ Sair</button></div>
-<div id="rotate-hint">↻ Gire o celular para jogar na horizontal. O botão Sair continua disponível.</div>
+<div class="game-top"><div><strong>🔔 Pedido #206</strong> <span id="game-order-status">⏳ Em preparo</span></div><button id="game-exit" class="secondary">✕ Sair</button><div class="game-sim"><span>Laboratório</span><button id="game-ready" class="secondary">Simular pedido pronto</button></div></div>
+<div id="rotate-hint"><span class="rotate-icon" aria-hidden="true">📱↻</span><strong>Gire o celular</strong><p>Para jogar Pong, coloque o aparelho na horizontal.</p><button id="rotate-exit" class="secondary">✕ Sair do jogo</button></div>
 <div class="game-body"><div id="stage"></div></div>
 
 </section>
@@ -95,8 +115,10 @@ $('games-open').addEventListener('click',()=>{if(pronto)return;$('games').hidden
 $('games-back').addEventListener('click',()=>{fechar();});
 $('refresh').addEventListener('click',carregar);
 $('game-exit').addEventListener('click',()=>{parar();$('status').textContent='Jogo encerrado';});
+$('rotate-exit').addEventListener('click',()=>{parar();$('status').textContent='Jogo encerrado';});
 function pedidoPronto(){pronto=true;fechar();$('badge').classList.add('ready');$('status-icon').textContent='✅';$('status-text').textContent='Pedido Pronto';$('message').textContent='Seu pedido está pronto para retirada!';$('sub').textContent='Dirija-se ao balcão para retirar seu pedido.';$('sound').textContent='🔔 Pedido pronto (simulação)';window.scrollTo({top:0,behavior:'smooth'});}
 $('ready').addEventListener('click',pedidoPronto);
+$('game-ready').addEventListener('click',pedidoPronto);
 
 $('reset').addEventListener('click',()=>{pronto=false;fechar();$('badge').classList.remove('ready');$('status-icon').textContent='⏳';$('status-text').textContent='Em Preparo';$('message').textContent='Sua comida está sendo preparada com todo cuidado pelo nosso chef!';$('sub').textContent='Você receberá um aviso quando o pedido estiver pronto.';$('sound').textContent='🔔 Toque para ativar alerta sonoro e vibração';$('sound').setAttribute('aria-pressed','false');$('games-open').hidden=false;});
 $('sound').addEventListener('click',()=>{if(pronto)return;const on=$('sound').getAttribute('aria-pressed')!=='true';$('sound').setAttribute('aria-pressed',String(on));$('sound').textContent=on?'🔊 Alerta visual habilitado nesta simulação':'🔔 Toque para ativar alerta sonoro e vibração';});
