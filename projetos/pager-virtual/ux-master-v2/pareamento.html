@@ -47,6 +47,11 @@ html.embedded .tabs{margin-top:2px}html.embedded .card{padding:15px}
 <section class="panel" id="devices" hidden><div class="between"><div><h1>Computadores vinculados</h1><p class="lead">Gestão por restaurante, com credenciais individuais.</p></div><button id="new-from-list" type="button">+ Vincular</button></div>
 <div class="devices" id="device-list"></div><div class="flow"><button type="button" class="outline" id="scenario-disconnect">Simular sem comunicação</button><button type="button" class="outline" id="scenario-server">Simular falha no servidor</button></div><div class="note">Estado de comunicação é apenas ilustrativo. Em produção, um vínculo não prova que o computador está online. A revogação deve bloquear novos envios, sem apagar eventos locais pendentes.</div></section>
 <section class="panel" id="pending" hidden><h1>Pendências de pedidos</h1><p class="lead">Conflitos de número comercial e eventos capturados. Nenhuma chamada duplicada é criada automaticamente.</p><div class="card"><div class="between"><h2>Aguardando decisão</h2><span class="pill amber" id="pending-count">2 pendências</span></div><div class="devices" id="pending-list"></div></div><div class="note">Ações apenas demonstrativas. “Já entregue” exige decisão humana. Contratos e permissões de conciliação ainda dependem do Tech Lead.</div></section>
+<dialog id="device-dialog" aria-labelledby="device-dialog-title">
+<div class="dialog-title"><h2 id="device-dialog-title">Gerenciar computador</h2><button class="secondary" id="device-dialog-x" type="button" aria-label="Fechar">×</button></div>
+<div id="device-dialog-details" class="device"></div>
+<div class="flow"><button type="button" class="secondary" id="device-dialog-rename">Renomear</button><button type="button" class="outline" id="device-dialog-replace">Substituir / parear</button><button type="button" class="danger" id="device-dialog-revoke">Revogar</button></div>
+</dialog>
 <dialog id="confirm-dialog"><div class="dialog-title"><h2 id="dialog-heading">Confirmar</h2><button class="secondary" id="dialog-x" type="button" aria-label="Fechar">×</button></div><p id="dialog-message"></p><div class="dialog-actions"><button class="secondary" id="dialog-back" type="button">Cancelar</button><button id="dialog-confirm" type="button">Confirmar</button></div></dialog>
 <div id="feedback" role="status" aria-live="polite" hidden></div>
 <footer>AVISAQUI-PAIR-001 · Protótipo UX isolado. Nenhum computador, credencial, pedido, servidor ou impressora real é modificado.</footer>
@@ -55,7 +60,7 @@ html.embedded .tabs{margin-top:2px}html.embedded .card{padding:15px}
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
-const state={retrieval:'not-started',pending:[{id:'EV-DEMO-001',restaurant:'Restaurante Exemplo',device:'Caixa Balcão',number:'205',captured:'15/11/2026 10:38',received:'15/11/2026 10:39',status:'Número ativo em revisão'},{id:'EV-DEMO-002',restaurant:'Restaurante Exemplo',device:'Caixa 2',number:'205',captured:'15/11/2026 10:40',received:'15/11/2026 10:41',status:'Possível duplicidade'}],serverDown:false,seq:1,ref:'DEMO-A1',code:'48273146',name:'Caixa 1',phase:'waiting',devices:[{id:'CAIXA-DEMO-001',name:'Caixa Balcão',last:'Última comunicação: exemplo ilustrativo',approvedBy:'Gerente demonstrativo',status:'vinculado',pending:0}],offline:false};
+const state={retrieval:'not-started',pending:[{id:'EV-DEMO-001',restaurant:'Restaurante Exemplo',device:'Caixa Balcão',number:'205',captured:'15/11/2026 10:38',received:'15/11/2026 10:39',status:'Número ativo em revisão'},{id:'EV-DEMO-002',restaurant:'Restaurante Exemplo',device:'Caixa 2',number:'205',captured:'15/11/2026 10:40',received:'15/11/2026 10:41',status:'Possível duplicidade'}],serverDown:false,seq:3,ref:'DEMO-A1',code:'48273146',name:'Caixa 4',phase:'waiting',devices:[{id:'CAIXA-DEMO-001',name:'Caixa Balcão',last:'há 2 min (fictício)',approvedBy:'Gerente demonstrativo',status:'vinculado',connection:'Comunicação recente confirmada (exemplo)',linkedAt:'15/11/2026 (simulação)',pending:0},{id:'CAIXA-DEMO-002',name:'Caixa 02',last:'não confirmada',approvedBy:'Gerente demonstrativo',status:'vinculado',connection:'Sem comunicação recente (exemplo)',linkedAt:'15/11/2026 (simulação)',pending:0},{id:'CAIXA-DEMO-003',name:'Caixa Delivery',last:'há 5 min (fictício)',approvedBy:'Master demonstrativo',status:'vinculado',connection:'Comunicação recente confirmada (exemplo)',linkedAt:'15/11/2026 (simulação)',pending:0}],offline:false};
 let onConfirm=null;
 function reportHeight(){if(window.parent!==window&&document.documentElement.classList.contains('embedded')){const height=Math.ceil(Math.max(document.body.scrollHeight,document.documentElement.scrollHeight))+16;window.parent.postMessage({avisaquiPreview:'height',height},location.origin)}}
 function notify(txt){const f=$('feedback');f.textContent=txt;f.hidden=false;clearTimeout(notify.timer);notify.timer=setTimeout(()=>f.hidden=true,3500)}
@@ -113,17 +118,51 @@ $('simulate-expire').onclick=()=>{if(state.phase==='waiting'){state.phase='expir
 $('simulate-offline').onclick=()=>{state.offline=!state.offline;refresh();notify(state.offline?'Conexão interrompida na simulação.':'Conexão restaurada na simulação.')};
 $('mobile-again').onclick=()=>{view('computer');reset()};
 $('new-from-list').onclick=()=>{reset();view('computer')};
-function renderDevices(){const list=$('device-list');list.replaceChildren();if(!state.devices.length){list.textContent='Nenhum caixa vinculado.';return}
+function renderDevices(){const list=$('device-list');list.replaceChildren();if(!state.devices.length){list.textContent='Nenhum caixa vinculado.';reportDevices();return}
 state.devices.forEach((d)=>{
 const box=document.createElement('article');box.className='device';const head=document.createElement('div');head.className='between';const t=document.createElement('h3');t.textContent=d.name;const badge=document.createElement('span');badge.className='pill '+(d.status==='revogado'?'red':'green');badge.textContent=d.status==='revogado'?'Revogado':'Vinculado';head.append(t,badge);box.append(head);
-const details=document.createElement('p');details.className='meta';details.textContent='ID permanente: '+d.id+' · '+d.last+' · Vinculação: 15/11/2026 (simulação) · Autorizou: '+d.approvedBy;box.append(details);const connection=document.createElement('p');connection.className='meta';connection.textContent='Comunicação: '+(d.connection||'Não verificada')+' · Vínculo: '+d.status;box.append(connection);
+const details=document.createElement('p');details.className='meta';details.textContent='ID permanente: '+d.id+' · Última comunicação: '+d.last+' · Vinculação: '+(d.linkedAt||'15/11/2026 (simulação)')+' · Autorizou: '+d.approvedBy;box.append(details);const connection=document.createElement('p');connection.className='meta';connection.textContent='Comunicação: '+(d.connection||'Não verificada')+' · Vínculo: '+d.status;box.append(connection);
 const controls=document.createElement('div');controls.className='flow';
-const rename=document.createElement('button');rename.className='secondary';rename.textContent='Renomear';rename.disabled=d.status==='revogado';rename.onclick=()=>{const next=prompt('Nome amigável do caixa:',d.name);if(next!==null&&next.trim()){d.name=next.trim().slice(0,50);renderDevices()}};
-const revoke=document.createElement('button');revoke.className='danger';revoke.textContent='Revogar';revoke.disabled=d.status==='revogado';revoke.onclick=()=>confirmAction('Revogar este computador?','Este computador deixará de enviar novos pedidos ao Avisaqui. Os outros caixas continuarão funcionando. Eventos pendentes deverão ser tratados antes de qualquer reenvio.',()=>{if(state.serverDown){notify('Servidor indisponível. Revogação não confirmada.');return}d.status='revogado';d.pending=2;renderDevices();notify('Revogação simulada. Pendências preservadas.')},true);
-const replace=document.createElement('button');replace.className='outline';replace.textContent='Substituir / parear';replace.onclick=()=>{state.name=d.name;reset();view('computer')};
-controls.append(rename,revoke,replace);box.append(controls);
+const rename=document.createElement('button');rename.className='secondary';rename.textContent='Renomear';rename.disabled=d.status==='revogado';rename.onclick=()=>deviceCommand({id:d.id,action:'rename'});
+const revoke=document.createElement('button');revoke.className='danger';revoke.textContent='Revogar';revoke.disabled=d.status==='revogado';revoke.onclick=()=>deviceCommand({id:d.id,action:'revoke'});
+const replace=document.createElement('button');replace.className='outline';replace.textContent='Substituir / parear';replace.onclick=()=>deviceCommand({id:d.id,action:'replace'});
+const manage=document.createElement('button');manage.className='secondary';manage.textContent='Gerenciar';manage.onclick=()=>previewManage(d);controls.append(rename,manage,revoke,replace);box.append(controls);
 if(d.pending){const pend=document.createElement('p');pend.className='meta';pend.textContent=d.pending+' eventos locais demonstrativos aguardam conciliação';box.append(pend)}
-list.append(box)});
+list.append(box)});reportDevices();
+}
+function reportDevices(){
+if(window.parent!==window&&document.documentElement.classList.contains('embedded')){
+const snapshot=state.devices.map(d=>({id:d.id,name:d.name,status:d.status,connection:d.connection||'Comunicação não verificada',last:d.last||'não confirmada',approvedBy:d.approvedBy||'Não informado',linkedAt:d.linkedAt||'15/11/2026 (simulação)',pending:d.pending||0}));
+window.parent.postMessage({avisaquiPreview:'devices',devices:snapshot},location.origin);
+}}
+let detailDeviceId=null;
+function previewManage(d){
+detailDeviceId=d.id;
+$('device-dialog-title').textContent='Gerenciar '+d.name;
+const details=$('device-dialog-details');details.replaceChildren();
+for(const [label,value] of [['Nome',d.name],['Identificador permanente',d.id],['Estado do vínculo',d.status],['Comunicação',d.connection||'Não verificada'],['Última comunicação',d.last],['Data da vinculação',d.linkedAt||'15/11/2026 (simulação)'],['Autorizado por',d.approvedBy],['Pendências locais',String(d.pending||0)]]){
+const row=document.createElement('p');row.className='meta';row.textContent=label+': '+value;details.append(row)}
+$('device-dialog-rename').disabled=d.status==='revogado';
+$('device-dialog-revoke').disabled=d.status==='revogado';
+$('device-dialog').showModal();
+}
+$('device-dialog-x').onclick=()=>$('device-dialog').close();
+$('device-dialog-rename').onclick=()=>{const id=detailDeviceId;$('device-dialog').close();deviceCommand({id,action:'rename'});const d=state.devices.find(x=>x.id===id);if(d)previewManage(d)};
+$('device-dialog-replace').onclick=()=>{const id=detailDeviceId;$('device-dialog').close();deviceCommand({id,action:'replace'})};
+$('device-dialog-revoke').onclick=()=>{const id=detailDeviceId;$('device-dialog').close();deviceCommand({id,action:'revoke'})};
+function deviceCommand(data){
+const d=state.devices.find(x=>x.id===data.id);
+if(!d){notify('Computador não encontrado nesta simulação.');return}
+if(data.action==='manage'){view('devices');previewManage(d);return}
+if(data.action==='rename'){
+if(d.status==='revogado'){notify('Computador revogado.');return}
+const next=prompt('Nome amigável do caixa:',d.name);
+if(next!==null&&next.trim()){d.name=next.trim().slice(0,50);renderDevices();notify('Nome atualizado na simulação. O ID permanece o mesmo.')}
+return}
+if(data.action==='revoke'){
+if(d.status==='revogado')return;
+confirmAction('Revogar este computador?','Este computador deixará de enviar novos pedidos ao Avisaqui. Os outros caixas continuarão funcionando. Eventos pendentes deverão ser tratados antes de qualquer reenvio.',()=>{if(state.serverDown){notify('Servidor indisponível. Revogação não confirmada.');return}d.status='revogado';d.pending=2;renderDevices();notify('Revogação demonstrativa confirmada. Histórico preservado.')},true);return}
+if(data.action==='replace'){state.name=d.name;reset();view('computer');return}
 }
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>view(b.dataset.view));
 function renderPending(){
@@ -144,7 +183,7 @@ $('scenario-disconnect').onclick=()=>{const d=state.devices.find(x=>x.status==='
 $('scenario-server').onclick=()=>{state.serverDown=!state.serverDown;notify(state.serverDown?'Servidor indisponível (simulação).':'Servidor simulado disponível.')};
 const deep=new URLSearchParams(location.search);if(deep.get('incorporado')==='1')document.documentElement.classList.add('embedded');if(deep.has('solicitacao')){state.ref=deep.get('solicitacao').slice(0,30);if(state.ref!=='DEMO-A1')state.phase='expired'}
 refresh();view(['computer','mobile','devices','pending'].includes(location.hash.slice(1))?location.hash.slice(1):'computer');
-window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==window.parent)return;if(e.data?.avisaquiPreview==='measure')reportHeight();if(e.data?.avisaquiPreview==='view'&&['computer','mobile','devices','pending'].includes(e.data.view))view(e.data.view)});
+window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==window.parent)return;if(e.data?.avisaquiPreview==='measure'){reportHeight();reportDevices()}if(e.data?.avisaquiPreview==='device-action')deviceCommand(e.data);if(e.data?.avisaquiPreview==='view'&&['computer','mobile','devices','pending'].includes(e.data.view))view(e.data.view)});
 if(window.parent!==window){new ResizeObserver(reportHeight).observe(document.body);window.addEventListener('load',reportHeight);reportHeight()}
 
 })();
