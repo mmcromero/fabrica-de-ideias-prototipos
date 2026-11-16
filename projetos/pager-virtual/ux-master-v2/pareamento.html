@@ -77,7 +77,7 @@ if(previous){state.devices=previous.devices;state.pending=previous.pending}
 else{state.devices=[{id:'CAIXA-DEMO-CAF-001',name:'Caixa Principal',last:'não confirmada',approvedBy:'Gerente demonstrativo',status:'vinculado',connection:'Comunicação não verificada',linkedAt:'15/11/2026 (simulação)',pending:0}];state.pending=[]}
 state.name='Novo caixa';state.phase='waiting';state.retrieval='not-started';state.offline=false;
 }
-state.restaurant={id:next.id,name:next.name.slice(0,120),slug:String(next.slug||'').slice(0,80),logo:next.logo==='./logo-cafe-demonstrativo.svg'?'./logo-cafe-demonstrativo.svg':'./logo-restaurante-exemplo.svg',role:next.role==='master'?'master':'gerente'};
+state.restaurant={id:next.id,name:next.name.slice(0,120),slug:String(next.slug||'').slice(0,80),logo:['./logo-restaurante-exemplo.svg','./logo-cafe-demonstrativo.svg','./restaurante-ilustrativo.svg'].includes(next.logo)?next.logo:'./restaurante-ilustrativo.svg',role:next.role==='master'?'master':'gerente'};
 $('pair-restaurant-logo').src=state.restaurant.logo;
 $('pair-restaurant-logo').alt='Logo demonstrativo de '+state.restaurant.name;
 $('pair-restaurant-name').textContent=state.restaurant.name;
