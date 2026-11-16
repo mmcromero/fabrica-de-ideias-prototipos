@@ -42,6 +42,7 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 .pairing-parent-heading{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin:0 0 12px}
 #pairing-frame{width:100%;min-height:820px;height:900px;border:0;display:block;background:#090e17;border-radius:13px}
 @media(max-width:700px){.print-step{gap:9px}.pairing-parent-heading h2{font-size:1.05rem}.pairing-parent-heading button{font-size:.82rem;padding:8px 10px}#pairing-frame{min-height:900px}}
+.legacy-reference{margin-top:16px;border-top:1px solid #334155;padding-top:12px}.legacy-reference summary{cursor:pointer;color:#acbfd6;font-size:.9rem}.legacy-reference p{margin:10px 0 4px}.print-credentials strong{display:block;font-size:.95rem}
 </style>
 </head>
 <body>
@@ -72,26 +73,25 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 <h2>Integração de impressão</h2>
 <p class="muted" style="margin:8px 0 15px">Os computadores de caixa enviam pedidos ao Avisaqui. A impressora física continua funcionando de forma independente.</p>
 <section class="print-card">
-<div class="print-step"><span class="step-number">1</span><div><h2>Vincular computador</h2><p>Abra o agente no caixa. Peça ao gerente para ler o QR Code e autorizar o computador pelo celular. O código numérico é uma alternativa.</p></div></div>
-<div class="flow"><button type="button" data-go="pairing" data-pair-view="computer">Vincular um computador</button><button type="button" class="secondary" data-go="pairing" data-pair-view="devices">Computadores vinculados</button></div>
-<p class="muted small">O pareamento é uma proposta visual em revisão. Não gera credenciais reais.</p>
+<div class="print-step"><span class="step-number">1</span><div><h2>Conectar computador de caixa</h2><p>Abra o Avisaqui no computador. O gerente lê o QR Code ou informa o código temporário no próprio celular e autoriza o vínculo. O operador não copia credenciais nem faz login como gerente no Windows.</p></div></div>
+<div class="flow"><button type="button" data-go="pairing" data-pair-view="computer">Vincular novo caixa</button><button type="button" class="secondary" data-go="pairing" data-pair-view="devices">Gerenciar computadores</button></div>
+<p class="muted small">Um caixa recebe sua própria identidade e credencial protegida após a aprovação e a confirmação do agente. Este protótipo apenas demonstra o fluxo.</p>
 </section>
 <section class="print-card">
-<div class="print-step"><span class="step-number">2</span><div><h2>Últimos recebimentos</h2><p>Consulte os pedidos recebidos pelo agente. Eventos duplicados ficam pendentes para revisão, sem criar duas chamadas idênticas no KDS.</p></div></div>
+<div class="print-step"><span class="step-number">2</span><div><h2>Recebimentos e pendências</h2><p>Consulte os eventos recebidos dos caixas. Cada pedido precisa preservar restaurante, caixa, origem, evento e número comercial. Uma duplicidade não cria automaticamente outra chamada no KDS.</p></div></div>
 <button id="print-refresh" type="button" class="secondary" data-action="refresh">Atualizar agora</button>
 <ul class="print-events" id="print-events"><li>#208 · CRIADO · 15/11/2026, 14:41:07 · evento simulado</li><li>#207 · CRIADO · 15/11/2026, 12:15:23 · evento simulado</li><li>#206 · CRIADO · 15/11/2026, 12:15:22 · evento simulado</li><li>#205 · PENDENTE_DUPLICADO · 15/11/2026, 10:40:23 · evento simulado</li><li>#205 · CRIADO · 15/11/2026, 10:38:54 · evento simulado</li><li>#204 · CRIADO · 15/11/2026, 10:37:56 · evento simulado</li><li>#203 · CRIADO · 15/11/2026, 02:19:02 · evento simulado</li></ul>
 <div class="flow"><button type="button" data-go="pairing" data-pair-view="pending" class="secondary">Revisar pendências</button></div>
 </section>
-<section class="print-card"><div class="print-step"><span class="step-number">3</span><div><h2>Agente Windows</h2><p>O agente identifica números de pedidos e envia os eventos. No fluxo proposto, não exige CMD nem cópia manual de credenciais no uso comercial.</p></div></div>
-<p class="muted small">A configuração e a captura atuais do agente pertencem à integração existente. Pareamento não resolve falhas de captura, e nenhuma impressora é alterada no protótipo.</p>
+<section class="print-card"><div class="print-step"><span class="step-number">3</span><div><h2>Agente Windows</h2><p>O agente captura o número de pedido, mantém eventos pendentes em falhas de rede e comunica o KDS. Na experiência proposta, não exige CMD nem cópia manual de credenciais para parear.</p></div></div>
+<p class="muted small">A impressão física e a inclusão manual continuam independentes. O pareamento não resolve, por si só, perda de arquivos de captura ou pedidos já impressos com o agente desligado.</p>
 </section>
-<details class="print-legacy" id="print-legacy"><summary>Administração de credenciais existente (legado)</summary>
-<div class="print-card">
-<h2>Credenciais atuais</h2><p>Este fluxo já existe na aplicação. Está preservado aqui para análise e migração futura, sem ser o método principal proposto para novos caixas.</p>
-<button type="button" data-action="credential">Gerar credencial fictícia</button><p id="credential-result" class="muted" aria-live="polite"></p>
-<h3 class="print-subheading">Credenciais existentes</h3>
-<div class="print-credentials" id="print-credentials"><div><span class="print-key-code">exemplo-01</span> · 15/11/2026, 14:47 · Ativa</div><button type="button" class="danger" data-action="revoke">Revogar</button></div>
-<p class="muted small">Sem copiar, exibir ou criar credenciais válidas neste laboratório.</p>
+<details class="print-legacy" id="print-legacy"><summary>Credenciais anteriores e migração</summary>
+<div class="print-card"><h2>Computadores ainda não migrados</h2>
+<p>Chaves antigas seguem válidas até migração autorizada. O sistema não deve revogá-las automaticamente nem exigir novo pareamento sem planejamento.</p>
+<div class="print-credentials" id="print-credentials"><div><strong>Credencial anterior · Identidade do caixa ainda não vinculada</strong><p class="muted small">exemplo-01 · Criada em 15/11/2026 (dados fictícios) · Ativa</p></div><button type="button" class="danger" data-action="revoke">Revogar</button></div>
+<p class="muted small">A revogação individual exige confirmação e não apaga eventos. Novos caixas devem usar o pareamento. Não há geração nem cópia de chave no fluxo comercial proposto.</p>
+<details class="legacy-reference"><summary>Consultar funcionamento anterior (somente referência)</summary><p>A versão atual permite criar manualmente uma credencial e copiá-la para o agente Windows. Esse comportamento é documentado como legado, não como experiência aprovada para novos computadores.</p><button type="button" class="secondary" data-action="credential">Ver comportamento anterior (simulação)</button><p id="credential-result" class="muted" aria-live="polite"></p></details>
 </div></details>
 </div></section>
 <section class="page" id="pairing" hidden>
@@ -164,7 +164,7 @@ if(modalType==='sequence')state.seq=Number(data.number);
 if(modalType==='interest'){state.interests.push({name:data.name,phone:data.phone});renderInterests()}
 dirty=false;$('modal').close();toast('Ação realizada somente na simulação.')});
 $('modal-cancel').onclick=closeModal;$('modal-x').onclick=closeModal;$('modal').addEventListener('cancel',e=>{e.preventDefault();closeModal()});
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.go){if(b.dataset.go==='pairing')$('pairing-frame').dataset.pairView=b.dataset.pairView||'computer';navigate(b.dataset.go);}if(b.dataset.modal)openModal(b.dataset.modal);if(b.dataset.master){document.querySelectorAll('[data-master]').forEach(x=>x.classList.toggle('current',x===b));['restaurants','interests','settings'].forEach(k=>$('master-'+k).hidden=k!==b.dataset.master)}if(b.dataset.action==='refresh')toast('Lista de demonstração atualizada.');if(b.dataset.action==='credential'){$('credential-result').textContent='Credencial fictícia gerada somente nesta demonstração.'}if(b.dataset.action==='revoke'){if(confirm('Revogar esta credencial demonstrativa?')){$('print-credentials').textContent='Nenhuma credencial ativa';toast('Credencial demonstrativa revogada.')}}if(b.dataset.action==='sound'){state.sound=!state.sound;b.textContent=state.sound?'🔔 Som ligado':'🔔 Som desligado'}if(b.dataset.action==='games')toast('Jogos em estudo separado.');if(b.dataset.action==='reset'){if(confirm('Reiniciar a demonstração?'))location.reload()}});
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.go){if(b.dataset.go==='pairing')$('pairing-frame').dataset.pairView=b.dataset.pairView||'computer';navigate(b.dataset.go);}if(b.dataset.modal)openModal(b.dataset.modal);if(b.dataset.master){document.querySelectorAll('[data-master]').forEach(x=>x.classList.toggle('current',x===b));['restaurants','interests','settings'].forEach(k=>$('master-'+k).hidden=k!==b.dataset.master)}if(b.dataset.action==='refresh')toast('Lista de demonstração atualizada.');if(b.dataset.action==='credential'){$('credential-result').textContent='Antes: a credencial era mostrada para copiar. Novo fluxo aprovado: pareamento sem exibir ou copiar a chave. Nenhum segredo foi gerado.'}if(b.dataset.action==='revoke'){if(confirm('Revogar esta credencial anterior? Ela deixará de enviar pedidos. Os demais caixas continuam funcionando. Eventos pendentes permanecem para revisão.')){$('print-credentials').textContent='Credencial anterior revogada na simulação · Histórico e pendências preservados.';toast('Revogação demonstrativa confirmada. Nenhum servidor foi alterado.')}}if(b.dataset.action==='sound'){state.sound=!state.sound;b.textContent=state.sound?'🔔 Som ligado':'🔔 Som desligado'}if(b.dataset.action==='games')toast('Jogos em estudo separado.');if(b.dataset.action==='reset'){if(confirm('Reiniciar a demonstração?'))location.reload()}});
 $('screen').addEventListener('change',e=>{if(e.target.value==='pairing')$('pairing-frame').dataset.pairView='computer';navigate(e.target.value)});
 $('pairing-frame').addEventListener('load',()=>{if(!$('pairing').hidden)$('pairing-frame').contentWindow?.postMessage({avisaquiPreview:'view',view:$('pairing-frame').dataset.pairView||'computer'},location.origin)});
 $('login-form').addEventListener('submit',e=>{e.preventDefault();const role=new FormData(e.currentTarget).get('role');e.currentTarget.reset();navigate(role);toast('Acesso demonstrativo, sem autenticação real.')});
