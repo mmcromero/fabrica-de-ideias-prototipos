@@ -47,6 +47,11 @@ html.embedded .tabs{margin-top:2px}html.embedded .card{padding:15px}
 <section class="panel" id="devices" hidden><div class="between"><div><h1>Computadores vinculados</h1><p class="lead">Gestão por restaurante, com credenciais individuais.</p></div><button id="new-from-list" type="button">+ Vincular</button></div>
 <div class="devices" id="device-list"></div><div class="flow"><button type="button" class="outline" id="scenario-disconnect">Simular sem comunicação</button><button type="button" class="outline" id="scenario-server">Simular falha no servidor</button></div><div class="note">Estado de comunicação é apenas ilustrativo. Em produção, um vínculo não prova que o computador está online. A revogação deve bloquear novos envios, sem apagar eventos locais pendentes.</div></section>
 <section class="panel" id="pending" hidden><h1>Pendências de pedidos</h1><p class="lead">Conflitos de número comercial e eventos capturados. Nenhuma chamada duplicada é criada automaticamente.</p><div class="card"><div class="between"><h2>Aguardando decisão</h2><span class="pill amber" id="pending-count">2 pendências</span></div><div class="devices" id="pending-list"></div></div><div class="note">Ações apenas demonstrativas. “Já entregue” exige decisão humana. Contratos e permissões de conciliação ainda dependem do Tech Lead.</div></section>
+<dialog id="device-dialog" aria-labelledby="device-dialog-title">
+<div class="dialog-title"><h2 id="device-dialog-title">Gerenciar computador</h2><button class="secondary" id="device-dialog-x" type="button" aria-label="Fechar">×</button></div>
+<div id="device-dialog-details" class="device"></div>
+<div class="flow"><button type="button" class="secondary" id="device-dialog-rename">Renomear</button><button type="button" class="outline" id="device-dialog-replace">Substituir / parear</button><button type="button" class="danger" id="device-dialog-revoke">Revogar</button></div>
+</dialog>
 <dialog id="confirm-dialog"><div class="dialog-title"><h2 id="dialog-heading">Confirmar</h2><button class="secondary" id="dialog-x" type="button" aria-label="Fechar">×</button></div><p id="dialog-message"></p><div class="dialog-actions"><button class="secondary" id="dialog-back" type="button">Cancelar</button><button id="dialog-confirm" type="button">Confirmar</button></div></dialog>
 <div id="feedback" role="status" aria-live="polite" hidden></div>
 <footer>AVISAQUI-PAIR-001 · Protótipo UX isolado. Nenhum computador, credencial, pedido, servidor ou impressora real é modificado.</footer>
@@ -130,10 +135,21 @@ if(window.parent!==window&&document.documentElement.classList.contains('embedded
 const snapshot=state.devices.map(d=>({id:d.id,name:d.name,status:d.status,connection:d.connection||'Comunicação não verificada',last:d.last||'não confirmada',approvedBy:d.approvedBy||'Não informado',linkedAt:d.linkedAt||'15/11/2026 (simulação)',pending:d.pending||0}));
 window.parent.postMessage({avisaquiPreview:'devices',devices:snapshot},location.origin);
 }}
+let detailDeviceId=null;
 function previewManage(d){
-const msg='Identificador: '+d.id+'\nVínculo: '+d.status+'\nComunicação: '+(d.connection||'não verificada')+'\nÚltima comunicação: '+d.last+'\nData de vínculo: '+(d.linkedAt||'15/11/2026 (simulação)')+'\nAutorizou: '+d.approvedBy+'\n\nAqui é possível renomear, revogar ou iniciar novo pareamento.';
-confirmAction('Gerenciar '+d.name,msg,()=>view('devices'));
+detailDeviceId=d.id;
+$('device-dialog-title').textContent='Gerenciar '+d.name;
+const details=$('device-dialog-details');details.replaceChildren();
+for(const [label,value] of [['Nome',d.name],['Identificador permanente',d.id],['Estado do vínculo',d.status],['Comunicação',d.connection||'Não verificada'],['Última comunicação',d.last],['Data da vinculação',d.linkedAt||'15/11/2026 (simulação)'],['Autorizado por',d.approvedBy],['Pendências locais',String(d.pending||0)]]){
+const row=document.createElement('p');row.className='meta';row.textContent=label+': '+value;details.append(row)}
+$('device-dialog-rename').disabled=d.status==='revogado';
+$('device-dialog-revoke').disabled=d.status==='revogado';
+$('device-dialog').showModal();
 }
+$('device-dialog-x').onclick=()=>$('device-dialog').close();
+$('device-dialog-rename').onclick=()=>{const id=detailDeviceId;$('device-dialog').close();deviceCommand({id,action:'rename'});const d=state.devices.find(x=>x.id===id);if(d)previewManage(d)};
+$('device-dialog-replace').onclick=()=>{const id=detailDeviceId;$('device-dialog').close();deviceCommand({id,action:'replace'})};
+$('device-dialog-revoke').onclick=()=>{const id=detailDeviceId;$('device-dialog').close();deviceCommand({id,action:'revoke'})};
 function deviceCommand(data){
 const d=state.devices.find(x=>x.id===data.id);
 if(!d){notify('Computador não encontrado nesta simulação.');return}
