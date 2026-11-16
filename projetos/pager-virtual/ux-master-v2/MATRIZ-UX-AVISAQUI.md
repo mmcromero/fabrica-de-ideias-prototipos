@@ -109,3 +109,13 @@ Fonte recebida: GOV-COM-003, devolutiva Arquitetura e Segurança para Equipe X, 
 **Distribuição:** não existe versão comercial aprovada, URL final ou arquivo Windows autorizado nesta fonte. O protótipo não publica e não oferece downloads de executáveis. A simulação de disponibilidade não deve ser interpretada como autorização real.
 
 **Pendente:** testes de acesso, estado, segurança, contratos, disponibilidade, UX mobile e compatibilidade de captura/Windows. Impressão física e contingência manual não são alteradas.
+
+## Identidade visual e contexto de restaurante — revisão UX
+
+**Decisão do proprietário:** toda tela operada no contexto de um restaurante deve mostrar **nome + logotipo** de forma visível, inclusive quando o Master Admin seleciona um restaurante. Não basta o logotipo do próprio Avisaqui.
+
+**Protótipo unificado:** a lista geral do Master não indica restaurante ativo; ao acionar **Entrar** em um restaurante, a seleção passa para KDS e é preservada ao navegar por Gerente, Integração de impressão e Pareamento. Um cabeçalho de contexto informa nome, imagem demonstrativa, papel e identificador. A seleção de outro restaurante altera o cabeçalho e a lista demonstrativa de caixas, sem reutilizar os dispositivos do anterior. A etapa de autorização mobile repete o nome do restaurante.
+
+**Sem logo real:** neste laboratório foram criados dois logotipos **fictícios** de demonstração para Restaurante Exemplo e Café Demonstrativo. Restaurantes novos recebem imagem ilustrativa de reserva. Não existe envio, guarda ou serviço de logos implementado no Avisaqui real por esta mudança.
+
+**Responsabilidades futuras:** Tech Lead/Backend deve fornecer restaurante e URL/arquivo de logo autorizados por sessão e isolamento entre estabelecimentos. Windows deve refletir a identidade validada após o vínculo; antes disso, nome do restaurante é apenas o contexto da solicitação a confirmar. Nenhuma mensagem visual deve substituir verificação server-side de restaurante. Homologação visual mobile/desktop e dados reais permanecem pendentes.
