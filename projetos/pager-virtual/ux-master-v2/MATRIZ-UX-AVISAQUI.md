@@ -36,7 +36,7 @@
 | Envio do agente | `POST /api/integracoes/impressao/pedidos` | Origem e dispositivo estáveis, idempotência, conciliação de números ativos | Apenas encenação visual, sem API |
 | Pedido manual | KDS atual | Preservar a contingência | Tela KDS preservada |
 | Impressão física | Separada do agente | Deve permanecer independente | Mensagem explicativa; nenhuma ação de impressão real |
-| Pareamento QR | Não implementado na main | QR temporário, autorização gerente/Master, prova de posse e entrega individual | PC mostra QR; gerente autoriza; agente confirma separadamente |
+| Pareamento QR | Não implementado na main | QR temporário, gerente autoriza, agente recebe e conclui sem intervenção humana | PC mostra QR; gerente autoriza; simulação conclui vínculo automaticamente após confirmação fictícia do agente |
 | Código temporário | Não implementado | Alternativa ao QR, mesma solicitação | Campo demonstrativo e código fictício |
 | Computadores vinculados | Não implementado | Nome editável, ID permanente, responsável, vínculo e comunicação separados | Gerenciamento demonstrativo |
 | Conciliação | Registro `PENDENTE_DUPLICADO`, sem resolução completa na UI | Enviar KDS / Já entregue / Manter para revisão conforme permissão e contrato | Tela de pendências com confirmação; não cria chamadas |
@@ -63,8 +63,8 @@ Os nomes e contratos finais são responsabilidade do Tech Lead. **Não gerar req
 
 1. **Aguardando:** PC mostra QR e código da mesma solicitação, nome sugerido e prazo demonstrativo.
 2. **Sem sessão:** login do gerente no próprio celular; operador e gerente de outro restaurante não autorizam.
-3. **Aprovado:** mostrar *autorização recebida*, **não** *vinculado* até a confirmação separada do agente.
-4. **Resgate sem resposta:** consultar estado com o mesmo pedido; não emitir automaticamente nova credencial.
+3. **Aprovado:** mostrar *autorização aprovada*, **não** *vinculado* até confirmação técnica do agente. No fluxo comercial, o agente conclui automaticamente, sem exigir botão ou nova confirmação no PC.
+4. **Resgate sem resposta:** o aplicativo recupera automaticamente a mesma operação protegida quando a conexão volta; não emitir outra credencial. O botão de consulta é apenas um cenário de laboratório.
 5. **Vinculado:** nome/ID do caixa, aprovador, vínculo e comunicação separados.
 6. **Expirado/recusado/cancelado:** invalidar apresentação da solicitação; oferecer nova sem reaproveitar dados antigos.
 7. **Revogado:** bloquear novos envios na solução real, sem apagar eventos, sem afetar outros caixas.
@@ -90,3 +90,22 @@ Os nomes e contratos finais são responsabilidade do Tech Lead. **Não gerar req
 - Aprovação visual de cada alteração antes de transformar o protótipo em interface real.
 
 **Estado:** especificação e protótipo de UX em evolução; implantação real bloqueada até o processo de aprovação. O código do laboratório não comprova conformidade de back-end, Segurança ou Windows.
+
+## Atualização de UX — passagem Equipe X / Windows (15/11/2026)
+
+Fonte recebida: GOV-COM-003, devolutiva Arquitetura e Segurança para Equipe X, PR #23 e contrato Windows v0.2 em `docs/AVISAQUI_PAIR_001_CONTRATO_WINDOWS.md` (branch `feat/avisaqui-pair-001-nucleo`). **Esta fonte autoriza continuidade isolada, não merge, deploy ou distribuição comercial.**
+
+| Necessidade | Comportamento no laboratório | Dependência real |
+|---|---|---|
+| Download Windows | Botão `Baixar Avisaqui para Windows` desativado até existir uma versão aprovada; versão, data, disponibilidade, erro e cenário fictício de versão aprovada | Registro e artefato imutável, armazenamento durável, sessão gerente/master, integridade/proveniência, aprovação manual de publicação |
+| QR e código | Continuam na etapa do PC, sem senha/credencial; código fictício de 8 dígitos | Contratos finais QR, expiração, desafios e limites de abuso |
+| Aprovação mobile | Exige confirmação do gerente/Master na simulação; perfis sem permissão ou restaurante diferente são recusados visualmente | Autenticação, CSRF e isolamento real |
+| Conclusão de vínculo | Após aprovação, transição visual para `aprovado` e `vinculado` **automática** na simulação, sem clique adicional no computador | API transacional + cliente Windows + prova de posse + ACK, resgate seguro |
+| Falha de rede | Estado de aprovação é preservado; nova consulta ou restauração simulam recuperar a operação original, sem emitir segunda credencial | Envelopamento criptografado de resposta, confirmação e recuperação idempotente aprovados em contrato único |
+| Credenciais antigas | Área de migração e revogação permanece; nenhum legado é invalidado automaticamente | Migração aditiva aprovada |
+
+**Contratos ainda não homologados:** o contrato Windows v0.2 descreve Ed25519 e prova `avisaqui-pair-proof-v1`, mas o parecer posterior exige desafio por operação de uso único e resposta protegida/idempotente. Backend e Windows devem fechar juntos formato, finalidade, expiração, ACK, chaves e recuperação; **o protótipo não implementa criptografia**. Propostas iniciais de 8 dígitos, 5 minutos, 5 tentativas e consulta de 5 segundos não são limites homologados.
+
+**Distribuição:** não existe versão comercial aprovada, URL final ou arquivo Windows autorizado nesta fonte. O protótipo não publica e não oferece downloads de executáveis. A simulação de disponibilidade não deve ser interpretada como autorização real.
+
+**Pendente:** testes de acesso, estado, segurança, contratos, disponibilidade, UX mobile e compatibilidade de captura/Windows. Impressão física e contingência manual não são alteradas.

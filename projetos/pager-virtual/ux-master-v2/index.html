@@ -67,6 +67,7 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 .cashier-buttons button{margin:0!important;min-width:0;background:#26364b;padding:10px;font-size:.9rem}
 .cashier-card .cashier-pending{color:#fbbf24;font-size:.8rem;margin:8px 0}
 @media(max-width:370px){.cashier-top{align-items:flex-start}.cashier-card{padding:12px}.cashiers-metric{padding:10px}.cashier-buttons button{font-size:.83rem}}
+.windows-release{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin:16px 0 4px;padding:12px;border:1px solid #354a66;border-radius:12px;background:#0e192b}.windows-release p{margin:4px 0 0}.release-indicator{display:inline-block;border:1px solid #875e28;color:#fbbf24;border-radius:22px;padding:5px 9px;font-size:.78rem}.release-indicator.release-approved{border-color:#17735b;color:#6ee7b7}#windows-download-button{min-height:50px;width:100%}
 </style>
 </head>
 <body>
@@ -106,13 +107,22 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 <div id="cashiers-list" class="cashiers-list" aria-live="polite"><p class="muted">Carregando computadores demonstrativos…</p></div>
 <p class="muted small">Vínculo e comunicação são estados diferentes. Todas as informações desta área são fictícias.</p>
 </section>
+<section class="print-card" id="windows-download" aria-labelledby="windows-download-title">
+<div class="print-step"><span class="step-number">2</span><div><h2 id="windows-download-title">Aplicativo Avisaqui para Windows</h2><p>Instale o aplicativo no computador do caixa. Depois, abra o aplicativo e autorize pelo celular do gerente.</p></div></div>
+<div class="windows-release"><div><strong id="windows-release-state">Nenhuma versão aprovada disponível</strong><p class="muted small">Versão: <span id="windows-release-version">Não publicada</span> · Publicação: <span id="windows-release-date">Não informada</span></p></div><span class="release-indicator" id="windows-release-indicator">Indisponível</span></div>
+<div class="flow"><button type="button" disabled id="windows-download-button">Baixar Avisaqui para Windows</button></div>
+<p id="windows-download-message" role="status" class="muted small">O download ficará disponível somente após aprovação e publicação controlada de um pacote Windows. Nenhum instalador é disponibilizado neste laboratório.</p>
+<details class="print-legacy"><summary>Simular estados da distribuição (apenas laboratório)</summary>
+<div class="flow"><button class="secondary" type="button" data-action="release-approved">Versão aprovada (fictícia)</button><button class="secondary" type="button" data-action="release-unavailable">Pacote indisponível</button><button class="secondary" type="button" data-action="release-error">Falha ao baixar</button></div>
+<p class="muted small">Estas ações simulam a resposta do servidor. Não baixam arquivos e não publicam executáveis.</p></details>
+</section>
 <section class="print-card">
-<div class="print-step"><span class="step-number">2</span><div><h2>Recebimentos e pendências</h2><p>Consulte os eventos recebidos dos caixas. Cada pedido precisa preservar restaurante, caixa, origem, evento e número comercial. Uma duplicidade não cria automaticamente outra chamada no KDS.</p></div></div>
+<div class="print-step"><span class="step-number">3</span><div><h2>Recebimentos e pendências</h2><p>Consulte os eventos recebidos dos caixas. Cada pedido precisa preservar restaurante, caixa, origem, evento e número comercial. Uma duplicidade não cria automaticamente outra chamada no KDS.</p></div></div>
 <button id="print-refresh" type="button" class="secondary" data-action="refresh">Atualizar agora</button>
 <ul class="print-events" id="print-events"><li>#208 · CRIADO · 15/11/2026, 14:41:07 · evento simulado</li><li>#207 · CRIADO · 15/11/2026, 12:15:23 · evento simulado</li><li>#206 · CRIADO · 15/11/2026, 12:15:22 · evento simulado</li><li>#205 · PENDENTE_DUPLICADO · 15/11/2026, 10:40:23 · evento simulado</li><li>#205 · CRIADO · 15/11/2026, 10:38:54 · evento simulado</li><li>#204 · CRIADO · 15/11/2026, 10:37:56 · evento simulado</li><li>#203 · CRIADO · 15/11/2026, 02:19:02 · evento simulado</li></ul>
 <div class="flow"><button type="button" data-go="pairing" data-pair-view="pending" class="secondary">Revisar pendências</button></div>
 </section>
-<section class="print-card"><div class="print-step"><span class="step-number">3</span><div><h2>Agente Windows</h2><p>O agente captura o número de pedido, mantém eventos pendentes em falhas de rede e comunica o KDS. Na experiência proposta, não exige CMD nem cópia manual de credenciais para parear.</p></div></div>
+<section class="print-card"><div class="print-step"><span class="step-number">4</span><div><h2>Agente Windows</h2><p>O aplicativo mostra o QR Code no próprio computador. Após a autorização no celular, conclui o vínculo sem exigir outra confirmação do operador. O agente envia pedidos ao KDS e preserva eventos pendentes durante falhas de rede.</p></div></div>
 <p class="muted small">A impressão física e a inclusão manual continuam independentes. O pareamento não resolve, por si só, perda de arquivos de captura ou pedidos já impressos com o agente desligado.</p>
 </section>
 <details class="print-legacy" id="print-legacy"><summary>Credenciais anteriores e migração</summary>
@@ -149,6 +159,17 @@ interest:['Interesse no piloto','<label>Nome fictício<input class="field" name=
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e}
 function toast(message){$('toast').textContent=message;$('toast').hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').hidden=true,3000)}
 function navigate(id){if(!$(id)||!$(id).classList.contains('page'))id='master';document.querySelectorAll('.page').forEach(e=>e.hidden=e.id!==id);$('screen').value=id;history.replaceState(null,'','#'+id);window.scrollTo(0,0);if(id==='pairing')requestAnimationFrame(()=>{const f=$('pairing-frame');if(f&&f.contentWindow){f.contentWindow.postMessage({avisaquiPreview:'view',view:f.dataset.pairView||'computer'},location.origin);f.contentWindow.postMessage({avisaquiPreview:'measure'},location.origin)}})}
+function setWindowsRelease(mode){
+const approved=mode==='approved';
+$('windows-release-state').textContent=approved?'Pacote fictício aprovado (prévia)':mode==='error'?'Falha simulada na distribuição':'Nenhuma versão aprovada disponível';
+$('windows-release-version').textContent=approved?'DEMO — sem versão real':'Não publicada';
+$('windows-release-date').textContent=approved?'Data fictícia — não publicada':'Não informada';
+$('windows-release-indicator').textContent=approved?'Disponível (simulação)':'Indisponível';
+$('windows-release-indicator').className='release-indicator'+(approved?' release-approved':'');
+$('windows-download-button').disabled=!approved;
+$('windows-download-message').textContent=approved?'Prévia de uma versão aprovada. Ao clicar, será exibida uma demonstração; nenhum arquivo será baixado.':mode==='error'?'Não foi possível acessar o pacote demonstrativo. A versão anterior aprovada permaneceria disponível em produção.':'O download ficará disponível somente após aprovação e publicação controlada de um pacote Windows.';
+}
+$('windows-download-button').addEventListener('click',()=>toast('Download demonstrativo: nenhum executável foi enviado.'));
 function cashierAction(action,id,name){const f=$('pairing-frame');let newName;
 if(action==='rename'){const next=prompt('Nome amigável do caixa:',name||'');if(next===null)return;newName=next.trim().slice(0,50);if(!newName){toast('Informe um nome válido.');return}}
 f.dataset.pairView='devices';if(action==='manage')navigate('pairing');f.contentWindow?.postMessage({avisaquiPreview:'device-action',action,id,newName},location.origin)}
@@ -204,7 +225,10 @@ if(modalType==='sequence')state.seq=Number(data.number);
 if(modalType==='interest'){state.interests.push({name:data.name,phone:data.phone});renderInterests()}
 dirty=false;$('modal').close();toast('Ação realizada somente na simulação.')});
 $('modal-cancel').onclick=closeModal;$('modal-x').onclick=closeModal;$('modal').addEventListener('cancel',e=>{e.preventDefault();closeModal()});
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.go){if(b.dataset.go==='pairing')$('pairing-frame').dataset.pairView=b.dataset.pairView||'computer';navigate(b.dataset.go);}if(b.dataset.modal)openModal(b.dataset.modal);if(b.dataset.master){document.querySelectorAll('[data-master]').forEach(x=>x.classList.toggle('current',x===b));['restaurants','interests','settings'].forEach(k=>$('master-'+k).hidden=k!==b.dataset.master)}if(b.dataset.action==='refresh')toast('Lista de demonstração atualizada.');if(b.dataset.action==='credential'){$('credential-result').textContent='Antes: a credencial era mostrada para copiar. Novo fluxo aprovado: pareamento sem exibir ou copiar a chave. Nenhum segredo foi gerado.'}if(b.dataset.action==='revoke'){if(confirm('Revogar esta credencial anterior? Ela deixará de enviar pedidos. Os demais caixas continuam funcionando. Eventos pendentes permanecem para revisão.')){$('print-credentials').textContent='Credencial anterior revogada na simulação · Histórico e pendências preservados.';toast('Revogação demonstrativa confirmada. Nenhum servidor foi alterado.')}}if(b.dataset.action==='sound'){state.sound=!state.sound;b.textContent=state.sound?'🔔 Som ligado':'🔔 Som desligado'}if(b.dataset.action==='games')toast('Jogos em estudo separado.');if(b.dataset.action==='reset'){if(confirm('Reiniciar a demonstração?'))location.reload()}});
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.go){if(b.dataset.go==='pairing')$('pairing-frame').dataset.pairView=b.dataset.pairView||'computer';navigate(b.dataset.go);}if(b.dataset.modal)openModal(b.dataset.modal);if(b.dataset.master){document.querySelectorAll('[data-master]').forEach(x=>x.classList.toggle('current',x===b));['restaurants','interests','settings'].forEach(k=>$('master-'+k).hidden=k!==b.dataset.master)}if(b.dataset.action==='refresh')toast('Lista de demonstração atualizada.');
+if(b.dataset.action==='release-approved')setWindowsRelease('approved');
+if(b.dataset.action==='release-unavailable')setWindowsRelease('unavailable');
+if(b.dataset.action==='release-error')setWindowsRelease('error');if(b.dataset.action==='credential'){$('credential-result').textContent='Antes: a credencial era mostrada para copiar. Novo fluxo aprovado: pareamento sem exibir ou copiar a chave. Nenhum segredo foi gerado.'}if(b.dataset.action==='revoke'){if(confirm('Revogar esta credencial anterior? Ela deixará de enviar pedidos. Os demais caixas continuam funcionando. Eventos pendentes permanecem para revisão.')){$('print-credentials').textContent='Credencial anterior revogada na simulação · Histórico e pendências preservados.';toast('Revogação demonstrativa confirmada. Nenhum servidor foi alterado.')}}if(b.dataset.action==='sound'){state.sound=!state.sound;b.textContent=state.sound?'🔔 Som ligado':'🔔 Som desligado'}if(b.dataset.action==='games')toast('Jogos em estudo separado.');if(b.dataset.action==='reset'){if(confirm('Reiniciar a demonstração?'))location.reload()}});
 $('screen').addEventListener('change',e=>{if(e.target.value==='pairing')$('pairing-frame').dataset.pairView='computer';navigate(e.target.value)});
 $('pairing-frame').addEventListener('load',()=>{const f=$('pairing-frame');f.contentWindow?.postMessage({avisaquiPreview:'measure'},location.origin);if(!$('pairing').hidden)f.contentWindow?.postMessage({avisaquiPreview:'view',view:f.dataset.pairView||'computer'},location.origin)});
 $('login-form').addEventListener('submit',e=>{e.preventDefault();const role=new FormData(e.currentTarget).get('role');e.currentTarget.reset();navigate(role);toast('Acesso demonstrativo, sem autenticação real.')});
