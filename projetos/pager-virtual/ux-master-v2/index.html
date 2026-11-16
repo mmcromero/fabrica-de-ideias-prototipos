@@ -43,6 +43,7 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 #pairing-frame{width:100%;min-height:820px;height:900px;border:0;display:block;background:#090e17;border-radius:13px}
 @media(max-width:700px){.print-step{gap:9px}.pairing-parent-heading h2{font-size:1.05rem}.pairing-parent-heading button{font-size:.82rem;padding:8px 10px}#pairing-frame{min-height:900px}}
 .legacy-reference{margin-top:16px;border-top:1px solid #334155;padding-top:12px}.legacy-reference summary{cursor:pointer;color:#acbfd6;font-size:.9rem}.legacy-reference p{margin:10px 0 4px}.print-credentials strong{display:block;font-size:.95rem}
+.restaurant-thumb{width:58px;height:58px;flex:none;border-radius:11px;object-fit:cover;border:1px solid #3a526f;background:#24364a}@media(max-width:350px){.restaurant-thumb{width:48px;height:48px}}
 </style>
 </head>
 <body>
@@ -124,7 +125,7 @@ window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==
 function renderRestaurants(){
 $('rest-count').textContent=state.restaurants.length;
 const root=$('restaurant-list');root.replaceChildren();
-state.restaurants.forEach(r=>{const line=el('div',undefined,'entry');const info=el('div',undefined,'info');info.append(el('div',r.name,'name'),el('div',r.slug,'sub'));const b=el('button','Entrar');b.onclick=()=>{state.selected=r.id;navigate('kds');toast('Restaurante selecionado somente na simulação.')};line.append(info,b);root.append(line)});
+state.restaurants.forEach(r=>{const line=el('div',undefined,'entry');const info=el('div',undefined,'info');info.append(el('div',r.name,'name'),el('div',r.slug,'sub'));const thumb=el('img',undefined,'restaurant-thumb');thumb.src='./restaurante-ilustrativo.svg';thumb.alt='Imagem ilustrativa de '+r.name;thumb.width=58;thumb.height=58;thumb.loading='lazy';const b=el('button','Entrar');b.onclick=()=>{state.selected=r.id;navigate('kds');toast('Restaurante selecionado somente na simulação.')};line.append(thumb,info,b);root.append(line)});
 }
 function renderInterests(){$('interest-count').textContent=state.interests.length;const root=$('interest-list');root.replaceChildren();if(!state.interests.length)root.append(el('p','Nenhum interessado na simulação.','muted'));state.interests.forEach(c=>root.append(el('div',c.name+' · '+c.phone,'entry')))}
 function renderTerminals(){const root=$('terminals');root.replaceChildren();state.terminals.forEach((t,i)=>{const line=el('div',undefined,'entry');line.append(el('div',t.name+(t.active?' · Ativo':' · Desativado'),'info'));const b=el('button',t.active?'Desativar':'Reativar','secondary');b.onclick=()=>{t.active=!t.active;renderTerminals()};line.append(b);root.append(line)})}
