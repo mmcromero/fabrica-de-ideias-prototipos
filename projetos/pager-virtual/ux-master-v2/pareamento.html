@@ -28,14 +28,16 @@ html.embedded .tabs{margin-top:2px}html.embedded .card{padding:15px}
 <section class="panel" id="computer">
 <div class="between"><div><h1>Vincular este computador</h1><p class="lead">Peça ao gerente para ler o QR Code com o celular e autorizar este caixa.</p></div><span id="computer-badge" class="pill amber">Aguardando aprovação</span></div>
 <div class="split"><div class="card"><h2>1. Leia o QR Code</h2><div id="qr" class="qr-container" aria-label="QR Code da prévia de autorização"></div><p class="muted small" style="text-align:center">Aponte o celular do gerente para continuar.</p><button class="secondary" type="button" id="simulate-scan" style="width:100%;margin-top:12px">Simular leitura do QR no celular</button></div>
-<div class="card"><h2>2. Ou use o código</h2><p class="muted small">Não consegue ler o QR Code? Informe o código no painel do gerente.</p><div class="number" id="pair-code">482 731</div>
+<div class="card"><h2>2. Ou use o código</h2><p class="muted small">Não consegue ler o QR Code? Informe o código no painel do gerente.</p><div class="number" id="pair-code">4827 3146</div>
 <p class="muted small">Validade demonstrativa: <strong id="expiry-label">Aguardando aprovação</strong></p>
 <div class="keyvalue"><span>Nome sugerido</span><strong id="computer-name">Caixa 1</strong></div><div class="keyvalue"><span>Solicitação</span><strong id="request-ref">DEMO-A1</strong></div><div class="keyvalue"><span>Estado</span><strong id="computer-status">Aguardando aprovação do gerente</strong></div>
 <div class="flow"><button class="secondary" id="regenerate" type="button">Gerar novo</button><button class="outline" id="cancel-pair" type="button">Cancelar</button></div></div></div>
 <div class="note">O QR contém somente uma referência fictícia da solicitação. Não contém senha nem credencial. Prazo de expiração real ainda depende de revisão técnica; use o botão abaixo para simular o vencimento.</div>
 <div class="flow"><button class="outline" id="simulate-expire" type="button">Simular expiração</button><button class="outline" id="simulate-offline" type="button">Simular perda de conexão</button></div>
+<div class="card" id="agent-outcome" hidden><h2 id="agent-outcome-title">Autorização recebida</h2><p class="lead" id="agent-outcome-desc">Aguardando confirmação do agente.</p><div class="flow"><button type="button" id="agent-confirm">Simular confirmação do agente</button><button type="button" class="outline" id="agent-lost">Simular resposta perdida</button><button type="button" class="secondary" id="agent-retry">Consultar novamente</button></div></div>
 </section>
-<section class="panel" id="mobile" hidden><h1>Autorizar novo computador</h1><p class="lead">Prévia de tela para gerente ou Master autenticado no próprio celular.</p>
+<section class="panel" id="mobile" hidden><h1>Autorizar computador</h1><p class="lead">O gerente ou Master autoriza usando a sessão no próprio celular. Não há instalação de aplicativo no celular.</p>
+<div class="card" id="auth-preview"><h2>Sessão no celular (demonstração)</h2><p class="muted small">Simule quem está acessando. Na aplicação real, o servidor valida sessão, perfil e restaurante.</p><label class="label" for="auth-role">Perfil</label><select class="field" id="auth-role"><option value="gerente">Gerente do Restaurante Exemplo</option><option value="master">Master autorizado</option><option value="operador">Operador sem permissão</option><option value="outro">Gerente de outro restaurante</option><option value="sem-sessao">Sem sessão (login necessário)</option></select><p id="auth-message" class="muted small">Sessão demonstrativa de gerente selecionada.</p><div class="flow"><button type="button" class="secondary" id="simulate-login">Simular login pelo celular</button></div></div>
 <div class="card" id="mobile-step-code"><h2>Usar código alternativo</h2><p class="muted">Informe o código mostrado no computador do caixa.</p><label class="label" for="code-input">Código temporário</label><input class="field" id="code-input" inputmode="numeric" maxlength="9" placeholder="0000 0000"><div class="flow"><button id="code-continue" type="button">Continuar</button><button type="button" class="secondary" id="use-qr">Visualizar solicitação do QR</button></div></div>
 <div class="card" id="mobile-request" hidden><div class="between"><h2>Solicitação de vínculo</h2><span class="pill amber" id="mobile-badge">Pendente</span></div>
 <div class="keyvalue"><span>Restaurante</span><strong>Restaurante Exemplo</strong></div><div class="keyvalue"><span>Computador</span><strong id="manager-computer-name">Caixa 1</strong></div><div class="keyvalue"><span>Solicitação</span><strong id="manager-request-id">DEMO-A1</strong></div><div class="keyvalue"><span>Prazo</span><strong id="manager-deadline">Valor a definir</strong></div>
@@ -53,41 +55,61 @@ html.embedded .tabs{margin-top:2px}html.embedded .card{padding:15px}
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
-const state={pending:[{id:'EV-DEMO-001',restaurant:'Restaurante Exemplo',device:'Caixa Balcão',number:'205',captured:'15/11/2026 10:38',received:'15/11/2026 10:39',status:'Número ativo em revisão'},{id:'EV-DEMO-002',restaurant:'Restaurante Exemplo',device:'Caixa 2',number:'205',captured:'15/11/2026 10:40',received:'15/11/2026 10:41',status:'Possível duplicidade'}],serverDown:false,seq:1,ref:'DEMO-A1',code:'48273146',name:'Caixa 1',phase:'waiting',devices:[{id:'CAIXA-DEMO-001',name:'Caixa Balcão',last:'Última comunicação: exemplo ilustrativo',approvedBy:'Gerente demonstrativo',status:'vinculado',pending:0}],offline:false};
+const state={retrieval:'not-started',pending:[{id:'EV-DEMO-001',restaurant:'Restaurante Exemplo',device:'Caixa Balcão',number:'205',captured:'15/11/2026 10:38',received:'15/11/2026 10:39',status:'Número ativo em revisão'},{id:'EV-DEMO-002',restaurant:'Restaurante Exemplo',device:'Caixa 2',number:'205',captured:'15/11/2026 10:40',received:'15/11/2026 10:41',status:'Possível duplicidade'}],serverDown:false,seq:1,ref:'DEMO-A1',code:'48273146',name:'Caixa 1',phase:'waiting',devices:[{id:'CAIXA-DEMO-001',name:'Caixa Balcão',last:'Última comunicação: exemplo ilustrativo',approvedBy:'Gerente demonstrativo',status:'vinculado',pending:0}],offline:false};
 let onConfirm=null;
 function reportHeight(){if(window.parent!==window&&document.documentElement.classList.contains('embedded')){const height=Math.ceil(Math.max(document.body.scrollHeight,document.documentElement.scrollHeight))+16;window.parent.postMessage({avisaquiPreview:'height',height},location.origin)}}
 function notify(txt){const f=$('feedback');f.textContent=txt;f.hidden=false;clearTimeout(notify.timer);notify.timer=setTimeout(()=>f.hidden=true,3500)}
 function view(id){document.querySelectorAll('.panel').forEach(p=>p.hidden=p.id!==id);document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.view===id)));history.replaceState(null,'',location.pathname+location.search+'#'+id);window.scrollTo(0,0);reportHeight()}
 function refreshQr(){const target=$('qr');target.replaceChildren();const url=new URL(location.href);url.searchParams.delete('incorporado');url.searchParams.set('solicitacao',state.ref);url.hash='mobile';try {new QRCode(target,{text:url.toString(),width:210,height:210,correctLevel:QRCode.CorrectLevel.M})}catch(e){target.textContent='QR indisponível. Use o código alternativo.'}}
-function reset(){state.seq++;state.ref='DEMO-A'+state.seq;state.code=String(48273145+state.seq);state.phase='waiting';state.offline=false;$('code-input').value='';$('mobile-request').hidden=true;$('mobile-result').hidden=true;$('mobile-step-code').hidden=false;refresh()}
+function reset(){state.seq++;state.ref='DEMO-A'+state.seq;state.code=String(48273145+state.seq);state.phase='waiting';state.offline=false;state.retrieval='not-started';$('code-input').value='';$('mobile-request').hidden=true;$('mobile-result').hidden=true;$('mobile-step-code').hidden=false;refresh()}
 function refresh(){
-$('pair-code').textContent=state.code.slice(0,4)+' '+state.code.slice(4);
+$('pair-code').textContent=state.phase==='waiting'?state.code.slice(0,4)+' '+state.code.slice(4):'— — —';$('qr').style.visibility=state.phase==='waiting'?'visible':'hidden';
 $('request-ref').textContent=state.ref;$('manager-request-id').textContent=state.ref;$('manager-deadline').textContent=state.phase==='waiting'?'Temporário (parâmetro pendente)':state.phase==='expired'?'Expirado':'Encerrado';
 $('computer-name').textContent=state.name;$('manager-computer-name').textContent=state.name;
-const labels={waiting:'Aguardando aprovação do gerente',approved:'Autorizado — concluindo vínculo',linked:'Caixa vinculado',denied:'Solicitação recusada',expired:'Código expirado',cancelled:'Solicitação cancelada'};
+const labels={waiting:'Aguardando aprovação do gerente',approved:'Autorização recebida — aguardando agente',linked:'Caixa vinculado',denied:'Solicitação recusada',expired:'Código expirado',cancelled:'Solicitação cancelada'};
 $('computer-status').textContent=state.offline?'Sem conexão — aguarde ou tente novamente':labels[state.phase];
 $('expiry-label').textContent=state.phase==='waiting'?'Temporário (prazo a definir)':state.phase==='expired'?'Expirado':'Sem prazo em andamento';
 $('computer-badge').textContent=state.offline?'Sem conexão':state.phase==='linked'?'Vinculado':labels[state.phase];
 $('computer-badge').className='pill '+(state.phase==='linked'?'green':(['expired','denied','cancelled'].includes(state.phase)?'red':'amber'));
 $('mobile-badge').textContent=state.phase==='waiting'?'Aguardando':labels[state.phase];
+$('agent-outcome').hidden=!['approved','linked'].includes(state.phase);
+$('agent-outcome-title').textContent=state.phase==='linked'?'Caixa vinculado (simulação)':'Autorizado — falta confirmar o agente';
+$('agent-outcome-desc').textContent=state.phase==='linked'?'O computador concluiu o vínculo demonstrativo. Comunicação real não verificada.':state.retrieval==='lost'?'A resposta foi perdida. Consulte o estado sem criar outra credencial.':'A confirmação do agente ainda não chegou. A aprovação do gerente não é sucesso final.';
+$('agent-confirm').disabled=state.phase!=='approved'||state.serverDown||state.offline;
+$('agent-lost').disabled=state.phase!=='approved';
+$('agent-retry').disabled=state.phase!=='approved';
+
 refreshQr();renderDevices();renderPending();
 }
 function confirmAction(title,msg,fn,danger=false){onConfirm=fn;$('dialog-heading').textContent=title;$('dialog-message').textContent=msg;$('dialog-confirm').textContent=danger?'Confirmar revogação':'Confirmar';$('dialog-confirm').className=danger?'danger':'';$('confirm-dialog').showModal()}
 function closeConfirm(){$('confirm-dialog').close();onConfirm=null}
 $('dialog-x').onclick=closeConfirm;$('dialog-back').onclick=closeConfirm;
 $('dialog-confirm').onclick=()=>{const f=onConfirm;closeConfirm();if(f)f()};
+function canManage(){const role=$('auth-role').value;return role==='gerente'||role==='master'}
 function showRequest(){
-if(state.serverDown){notify('Servidor indisponível. Tente consultar novamente.');return}if(state.phase!=='waiting'){notify('Esta solicitação não está mais disponível. Gere uma nova.');return}
+if(state.serverDown){notify('Servidor indisponível. Tente consultar novamente.');return}if(!canManage()){notify($('auth-role').value==='sem-sessao'?'Faça login no celular antes de autorizar.':'Este perfil ou restaurante não tem permissão.');return}if(state.phase!=='waiting'){notify('Esta solicitação não está mais disponível. Gere uma nova.');return}
 $('mobile-step-code').hidden=true;$('mobile-result').hidden=true;$('mobile-request').hidden=false;refresh();
 }
 function result(title,message){$('mobile-step-code').hidden=true;$('mobile-request').hidden=true;$('mobile-result').hidden=false;$('mobile-result-title').textContent=title;$('mobile-result-text').textContent=message}
-$('approve').onclick=()=>{if(state.serverDown){notify('Servidor indisponível. Nenhuma autorização foi confirmada.');return}if(state.phase!=='waiting'){notify('Solicitação indisponível.');return}confirmAction('Autorizar computador?','Confirme que Caixa 1 pertence ao Restaurante Exemplo. Nesta prévia a autorização é somente visual.',()=>{state.phase='approved';refresh();result('Autorização simulada','Aguardando o computador concluir o vínculo. Nenhuma credencial real foi criada.');setTimeout(()=>{if(state.phase==='approved'){state.phase='linked';state.devices.push({id:'CAIXA-DEMO-'+String(state.seq+1).padStart(3,'0'),name:state.name,last:'Ainda não há comunicação verificada',approvedBy:'Gerente demonstrativo',status:'vinculado',pending:0});refresh()}},550)})};
-$('deny').onclick=()=>confirmAction('Recusar solicitação?','O computador não será vinculado.',()=>{state.phase='denied';refresh();result('Solicitação recusada','Nenhum computador foi vinculado.')});
+function finishAgent(){
+if(state.phase!=='approved'){notify('Não há aprovação pendente de confirmação.');return}
+if(state.serverDown||state.offline){state.retrieval='lost';refresh();notify('A comunicação falhou. Nenhum novo vínculo foi criado.');return}
+state.phase='linked';state.retrieval='confirmed';
+if(!state.devices.some(d=>d.request===state.ref))state.devices.push({id:'CAIXA-DEMO-'+String(state.seq+1).padStart(3,'0'),request:state.ref,name:state.name,last:'Ainda não há comunicação verificada',approvedBy:'Gerente demonstrativo',status:'vinculado',pending:0});
+refresh();notify('Agente confirmou o vínculo somente nesta simulação.');
+}
+$('agent-confirm').onclick=finishAgent;
+$('agent-lost').onclick=()=>{if(state.phase!=='approved')return;state.retrieval='lost';refresh();notify('Resposta perdida: não gerar outra credencial.')};
+$('agent-retry').onclick=()=>{if(state.phase!=='approved')return;if(state.serverDown||state.offline){notify('Sem resposta do servidor/agente. Estado preservado.');return}notify('Solicitação aprovada. Falta a confirmação do agente; nenhuma credencial adicional foi criada.')};
+$('auth-role').addEventListener('change',()=>{$('auth-message').textContent=canManage()?'Perfil autorizado apenas nesta demonstração.':$('auth-role').value==='sem-sessao'?'Entre no painel pelo celular.':'Acesso não autorizado para este restaurante/perfil.'});
+$('simulate-login').onclick=()=>{if($('auth-role').value==='sem-sessao'){$('auth-role').value='gerente';$('auth-message').textContent='Login ilustrativo concluído no celular. Nenhuma autenticação real ocorreu.';}else notify('Sessão demonstrativa já selecionada.')};
+$('approve').onclick=()=>{if(state.serverDown){notify('Servidor indisponível. Nenhuma autorização foi confirmada.');return}if(!canManage()){notify('Acesso não autorizado.');return}if(state.phase!=='waiting'){notify('Solicitação indisponível.');return}confirmAction('Autorizar computador?','Confirme que o computador pertence ao Restaurante Exemplo. A leitura do QR não autoriza automaticamente.',()=>{if(state.phase!=='waiting'){notify('Solicitação encerrada.');return}state.phase='approved';refresh();result('Autorização recebida (simulação)','No computador, ainda é necessária a confirmação do agente. Nenhuma credencial real foi criada.')})};
+$('deny').onclick=()=>{if(!canManage()){notify('Acesso não autorizado.');return}confirmAction('Recusar solicitação?','O computador não será vinculado.',()=>{if(state.phase!=='waiting')return;state.phase='denied';refresh();result('Solicitação recusada','Nenhum computador foi vinculado.')})};
 $('code-continue').onclick=()=>{if($('code-input').value.replace(/\D/g,'')!==state.code){notify('Código incorreto ou não encontrado na simulação.');return}showRequest()};
 $('use-qr').onclick=showRequest;$('simulate-scan').onclick=()=>{view('mobile');showRequest()};
-$('regenerate').onclick=()=>{reset();notify('Nova solicitação demonstrativa criada.')};
+$('regenerate').onclick=()=>{if(state.phase==='approved'){notify('Autorização em andamento. Consulte o estado antes de gerar outro vínculo.');return}reset();notify('Nova solicitação demonstrativa criada.')};
 $('cancel-pair').onclick=()=>confirmAction('Cancelar pareamento?','O código atual deixará de ser utilizável.',()=>{state.phase='cancelled';refresh()});
-$('simulate-expire').onclick=()=>{state.phase='expired';refresh();notify('Solicitação demonstrativa expirada.')};
+$('simulate-expire').onclick=()=>{if(state.phase==='waiting'){state.phase='expired';refresh();notify('Solicitação demonstrativa expirada.')}else notify('Somente solicitações aguardando autorização podem expirar nesta simulação.')};
 $('simulate-offline').onclick=()=>{state.offline=!state.offline;refresh();notify(state.offline?'Conexão interrompida na simulação.':'Conexão restaurada na simulação.')};
 $('mobile-again').onclick=()=>{view('computer');reset()};
 $('new-from-list').onclick=()=>{reset();view('computer')};
