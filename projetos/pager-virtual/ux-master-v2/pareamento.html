@@ -156,7 +156,7 @@ if(!d){notify('Computador não encontrado nesta simulação.');return}
 if(data.action==='manage'){view('devices');previewManage(d);return}
 if(data.action==='rename'){
 if(d.status==='revogado'){notify('Computador revogado.');return}
-const next=prompt('Nome amigável do caixa:',d.name);
+const next=typeof data.newName==='string'?data.newName:prompt('Nome amigável do caixa:',d.name);
 if(next!==null&&next.trim()){d.name=next.trim().slice(0,50);renderDevices();notify('Nome atualizado na simulação. O ID permanece o mesmo.')}
 return}
 if(data.action==='revoke'){
