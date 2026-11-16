@@ -103,7 +103,7 @@ state.phase='linked';state.retrieval='confirmed';
 if(!state.devices.some(d=>d.request===state.ref))state.devices.push({id:'CAIXA-DEMO-'+String(state.seq+1).padStart(3,'0'),request:state.ref,name:state.name,last:'Ainda não há comunicação verificada',approvedBy:'Gerente demonstrativo',status:'vinculado',pending:0});
 refresh();notify('Agente confirmou o vínculo somente nesta simulação.');
 }
-function autoFinishAgent(request){setTimeout(()=>{if(state.phase!=='approved'||state.ref!==request)return;if(state.retrieval==='lost'||state.serverDown||state.offline){refresh();return}finishAgent()},1100)}
+function autoFinishAgent(request){setTimeout(()=>{if(state.phase!=='approved'||state.ref!==request)return;if(state.retrieval==='lost'||state.serverDown||state.offline){refresh();return}finishAgent()},3000)}
 $('agent-lost').onclick=()=>{if(state.phase!=='approved')return;state.retrieval='lost';refresh();notify('Falha simulada: aplicativo preserva vínculo pendente para recuperar a mesma resposta.')};
 $('agent-retry').onclick=()=>{if(state.phase!=='approved')return;if(state.serverDown||state.offline){notify('Sem comunicação. Solicitação preservada.');return}state.retrieval='recovering';refresh();notify('Consultando o mesmo vínculo, sem gerar outra credencial (simulação).');autoFinishAgent(state.ref)};
 $('auth-role').addEventListener('change',()=>{$('auth-message').textContent=canManage()?'Perfil autorizado apenas nesta demonstração.':$('auth-role').value==='sem-sessao'?'Entre no painel pelo celular.':'Acesso não autorizado para este restaurante/perfil.'});
