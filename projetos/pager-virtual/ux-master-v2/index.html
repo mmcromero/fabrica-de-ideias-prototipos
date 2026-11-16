@@ -44,6 +44,29 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 @media(max-width:700px){.print-step{gap:9px}.pairing-parent-heading h2{font-size:1.05rem}.pairing-parent-heading button{font-size:.82rem;padding:8px 10px}#pairing-frame{min-height:900px}}
 .legacy-reference{margin-top:16px;border-top:1px solid #334155;padding-top:12px}.legacy-reference summary{cursor:pointer;color:#acbfd6;font-size:.9rem}.legacy-reference p{margin:10px 0 4px}.print-credentials strong{display:block;font-size:.95rem}
 .restaurant-thumb{width:58px;height:58px;flex:none;border-radius:11px;object-fit:cover;border:1px solid #3a526f;background:#24364a}@media(max-width:350px){.restaurant-thumb{width:48px;height:48px}}
+
+/* Computadores de caixa — painel mobile-first */
+.cashiers-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.cashiers-head h2{font-size:1.26rem;margin:0 0 3px}
+.cashiers-header-icon{display:grid;place-items:center;font-size:1.8rem;color:#93c5fd}
+.cashiers-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:15px 0 12px}
+.cashiers-metric{background:#0f1829;border:1px solid #30435f;border-radius:13px;padding:13px;display:grid;gap:2px;min-width:0}
+.cashiers-metric strong{font-size:1.65rem;line-height:1.1;color:#f1f5f9}
+.cashiers-metric span{font-size:.79rem;color:#a9bdd3}
+.cashiers-add{display:block;width:100%;margin:0 0 14px!important;min-height:50px}
+.cashiers-list{display:grid;gap:12px;margin:10px 0 14px}
+.cashier-card{padding:14px;background:#172337;border:1px solid #30435f;border-radius:15px}
+.cashier-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.cashier-top h3{display:flex;align-items:center;gap:8px;margin:0;font-size:1.05rem}
+.cashier-link{display:inline-block;padding:4px 9px;border-radius:100px;border:1px solid #20694f;color:#6ee7b7;background:#10372d;font-size:.76rem;font-weight:700}
+.cashier-link.revoked{border-color:#8b3340;background:#381620;color:#fda4af}
+.cashier-comm{font-size:.83rem;margin:9px 0 4px;display:flex;align-items:center;gap:6px;color:#6ee7b7}
+.cashier-comm.offline{color:#fbbf24}.cashier-comm.unknown{color:#bacbe0}
+.cashier-detail{color:#9db3cb;font-size:.78rem;margin:4px 0;overflow-wrap:anywhere}
+.cashier-buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;border-top:1px solid #30435f;padding-top:10px;margin-top:12px}
+.cashier-buttons button{margin:0!important;min-width:0;background:#26364b;padding:10px;font-size:.9rem}
+.cashier-card .cashier-pending{color:#fbbf24;font-size:.8rem;margin:8px 0}
+@media(max-width:370px){.cashier-top{align-items:flex-start}.cashier-card{padding:12px}.cashiers-metric{padding:10px}.cashier-buttons button{font-size:.83rem}}
 </style>
 </head>
 <body>
@@ -73,10 +96,15 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 <header class="header"><div><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"><p class="identity">Integração de impressão · Restaurante Exemplo</p></div><div class="actions"><button type="button" class="secondary" data-go="kds">Voltar ao KDS</button></div></header>
 <h2>Integração de impressão</h2>
 <p class="muted" style="margin:8px 0 15px">Os computadores de caixa enviam pedidos ao Avisaqui. A impressora física continua funcionando de forma independente.</p>
-<section class="print-card">
-<div class="print-step"><span class="step-number">1</span><div><h2>Conectar computador de caixa</h2><p>Abra o Avisaqui no computador. O gerente lê o QR Code ou informa o código temporário no próprio celular e autoriza o vínculo. O operador não copia credenciais nem faz login como gerente no Windows.</p></div></div>
-<div class="flow"><button type="button" data-go="pairing" data-pair-view="computer">Vincular novo caixa</button><button type="button" class="secondary" data-go="pairing" data-pair-view="devices">Gerenciar computadores</button></div>
-<p class="muted small">Um caixa recebe sua própria identidade e credencial protegida após a aprovação e a confirmação do agente. Este protótipo apenas demonstra o fluxo.</p>
+<section class="print-card cashier-section" aria-labelledby="cashiers-title">
+<div class="cashiers-head"><div><h2 id="cashiers-title">Computadores de caixa</h2><p class="muted small">Restaurante Exemplo</p></div><span aria-hidden="true" class="cashiers-header-icon">▣</span></div>
+<div class="cashiers-metrics">
+<div class="cashiers-metric"><strong id="cashiers-linked">3</strong><span>Vinculados</span></div>
+<div class="cashiers-metric"><strong id="cashiers-no-signal">1</strong><span>Sem comunicação recente</span></div>
+</div>
+<button type="button" class="cashiers-add" data-go="pairing" data-pair-view="computer">＋ Vincular computador</button>
+<div id="cashiers-list" class="cashiers-list" aria-live="polite"><p class="muted">Carregando computadores demonstrativos…</p></div>
+<p class="muted small">Vínculo e comunicação são estados diferentes. Todas as informações desta área são fictícias.</p>
 </section>
 <section class="print-card">
 <div class="print-step"><span class="step-number">2</span><div><h2>Recebimentos e pendências</h2><p>Consulte os eventos recebidos dos caixas. Cada pedido precisa preservar restaurante, caixa, origem, evento e número comercial. Uma duplicidade não cria automaticamente outra chamada no KDS.</p></div></div>
@@ -97,7 +125,7 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 </div></section>
 <section class="page" id="pairing" hidden>
 <div class="pairing-parent-heading"><div><h2>Pareamento de computadores</h2><p class="muted small">Fluxo visual de impressão · QR, autorização pelo celular, computadores e pendências</p></div><button type="button" class="secondary" data-go="printing">Voltar à impressão</button></div>
-<iframe id="pairing-frame" title="Fluxo demonstrativo de pareamento de computadores de caixa" src="./pareamento.html?incorporado=1#computer" loading="lazy" referrerpolicy="same-origin"></iframe>
+<iframe id="pairing-frame" title="Fluxo demonstrativo de pareamento de computadores de caixa" src="./pareamento.html?incorporado=1#computer" loading="eager" referrerpolicy="same-origin"></iframe>
 </section>
 <footer>Protótipo visual público · Dados fictícios · Sem conexão com o Avisaqui ou com produção.</footer>
 </div>
@@ -121,7 +149,16 @@ interest:['Interesse no piloto','<label>Nome fictício<input class="field" name=
 function el(tag,text,cls){const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e}
 function toast(message){$('toast').textContent=message;$('toast').hidden=false;clearTimeout(toast.timer);toast.timer=setTimeout(()=>$('toast').hidden=true,3000)}
 function navigate(id){if(!$(id)||!$(id).classList.contains('page'))id='master';document.querySelectorAll('.page').forEach(e=>e.hidden=e.id!==id);$('screen').value=id;history.replaceState(null,'','#'+id);window.scrollTo(0,0);if(id==='pairing')requestAnimationFrame(()=>{const f=$('pairing-frame');if(f&&f.contentWindow){f.contentWindow.postMessage({avisaquiPreview:'view',view:f.dataset.pairView||'computer'},location.origin);f.contentWindow.postMessage({avisaquiPreview:'measure'},location.origin)}})}
-window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==$('pairing-frame').contentWindow)return;const data=e.data;if(data?.avisaquiPreview!=='height'||!Number.isFinite(data.height))return;const h=Math.min(12000,Math.max(760,Math.ceil(data.height)));$('pairing-frame').style.height=h+'px'})
+function cashierAction(action,id){const f=$('pairing-frame');f.dataset.pairView='devices';if(action==='manage')navigate('pairing');f.contentWindow?.postMessage({avisaquiPreview:'device-action',action,id},location.origin)}
+function renderCashiers(devices){
+const list=$('cashiers-list');list.replaceChildren();const linked=devices.filter(d=>d.status==='vinculado');const noSignal=linked.filter(d=>!/recente confirmada/.test(d.connection.toLowerCase()));$('cashiers-linked').textContent=linked.length;$('cashiers-no-signal').textContent=noSignal.length;
+for(const d of devices){const card=el('article',undefined,'cashier-card');const top=el('div',undefined,'cashier-top');const title=el('h3','▣ '+d.name);const status=el('span',d.status==='revogado'?'Revogado':'Vinculado','cashier-link'+(d.status==='revogado'?' revoked':''));top.append(title,status);
+const online=/recente confirmada/.test(d.connection.toLowerCase());const comm=el('p',(online?'◉ ': '◌ ')+d.connection,'cashier-comm '+(online?'':'offline'));
+const details=el('p','ID: '+d.id+' · Última comunicação: '+d.last,'cashier-detail');const buttons=el('div',undefined,'cashier-buttons');
+for(const [name,action] of [['Renomear','rename'],['Gerenciar','manage']]){const b=el('button',name,'secondary');if(d.status==='revogado'&&action==='rename')b.disabled=true;b.onclick=()=>cashierAction(action,d.id);buttons.append(b)}
+card.append(top,comm,details,buttons);if(d.pending)card.append(el('p',d.pending+' evento(s) local(is) pendente(s) — revisão necessária','cashier-pending'));list.append(card)}
+if(!devices.length)list.append(el('p','Nenhum computador vinculado na demonstração.','muted'))}
+window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==$('pairing-frame').contentWindow)return;const data=e.data;if(data?.avisaquiPreview==='devices'&&Array.isArray(data.devices)){renderCashiers(data.devices);return}if(data?.avisaquiPreview!=='height'||!Number.isFinite(data.height))return;const h=Math.min(12000,Math.max(760,Math.ceil(data.height)));$('pairing-frame').style.height=h+'px'})
 function renderRestaurants(){
 $('rest-count').textContent=state.restaurants.length;
 const root=$('restaurant-list');root.replaceChildren();
@@ -167,7 +204,7 @@ dirty=false;$('modal').close();toast('Ação realizada somente na simulação.')
 $('modal-cancel').onclick=closeModal;$('modal-x').onclick=closeModal;$('modal').addEventListener('cancel',e=>{e.preventDefault();closeModal()});
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.go){if(b.dataset.go==='pairing')$('pairing-frame').dataset.pairView=b.dataset.pairView||'computer';navigate(b.dataset.go);}if(b.dataset.modal)openModal(b.dataset.modal);if(b.dataset.master){document.querySelectorAll('[data-master]').forEach(x=>x.classList.toggle('current',x===b));['restaurants','interests','settings'].forEach(k=>$('master-'+k).hidden=k!==b.dataset.master)}if(b.dataset.action==='refresh')toast('Lista de demonstração atualizada.');if(b.dataset.action==='credential'){$('credential-result').textContent='Antes: a credencial era mostrada para copiar. Novo fluxo aprovado: pareamento sem exibir ou copiar a chave. Nenhum segredo foi gerado.'}if(b.dataset.action==='revoke'){if(confirm('Revogar esta credencial anterior? Ela deixará de enviar pedidos. Os demais caixas continuam funcionando. Eventos pendentes permanecem para revisão.')){$('print-credentials').textContent='Credencial anterior revogada na simulação · Histórico e pendências preservados.';toast('Revogação demonstrativa confirmada. Nenhum servidor foi alterado.')}}if(b.dataset.action==='sound'){state.sound=!state.sound;b.textContent=state.sound?'🔔 Som ligado':'🔔 Som desligado'}if(b.dataset.action==='games')toast('Jogos em estudo separado.');if(b.dataset.action==='reset'){if(confirm('Reiniciar a demonstração?'))location.reload()}});
 $('screen').addEventListener('change',e=>{if(e.target.value==='pairing')$('pairing-frame').dataset.pairView='computer';navigate(e.target.value)});
-$('pairing-frame').addEventListener('load',()=>{if(!$('pairing').hidden)$('pairing-frame').contentWindow?.postMessage({avisaquiPreview:'view',view:$('pairing-frame').dataset.pairView||'computer'},location.origin)});
+$('pairing-frame').addEventListener('load',()=>{const f=$('pairing-frame');f.contentWindow?.postMessage({avisaquiPreview:'measure'},location.origin);if(!$('pairing').hidden)f.contentWindow?.postMessage({avisaquiPreview:'view',view:f.dataset.pairView||'computer'},location.origin)});
 $('login-form').addEventListener('submit',e=>{e.preventDefault();const role=new FormData(e.currentTarget).get('role');e.currentTarget.reset();navigate(role);toast('Acesso demonstrativo, sem autenticação real.')});
 $('setup-form').addEventListener('submit',e=>{e.preventDefault();e.currentTarget.reset();navigate('login');toast('Nenhum usuário real foi criado.')});
 $('qr-close').onclick=()=>$('qr-dialog').close();$('qr-print').onclick=()=>toast('Prévia de impressão simulada. Nada foi enviado à impressora.');renderRestaurants();renderInterests();renderTerminals();renderOrders();navigate(location.hash.slice(1)||'master');
