@@ -119,3 +119,13 @@ Fonte recebida: GOV-COM-003, devolutiva Arquitetura e Segurança para Equipe X, 
 **Sem logo real:** neste laboratório foram criados dois logotipos **fictícios** de demonstração para Restaurante Exemplo e Café Demonstrativo. Restaurantes novos recebem imagem ilustrativa de reserva. Não existe envio, guarda ou serviço de logos implementado no Avisaqui real por esta mudança.
 
 **Responsabilidades futuras:** Tech Lead/Backend deve fornecer restaurante e URL/arquivo de logo autorizados por sessão e isolamento entre estabelecimentos. Windows deve refletir a identidade validada após o vínculo; antes disso, nome do restaurante é apenas o contexto da solicitação a confirmar. Nenhuma mensagem visual deve substituir verificação server-side de restaurante. Homologação visual mobile/desktop e dados reais permanecem pendentes.
+
+## Padrão de cabeçalho operacional — revisão visual 16/11/2026
+
+**Decisão visual do proprietário:** em todas as páginas internas com sessão, o **logo oficial Avisaqui** aparece na primeira faixa, à esquerda, e o botão **Sair** na mesma faixa, à direita. O **contexto do restaurante (logo, nome e papel/identificador)** vem imediatamente abaixo. O conteúdo começa após essa identificação.
+
+**Aplicação no laboratório:** Master Admin já utiliza marca e Sair no cabeçalho (sem indicar restaurante ativo na lista geral); Gerente, KDS, Integração de impressão e Pareamento passaram a utilizar o mesmo padrão. O retorno ao KDS, abrir KDS e retorno à impressão permanecem nas ações próprias do conteúdo. O pareamento aberto fora do iframe também exibe marca, Sair e contexto na mesma ordem. Ao incorporar o pareamento no navegador principal, seu cabeçalho próprio permanece oculto para evitar duplicidade.
+
+**Exceções de contexto:** landing, login, primeiro acesso e página pública do cliente não representam uma sessão administrativa; preservam entrada/voltar em vez de inserir um logout fictício. O primeiro acesso passou a mostrar o logo Avisaqui na parte superior.
+
+**Limites:** Sair é navegação demonstrativa, não encerramento de sessão real. O laboratório continua isolado da API e do Windows. A conformidade visual em telas móveis e desktop precisa de homologação em navegador.
