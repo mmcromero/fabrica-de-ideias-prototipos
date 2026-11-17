@@ -67,3 +67,23 @@
 - CI GitHub Actions e instalação/deploy não são executados neste trabalho; política AVISAQUI-CI-CUSTO-001 de custo zero permanece vigente.
 
 **Nenhuma autorização implícita para apagar arquivos, alterar landing, iniciar CI, fazer merge ou publicar.**
+
+## UX-M008 — fidelidade visual dirigida: Cliente / Login / Primeiro acesso
+
+**Commit de código:** `922574ba03a5fbbd33805f2940dc346b320047af` na branch isolada, sem merge/publicação.  
+**Arquivo de interface alterado:** apenas `ux-master-v2/index.html`.  
+**Novo blob verificado por releitura:** `45e31128b8ccc04ca2a425bb3ba87d4371fc1549`.
+
+### Alterações demonstrativas (sem copiar API ou autenticação da RC)
+
+- **Cliente:** estrutura aproximada da RC `src/public/cliente.html`: barra de acessibilidade (alto contraste, Texto A+), identificação do restaurante, cartão da senha de retirada, estado Em Preparo, texto explicativo, botão de aviso, diagnóstico e espaço dos jogos. Nenhum alerta push, SSE, jogos ou vibração real foi conectado. Os controles de acessibilidade alternam somente estilos locais.
+- **Login:** cartão, cabeçalho, textos, usuário/senha, tamanhos, cores e botão de entrada aproximados da RC `src/public/login.html`. Seletor de perfil fictício preservado, recolhido sob «Escolher perfil da simulação», para manter demonstração de Master/Gerente/Operador. Não existe `fetch` de login nem sessão real.
+- **Primeiro acesso:** estrutura de quatro campos, cartão, títulos e botões aproximados da RC `src/public/setup.html`; substituído o nome legado «Bipou» pelo nome de produto já aprovado «Avisaqui», **somente no protótipo**. Código de configuração é campo apenas ilustrativo; sem validação de token real, para evitar coleta de segredos. Formulário mantém simulação de navegação para login e mínimo demonstrativo de 12 caracteres para senha.
+- **Preservação:** HTML das áreas Master, Gerente, KDS, Landing simplificada (contornada), Impressão PR #71 e Pareamento permaneceu byte a byte idêntico durante a substituição. Alterações adicionais restritas a CSS namespaced `.rc-*` e handlers demonstrativos de Cliente (som, acessibilidade, diagnóstico).
+- **Landing:** a navegação canônica para `../landing/` continua. Blob da landing na branch permaneceu `dbfa3eacff933de7716f667981817c4e36cc304e`. Pareamento externo manteve blob `7a6d04183cc107f8ea4ec1c9138ed435b5055849`.
+
+### Evidências e limites
+
+Releitura do GitHub: nove seções de navegação presentes uma vez cada, formulários `login-form` e `setup-form` uma vez cada, um `</style>` e um `</script>`, controles de acessibilidade presentes, e referências de origem intactas. **Validação estática concluída**. Não houve teste visual de navegador, captura de tela, automação de fluxo, comparação pixel a pixel, API real nem homologação funcional; não afirmar equivalência visual perfeita.
+
+**Pendências:** homologar Cliente mobile/desktop; confrontar comportamento de leitura de status, jogos e notificações; aceitar ou devolver a impressão do PR #71; fechar Login e Primeiro acesso com identidade visual e documentação de cadastro atuais; integrar tela gerencial e pair-v1 na RC somente sob gate de Tech Lead/Segurança. O protótipo público permanece sem publicação desta branch.
