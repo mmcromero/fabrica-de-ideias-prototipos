@@ -81,6 +81,35 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 /* Controles de teste de impressão ocultos no fluxo normal; disponíveis só com ?qa=1. */
 #printing .printing-qa{display:none}
 body.printing-qa-enabled #printing .printing-qa{display:block}
+
+/* UX-M008: fidelidade visual da RC em demonstração independente */
+.rc-client{max-width:512px;margin:auto;color:#f8fafc;font-size:16px}
+.rc-a11y{display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px}.rc-a11y button{background:#1e293b;border:1px solid #334155;border-radius:99px;padding:6px 12px;min-height:36px;font-size:.8rem}
+.rc-client-card{background:#1e293b;border:2px solid #334155;border-radius:24px;overflow:hidden;box-shadow:0 10px 25px #0006}
+.rc-client-head{background:#0004;display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid #334155}
+.rc-bell{width:44px;height:44px;border-radius:12px;background:#f97316;display:grid;place-items:center;font-size:1.4rem}
+.rc-client-head h1{font-size:1.15rem;margin:0}.rc-client-head p{color:#94a3b8}
+.rc-order{text-align:center;padding:24px 18px}.rc-caption{display:block;font-size:.85rem;font-weight:800;color:#94a3b8;text-transform:uppercase}
+.rc-number{display:block;font-size:clamp(4rem,14vw,6rem);line-height:1.12;font-weight:900;margin:14px 0}
+.rc-order-badge{display:inline-flex;gap:9px;background:#f59e0b26;color:#fbbf24;border:1px solid #b8791f;border-radius:99px;padding:9px 18px;font-weight:800;margin:7px 0 15px}
+.rc-emphasis{font-weight:700;margin:12px 0}.rc-sub{color:#cbd5e1;margin:14px 0 18px}
+.rc-order>button{width:100%;min-height:56px}.rc-diagnostic{padding:14px;border-top:1px solid #64748b;font-size:.9rem}
+.rc-diagnostic summary{cursor:pointer;font-weight:700}.rc-diagnostic p{color:#cbd5e1;margin:12px 0}
+.rc-game{text-align:center;padding:15px}.rc-back{text-align:center;margin:14px 0}
+.rc-client.rc-high .rc-client-card{background:#121212;border-color:white}.rc-client.rc-high .rc-order{background:#000}.rc-client.rc-large{font-size:18px}.rc-client.rc-large .rc-order{font-size:1.15em}
+.rc-auth-wrap{min-height:min(100vh,740px);display:grid;place-items:center;padding:20px 0;color:#f1f5f9}
+.rc-auth{width:100%;max-width:430px;background:#131c2e;border:1px solid #30435f;border-radius:22px;padding:28px 24px}
+.rc-auth.rc-setup{max-width:440px;border-radius:20px;padding:26px}
+.rc-auth h1{font-size:1.75rem;margin:0 0 6px}.rc-auth.rc-setup h1{font-size:1.55rem;margin-bottom:10px}
+.rc-auth p{color:#b1c0d7;line-height:1.45;margin:0 0 26px}.rc-auth.rc-setup p{color:#bac8de}
+.rc-auth label{display:block;font-weight:700;margin:18px 0 8px}
+.rc-auth input{display:block;width:100%;min-height:56px;font:inherit;font-size:1.1rem;padding:13px 15px;border-radius:10px;background:#0b1220;border:2px solid #4a5c78;color:#f8fafc}
+.rc-auth.rc-setup input{min-height:54px;padding:12px;font-size:1rem}
+.rc-auth input:focus-visible{outline:3px solid #93c5fd;outline-offset:3px}
+.rc-auth form>button{width:100%;min-height:58px;margin-top:22px;border-radius:12px;font-size:1.05rem;font-weight:800}
+.rc-auth .rc-note{color:#b1c0d7;font-size:.8rem;margin:14px 0 0}
+.rc-role{margin-top:18px}.rc-role summary{cursor:pointer;font-size:.85rem;color:#acbfd6}.rc-role select{margin-top:8px}
+@media(max-width:380px){.rc-auth{padding:22px 18px}}
 </style>
 </head>
 <body>
@@ -101,10 +130,27 @@ body.printing-qa-enabled #printing .printing-qa{display:block}
 <div class="kds-actions"><button data-modal="sequence">⚙️ Numeração</button><button data-modal="order">✚ Inserir pedido manual</button><button class="kds-outline" data-go="printing">🖨️ Integração de impressão</button><button class="kds-outline" data-go="master">← Voltar à administração</button></div>
 <div class="orders-grid" id="orders-grid"></div>
 </section>
-<section class="page" id="client" hidden><header class="header"><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"><button class="secondary" data-go="kds">Voltar</button></header><div class="status-card"><p>Acompanhamento do pedido</p><strong id="client-number">Pedido 101</strong><p id="client-status">Seu pedido está em preparo.</p><div class="toolbar" style="justify-content:center"><button class="secondary" data-action="sound">🔔 Som desligado</button><button class="secondary" data-action="games">Jogos</button></div></div></section>
+<section class="page" id="client" hidden><div class="rc-client">
+<div class="rc-a11y"><button id="rc-contrast" class="secondary" type="button" aria-pressed="false">Alto Contraste</button><button id="rc-font" class="secondary" type="button" aria-pressed="false">Texto A+</button></div>
+<main class="rc-client-card"><header class="rc-client-head"><span class="rc-bell">🔔</span><div><h1>Pager Virtual</h1><p>Acompanhamento do seu pedido</p></div></header>
+<div class="rc-order"><span class="rc-caption">Sua Senha de Retirada</span><strong id="client-number" class="rc-number">101</strong><div class="rc-order-badge">⏳ <span id="client-status">Em Preparo</span></div><p class="rc-emphasis">Sua comida está sendo preparada com todo cuidado pelo nosso chef!</p><p class="rc-sub">Você receberá um aviso quando o pedido estiver pronto.</p><button id="rc-sound" type="button" data-action="sound">🔔 Toque para ativar alerta sonoro e vibração</button></div>
+<details class="rc-diagnostic"><summary>Diagnóstico do aparelho (testes)</summary><p>Simulação visual, sem acesso aos recursos do aparelho.</p><button type="button" class="secondary" data-action="client-diagnostic">Verificar recursos</button></details>
+<div class="rc-game"><button type="button" class="secondary" data-action="games">🎮 Jogar enquanto aguarda</button></div></main>
+<div class="rc-back"><button class="secondary" type="button" data-go="kds">Voltar ao KDS</button></div></div></section>
 <section class="page" id="landing" hidden><header class="header"><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"><button data-go="login">Entrar</button></header><div class="hero"><h1>Seu cliente aproveita a espera. Você cuida dos pedidos.</h1><p>O aviso chega na hora. O cliente acompanha o pedido no navegador, sem instalar aplicativo.</p><div class="toolbar"><button data-go="client">Ver página do cliente</button><button class="secondary" data-modal="interest">Interesse no piloto</button></div></div><div class="grid2"><div class="card"><h3>QR Code</h3><p class="muted">Acesso direto à página do pedido.</p></div><div class="card"><h3>Aviso</h3><p class="muted">Notificação de pedido pronto.</p></div></div></section>
-<section class="page" id="login" hidden><div class="formview"><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui" style="margin:0 auto 16px"><form class="card" id="login-form"><h2>Entrar</h2><label>Login<input class="field" name="login" required autocomplete="off" placeholder="Acesso demonstrativo"></label><label>Senha<input class="field" type="password" name="password" required autocomplete="off" placeholder="Qualquer senha fictícia"></label><label>Perfil<select name="role"><option value="master">Master Admin</option><option value="manager">Gerente</option><option value="kds">Operador / KDS</option></select></label><button type="submit">Entrar na simulação</button><p class="muted small" style="margin-top:9px">Não use dados ou senhas reais.</p></form></div></section>
-<section class="page" id="setup" hidden><header class="header"><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"></header><div class="formview"><form class="card" id="setup-form"><h2>Primeiro acesso</h2><label>Nome<input class="field" name="name" required></label><label>Login<input class="field" name="login" required></label><label>Senha fictícia<input class="field" name="password" type="password" minlength="12" required></label><button type="submit">Continuar</button></form></div></section>
+<section class="page" id="login" hidden><div class="rc-auth-wrap"><main class="rc-auth">
+<h1>🔔 Avisaqui</h1><p>Entre para acessar o restaurante ou administrar a plataforma.</p>
+<form id="login-form"><label for="rc-user">Usuário</label><input id="rc-user" name="login" required maxlength="120" autocomplete="off" autocapitalize="none" placeholder="Usuário fictício">
+<label for="rc-pass">Senha</label><input id="rc-pass" name="password" type="password" required autocomplete="off" placeholder="Senha fictícia">
+<details class="rc-role"><summary>Escolher perfil da simulação</summary><label for="rc-profile">Perfil demonstrativo</label><select name="role" id="rc-profile"><option value="master">Master Admin</option><option value="manager">Gerente</option><option value="kds">Operador / KDS</option></select></details>
+<button type="submit">Entrar</button><p class="rc-note">Simulação: não use senhas reais. Nenhuma autenticação ocorre.</p></form></main></div></section>
+<section class="page" id="setup" hidden><div class="rc-auth-wrap"><main class="rc-auth rc-setup">
+<h1>🔔 Primeiro acesso ao Avisaqui</h1><p>Este cadastro ocorre apenas uma vez. No aplicativo real, é necessário um código temporário de configuração. Este protótipo não verifica códigos reais.</p>
+<form id="setup-form"><label for="rc-code">Código temporário (demonstração)</label><input id="rc-code" name="codigo" maxlength="48" autocomplete="off" placeholder="Não informe um código real">
+<label for="rc-name">Nome do administrador</label><input id="rc-name" name="name" required maxlength="120" autocomplete="off">
+<label for="rc-setup-user">Usuário de acesso</label><input id="rc-setup-user" name="login" required maxlength="120" autocomplete="off">
+<label for="rc-setup-pass">Senha (mínimo 12 caracteres)</label><input id="rc-setup-pass" name="password" type="password" minlength="12" required autocomplete="off" placeholder="Somente senha fictícia">
+<button type="submit">Criar Master Admin</button><p class="rc-note">Nenhum usuário ou credencial será criado.</p></form></main></div></section>
 <section class="page" id="printing" hidden>
 <div class="print-container"><header class="header internal-header"><div class="brand-area"><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"></div><div class="actions"><button class="secondary" type="button" data-go="login">Sair</button></div></header><div class="restaurant-context" aria-label="Restaurante em uso"><img class="restaurant-context-logo" alt="Logo demonstrativo do restaurante" src="./logo-restaurante-exemplo.svg"><div class="restaurant-context-text"><strong class="restaurant-context-name">Restaurante Exemplo</strong><span class="restaurant-context-detail">Gerente · restaurante-exemplo</span></div></div>
 <div class="section-heading"><h2>Integração de impressão</h2><button type="button" class="secondary" data-go="kds">Voltar ao KDS</button></div>
@@ -255,7 +301,9 @@ $('modal-cancel').onclick=closeModal;$('modal-x').onclick=closeModal;$('modal').
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.go){if(b.dataset.go==='pairing')$('pairing-frame').dataset.pairView=b.dataset.pairView||'computer';navigate(b.dataset.go);}if(b.dataset.modal)openModal(b.dataset.modal);if(b.dataset.master){document.querySelectorAll('[data-master]').forEach(x=>x.classList.toggle('current',x===b));['restaurants','interests','settings'].forEach(k=>$('master-'+k).hidden=k!==b.dataset.master)}if(b.dataset.action==='refresh')toast('Lista de demonstração atualizada.');
 if(b.dataset.action==='release-approved')setWindowsRelease('approved');
 if(b.dataset.action==='release-unavailable')setWindowsRelease('unavailable');
-if(b.dataset.action==='release-error')setWindowsRelease('error');if(b.dataset.action==='credential'){$('credential-result').textContent='Antes: a credencial era mostrada para copiar. Novo fluxo aprovado: pareamento sem exibir ou copiar a chave. Nenhum segredo foi gerado.'}if(b.dataset.action==='revoke'){if(confirm('Revogar esta credencial anterior? Ela deixará de enviar pedidos. Os demais caixas continuam funcionando. Eventos pendentes permanecem para revisão.')){$('print-credentials').textContent='Credencial anterior revogada na simulação · Histórico e pendências preservados.';toast('Revogação demonstrativa confirmada. Nenhum servidor foi alterado.')}}if(b.dataset.action==='sound'){state.sound=!state.sound;b.textContent=state.sound?'🔔 Som ligado':'🔔 Som desligado'}if(b.dataset.action==='games')toast('Jogos em estudo separado.');if(b.dataset.action==='reset'){if(confirm('Reiniciar a demonstração?'))location.reload()}});
+if(b.dataset.action==='release-error')setWindowsRelease('error');if(b.dataset.action==='credential'){$('credential-result').textContent='Antes: a credencial era mostrada para copiar. Novo fluxo aprovado: pareamento sem exibir ou copiar a chave. Nenhum segredo foi gerado.'}if(b.dataset.action==='revoke'){if(confirm('Revogar esta credencial anterior? Ela deixará de enviar pedidos. Os demais caixas continuam funcionando. Eventos pendentes permanecem para revisão.')){$('print-credentials').textContent='Credencial anterior revogada na simulação · Histórico e pendências preservados.';toast('Revogação demonstrativa confirmada. Nenhum servidor foi alterado.')}}if(b.dataset.action==='sound'){state.sound=!state.sound;b.textContent=state.sound?'🔔 Alerta ativado (simulação)':'🔔 Toque para ativar alerta sonoro e vibração';b.setAttribute('aria-pressed',String(state.sound))}if(b.dataset.action==='client-diagnostic')toast('Recursos não verificados no laboratório.');if(b.dataset.action==='games')toast('Jogos em estudo separado.');if(b.dataset.action==='reset'){if(confirm('Reiniciar a demonstração?'))location.reload()}});
+$('rc-contrast').addEventListener('click',e=>{const v=$('client').querySelector('.rc-client').classList.toggle('rc-high');e.currentTarget.setAttribute('aria-pressed',String(v))});
+$('rc-font').addEventListener('click',e=>{const v=$('client').querySelector('.rc-client').classList.toggle('rc-large');e.currentTarget.setAttribute('aria-pressed',String(v))});
 $('screen').addEventListener('change',e=>{if(e.target.value==='pairing')$('pairing-frame').dataset.pairView='computer';navigate(e.target.value)});
 $('pairing-frame').addEventListener('load',()=>{const f=$('pairing-frame');updateRestaurantIdentity();f.contentWindow?.postMessage({avisaquiPreview:'measure'},location.origin);if(!$('pairing').hidden)f.contentWindow?.postMessage({avisaquiPreview:'view',view:f.dataset.pairView||'computer'},location.origin)});
 $('login-form').addEventListener('submit',e=>{e.preventDefault();const role=new FormData(e.currentTarget).get('role');state.entryRole=role==='master'?'master':'gerente';state.selected=state.selected||state.restaurants[0]?.id;e.currentTarget.reset();navigate(role);toast('Acesso demonstrativo, sem autenticação real.')});
