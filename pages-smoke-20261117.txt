@@ -1,0 +1,8 @@
+AVISAQUI — TESTE ISOLADO DE PUBLICAÇÃO GITHUB PAGES
+Data: 2026-11-17
+Repositório: mmcromero/fabrica-de-ideias-prototipos
+Branch de origem: main
+Objetivo: verificar publicação de novo arquivo estático no GitHub Pages.
+Sem conexão com o Avisaqui, sem dados pessoais, sem segredos.
+Identificador: AVISAQUI-PAGES-SMOKE-20261117-01
+Não remover sem autorização do proprietário.
