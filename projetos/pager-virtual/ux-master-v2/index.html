@@ -92,6 +92,7 @@ body.printing-qa-enabled #printing .printing-qa{display:block}
 .rc-order{text-align:center;padding:24px 18px}.rc-caption{display:block;font-size:.85rem;font-weight:800;color:#94a3b8;text-transform:uppercase}
 .rc-number{display:block;font-size:clamp(4rem,14vw,6rem);line-height:1.12;font-weight:900;margin:14px 0}
 .rc-order-badge{display:inline-flex;gap:9px;background:#f59e0b26;color:#fbbf24;border:1px solid #b8791f;border-radius:99px;padding:9px 18px;font-weight:800;margin:7px 0 15px}
+.rc-order-badge.rc-ready{background:#10b98133;color:#6ee7b7;border-color:#059669}
 .rc-emphasis{font-weight:700;margin:12px 0}.rc-sub{color:#cbd5e1;margin:14px 0 18px}
 .rc-order>button{width:100%;min-height:56px}.rc-diagnostic{padding:14px;border-top:1px solid #64748b;font-size:.9rem}
 .rc-diagnostic summary{cursor:pointer;font-weight:700}.rc-diagnostic p{color:#cbd5e1;margin:12px 0}
@@ -287,7 +288,7 @@ function renderOrders(){
  });
  if(!running.length)root.append(el('p','Cozinha em dia! Nenhum pedido pendente.','muted'));renderClient()
 }
-function renderClient(){const order=state.orders.find(o=>o.number===state.clientOrder);$('client-number').textContent='Pedido '+state.clientOrder;$('client-status').textContent=!order?'Pedido demonstrativo':order.status==='new'?'Seu pedido está em preparo.':order.status==='ready'?'Seu pedido está pronto!':'Pedido finalizado.'}
+function renderClient(){const order=state.orders.find(o=>o.number===state.clientOrder);$('client-number').textContent=String(state.clientOrder);$('client-status').textContent=!order?'Em Preparo':order.status==='new'?'Em Preparo':order.status==='ready'?'Pronto para retirada':'Finalizado';const badge=$('client-status').closest('.rc-order-badge');badge.classList.toggle('rc-ready',order?.status==='ready');const message=$('client').querySelector('.rc-emphasis');message.textContent=order?.status==='ready'?'Seu pedido está pronto para retirada!':order?.status==='done'?'Pedido finalizado.':'Sua comida está sendo preparada com todo cuidado pelo nosso chef!';}
 function openModal(type){const m=modals[type];if(!m)return;modalType=type;dirty=false;$('modal-title').textContent=m[0];$('modal-fields').innerHTML=m[1];$('modal-submit').textContent=m[2];$('modal-form').reset();if(type==='manager'){const sel=$('modal-restaurant');state.restaurants.forEach(r=>sel.add(new Option(r.name,r.id)))}if(type==='order')$('modal-form').elements.number.value=state.seq;if(type==='sequence')$('modal-form').elements.number.value=state.seq;$('modal').showModal()}
 function closeModal(){if(dirty&&!confirm('Descartar alterações não salvas?'))return;$('modal').close()}
 $('modal-form').addEventListener('input',()=>dirty=true);
