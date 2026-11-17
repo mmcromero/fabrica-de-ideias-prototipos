@@ -23,7 +23,7 @@ export function escolhaComputador(casas) {
   });
   return indice;
 }
-export function iniciarJogoDaVelha({container,onExit=()=>{},modo='solo'}) {
+export function iniciarJogoDaVelha({container,onExit=()=>{},modo='solo',autoStart=false}) {
   if (!(container instanceof HTMLElement)) throw new TypeError('Container inválido');
   let casas=Array(9).fill(null),turno='X',encerrado=false,partidaIniciada=false;
   let tipo=modo==='dupla'||modo==='dupla-local'?'dupla':'solo';
@@ -89,6 +89,7 @@ export function iniciarJogoDaVelha({container,onExit=()=>{},modo='solo'}) {
     botoes.forEach((b,i)=>{b.textContent=casas[i]||'·';b.disabled=!!fim||!!casas[i]||(tipo==='solo'&&turno!=='X');b.style.color=casas[i]==='X'?'#67d4ff':casas[i]==='O'?'#ffb66d':'#94a3b8';b.setAttribute('aria-label','Casa '+(i+1)+': '+(casas[i]||'vazia'));});
   }
   jogo.append(status,grade,reiniciar);raiz.append(menu,jogo);container.append(raiz);
+  if(autoStart)iniciar.click();
   const destruir=()=>{if(encerrado)return;encerrado=true;raiz.remove();onExit();};
   return destruir;
 }

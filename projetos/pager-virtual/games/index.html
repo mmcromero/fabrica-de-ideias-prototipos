@@ -16,75 +16,6 @@ header{background:#0005;border-bottom:1px solid #334155;padding:18px 20px;displa
 .lab-controls{max-width:480px;margin:16px auto;padding:12px 16px;border:1px dashed #64748b;border-radius:12px;background:#0b1120}.lab-controls summary{cursor:pointer}.lab-controls button{margin:8px 5px 0 0}
 @media(min-width:768px){main{max-width:480px}}@media(max-width:380px){.library{grid-template-columns:1fr}.game-panel{padding:12px}}
  .a11y-bar{width:100%;max-width:480px;margin:0 auto 12px;display:flex;justify-content:flex-end;gap:8px}.chip{background:#1e293b;border:1px solid #334155;color:#f8fafc;border-radius:999px;padding:6px 12px;font-size:.8rem}.chip[aria-pressed=true]{background:#2563eb}.notice{margin-top:14px;padding:12px;border:1px solid #64748b;border-radius:12px;text-align:left;background:#162238;font-size:.9rem;line-height:1.5}.diagnostics{border-top:1px solid #64748b;padding:14px;font-size:.9rem}.diagnostics summary{cursor:pointer;font-weight:700}body.contrast{background:#000;color:#fff}body.contrast main{border-color:#fff}body.contrast .order,body.contrast .game-panel{background:#121212}body.large-text{font-size:1.15rem}
-#game-screen{position:fixed;inset:0;z-index:1000;background:#071320;display:flex;flex-direction:column;width:100vw;height:100vh;height:100dvh;overflow:hidden}
-#game-screen .game-top{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:calc(6px + env(safe-area-inset-top,0px)) 12px 7px;background:#111d2d;border-bottom:1px solid #334155;font-size:.85rem}
-#game-screen .game-top strong{font-size:.9rem}#game-screen .game-top .secondary{padding:7px 12px;font-size:.85rem}
-#game-screen .game-body{flex:1 1 auto;min-height:0;min-width:0;display:flex;align-items:center;justify-content:center;padding:6px;overflow:auto}
-#game-screen #stage{width:100%;height:100%;min-height:0;display:flex;align-items:center;justify-content:center}
-#game-screen #stage>section{width:100%;max-width:100%;max-height:100%;overflow:auto}
-#game-screen #stage>section>div:not([hidden]){max-width:100%}
-#game-screen #stage canvas{width:100%;height:auto;max-height:calc(100dvh - 115px);object-fit:contain}
-#game-screen .game-foot{display:flex;justify-content:center;gap:8px;align-items:center;flex:0 0 auto;padding:5px 10px calc(5px + env(safe-area-inset-bottom,0px));font-size:.75rem;color:#94a3b8}
-#rotate-hint{display:none;text-align:center;padding:12px;background:#182b3d;color:#fff}
-@media(orientation:portrait){#game-screen.landscape #rotate-hint{display:block}#game-screen.landscape .game-body{display:none}}
-body.game-active{overflow:hidden}
-#game-screen #stage canvas{max-width:none!important}#game-screen #stage>section h3{margin:3px 0;font-size:1rem}#game-screen #stage>section p{margin:5px 0;font-size:.85rem}#game-screen #stage>section button{padding:8px 12px}#game-screen #stage>section>div{max-width:100%}
-#game-screen .game-body{overflow:hidden;padding:4px}
-#game-screen #stage{overflow:hidden;align-items:stretch;justify-content:stretch}
-#game-screen #stage>.pong-root{height:100%;width:100%;max-height:100%;overflow:hidden;display:flex;flex-direction:column}
-#game-screen #stage>.pong-root>.pong-partida:not([hidden]){flex:1 1 auto;min-height:0;min-width:0;display:flex;flex-direction:column;overflow:hidden}
-#game-screen #stage .pong-arena{flex:1 1 auto;max-width:none!important;min-height:0;height:100%}
-#game-screen #stage .pong-arena canvas{width:100%!important;height:100%!important;max-height:none!important;max-width:none!important;object-fit:fill}
-#game-screen #stage>.pong-root>div:first-child:not([hidden]){margin:auto;width:min(420px,100%);padding:12px}
-#game-screen .game-foot{display:none}
-#game-screen .game-top{padding:calc(4px + env(safe-area-inset-top,0px)) 10px 4px}
-#game-screen .game-top .secondary{padding:5px 10px}
-@media(orientation:portrait){#game-screen.landscape .game-body{display:none}}
-/* Pong: a arena e o painel ocupam a mesma faixa horizontal, sem barras acima/abaixo. */
-#game-screen.landscape{flex-direction:row;align-items:stretch}
-#game-screen.landscape .game-top{order:2;flex:0 0 clamp(132px,18vw,205px);width:clamp(132px,18vw,205px);min-width:0;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:10px;padding:10px 8px;background:#152237;border:0;border-left:1px solid #334155;overflow-y:auto}
-#game-screen.landscape .game-top>div{display:flex;flex-direction:column;gap:6px;overflow-wrap:anywhere}
-#game-screen.landscape .game-top .secondary{width:100%;min-height:40px}
-#game-screen.landscape .game-body{order:1;flex:1 1 auto;min-width:0;min-height:0;padding:3px;overflow:hidden}
-#game-screen.landscape #stage,#game-screen.landscape .pong-root,#game-screen.landscape .pong-partida{height:100%;min-height:0}
-#game-screen.landscape .pong-arena{height:100%;min-height:0}
-#game-screen.landscape .pong-arena canvas{height:100%!important;max-height:none!important}
-#game-screen.landscape .game-sim{display:block}
-.game-sim{display:none}
-#game-screen .game-sim{margin-top:auto;font-size:.75rem;color:#94a3b8}
-#game-screen .game-sim button{font-size:.75rem;line-height:1.15;padding:8px 5px;white-space:normal}
-#rotate-hint{position:absolute;inset:0;z-index:5;align-items:center;justify-content:center;flex-direction:column;gap:18px;padding:24px;text-align:center;background:#091626;color:white}
-#rotate-hint .rotate-icon{font-size:clamp(65px,17vw,110px);line-height:1}
-#rotate-hint strong{font-size:clamp(1.6rem,7vw,2.5rem)}
-#rotate-hint p{font-size:1.05rem;max-width:330px;line-height:1.5;margin:0}
-#rotate-hint button{font-size:1rem;padding:12px 22px}
-@media(orientation:portrait){#game-screen.landscape #rotate-hint{display:flex}#game-screen.landscape .game-body{display:none}#game-screen.landscape .game-top{position:static;flex:0 0 auto;width:auto;order:1;display:none}}
-@media(orientation:landscape){#game-screen.landscape #rotate-hint{display:none}}
-/* Isolamento de rolagem somente durante a partida. */
-html:has(body.game-active),body.game-active{overflow:hidden!important;overscroll-behavior:none!important}
-body.game-active{position:fixed;inset:0;width:100%;height:var(--game-viewport-height,100dvh);touch-action:none}
-#game-screen{top:0;left:0;right:auto;bottom:auto;width:var(--game-viewport-width,100vw);height:var(--game-viewport-height,100dvh);max-width:100%;max-height:100%;overflow:hidden!important;overscroll-behavior:none;touch-action:none}
-#game-screen .game-body,#game-screen #stage,#game-screen .pong-root,#game-screen .pong-partida,#game-screen .pong-arena{overscroll-behavior:none;touch-action:none}
-#game-screen.landscape .game-top{overflow:hidden;min-height:0;gap:clamp(3px,1.4vh,10px);padding:clamp(3px,1.4vh,10px) 6px}
-#game-screen.landscape .game-top .secondary{min-height:0;padding:clamp(4px,1vh,9px) 5px}
-#game-screen.landscape .game-sim{margin-top:auto}
-#game-screen .hub{height:100%;width:100%;display:flex;flex-direction:column;min-height:0;gap:8px;padding:8px;overflow:hidden}
-#game-screen .hub h2{font-size:clamp(1.1rem,3vw,1.6rem);margin:0}
-#game-screen .hub .hub-list{flex:1;min-height:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;align-content:center}
-#game-screen .hub .hub-card{display:flex;flex-direction:column;justify-content:space-between;gap:6px;min-width:0;min-height:0;padding:clamp(8px,2vw,16px);border:1px solid #52677e;border-radius:14px;background:#20334b}
-#game-screen .hub .hub-card h3{margin:0;font-size:clamp(1rem,2.5vw,1.4rem)}
-#game-screen .hub .hub-card p{margin:0;font-size:clamp(.75rem,1.6vw,.95rem);color:#cbd5e1;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
-#game-screen .hub .hub-card button{width:100%;padding:9px}
-#game-screen .hub .hub-status{font-size:.8rem;color:#cbd5e1;min-height:1em}
-#game-screen.landscape #stage>.hub{max-height:100%;overflow:hidden}
-#game-screen.landscape .game-top{touch-action:manipulation}
-#game-screen.landscape .game-body{touch-action:manipulation}
-#game-screen.landscape .pong-arena{touch-action:none}
-@media(max-width:550px) and (orientation:landscape){#game-screen .hub .hub-card p{display:none}}
-[hidden]{display:none!important}
-#game-screen #stage>.velha-root{height:100%;width:100%;min-height:0;max-height:100%;overflow:hidden;display:flex;align-items:center;justify-content:center}
-#game-screen #stage .velha-root>div:not([hidden]){max-height:100%;min-height:0;box-sizing:border-box}
-#game-screen #stage .velha-root button{touch-action:manipulation}
 </style></head><body>
 <aside class="a11y-bar"><button id="contrast" class="chip" aria-pressed="false">Alto Contraste</button><button id="font" class="chip" aria-pressed="false">Texto A+</button></aside>
 <main>
@@ -98,92 +29,38 @@ body.game-active{position:fixed;inset:0;width:100%;height:var(--game-viewport-he
 </section>
 <section class="diagnostics"><details><summary>Diagnóstico do aparelho (testes)</summary><p>Recursos de diagnóstico não conectados nesta simulação.</p></details></section>
 <section class="games-entry"><button id="games-open" class="primary">🎮 Jogar enquanto aguarda</button></section>
-<section id="games" class="game-panel" hidden>
-<div class="actions"><button id="games-back" class="secondary">← Voltar à comanda</button><button id="refresh" class="secondary">Atualizar jogos</button></div>
-<h2>Escolha um jogo</h2><p>Os jogos não alteram seu pedido.</p>
-<p id="status" role="status"></p><div id="library" class="library"></div>
 
-</section>
 </main>
-<section id="game-screen" hidden aria-label="Jogo em tela cheia">
-<div class="game-top"><div><strong>🔔 Pedido #206</strong> <span id="game-order-status">⏳ Em preparo</span></div><button id="game-exit" class="secondary">✕ Sair</button><div class="game-sim"><span>Laboratório</span><button id="game-ready" class="secondary">Simular pedido pronto</button></div></div>
-<div id="rotate-hint"><span class="rotate-icon" aria-hidden="true">📱↻</span><strong>Gire o celular</strong><p>Vire o aparelho para escolher um jogo e começar a diversão.</p><button id="rotate-exit" class="secondary">✕ Sair do jogo</button></div>
-<div class="game-body"><div id="stage"></div></div>
 
-</section>
 <details class="lab-controls"><summary>Ferramentas de simulação (fora da comanda)</summary><p>Esta comanda é uma reprodução visual baseada na página real. Não há pedido, servidor ou notificação conectados.</p>
 <button id="ready" class="secondary">Simular pedido pronto</button><button id="reset" class="secondary">Reiniciar comanda</button></details>
-<script type="module">
-import {obterCatalogo,criarSessaoJogos} from './catalogo.js?v=49';
-const $=id=>document.getElementById(id),sessao=criarSessaoJogos();
-let pronto=false,ativo=false;
-let abertura=0,scrollAnterior=0,hubAberto=false;
-function ajustarViewport(){
-  if(!document.body.classList.contains('game-active'))return;
-  const vp=window.visualViewport;
-  const largura=Math.max(1,Math.floor(vp?.width||window.innerWidth));
-  const altura=Math.max(1,Math.floor(vp?.height||window.innerHeight));
-  const tela=$('game-screen');
-  tela.style.setProperty('--game-viewport-width',largura+'px');
-  tela.style.setProperty('--game-viewport-height',altura+'px');
-  tela.style.transform=vp?'translate('+Math.round(vp.offsetLeft)+'px,'+Math.round(vp.offsetTop)+'px)':'none';
-}
-function telaJogo(abrir,jogo){
-  if(abrir&&!document.body.classList.contains('game-active'))scrollAnterior=window.scrollY;
-  $('game-screen').hidden=!abrir;
-  document.body.classList.toggle('game-active',abrir);
-  $('game-screen').classList.toggle('landscape',abrir);
-  if(abrir)ajustarViewport();
-  else{$('game-screen').style.transform='';window.scrollTo(0,scrollAnterior);}
-}
-window.addEventListener('resize',ajustarViewport,{passive:true});
-window.addEventListener('orientationchange',ajustarViewport,{passive:true});
-window.visualViewport?.addEventListener('resize',ajustarViewport,{passive:true});
-window.visualViewport?.addEventListener('scroll',ajustarViewport,{passive:true});
-for(const [id,cls] of [['contrast','contrast'],['font','large-text']])$(id).addEventListener('click',()=>{const on=document.body.classList.toggle(cls);$(id).setAttribute('aria-pressed',String(on));});
-function parar(){abertura++;sessao.encerrar();$('stage').replaceChildren();hubAberto=false;telaJogo(false);ativo=false;}
-
-async function abrirHub(){
- if(pronto)return;
- parar();hubAberto=true;telaJogo(true);
- const ticket=abertura;
- const hub=document.createElement('section');hub.className='hub';
- const title=document.createElement('h2');title.textContent='🎮 Escolha um jogo';
- const status=document.createElement('div');status.className='hub-status';status.setAttribute('role','status');status.textContent='Carregando jogos…';
- const lista=document.createElement('div');lista.className='hub-list';
- hub.append(title,lista,status);$('stage').replaceChildren(hub);
- try{
- const jogos=await obterCatalogo();
- if(ticket!==abertura||!hubAberto)return;
- status.textContent=jogos.length+' jogos disponíveis';
- for(const jogo of jogos){
-  const card=document.createElement('article');card.className='hub-card';
-  const titulo=document.createElement('h3');titulo.textContent=jogo.title;
-  const descricao=document.createElement('p');descricao.textContent=jogo.description||'';
-  const btn=document.createElement('button');btn.className='secondary';btn.textContent='Jogar';
-  btn.addEventListener('click',()=>abrirPartida(jogo));
-  card.append(titulo,descricao,btn);lista.append(card);
- }
- }catch(e){if(ticket===abertura)status.textContent='Não foi possível carregar os jogos';console.error(e)}
-}
-async function abrirPartida(jogo){
- if(pronto||!hubAberto)return;
- hubAberto=false;abertura++;sessao.encerrar();$('stage').replaceChildren();
- const ticket=abertura;
- try{
-  const ok=await sessao.abrir(jogo,$('stage'),{modo:'solo',onExit:()=>{if(ticket!==abertura)return;abertura++;abrirHub();}});
-  if(ticket!==abertura)return;
-  if(!ok||pronto)abrirHub();
-  else ativo=true;
- }catch(e){if(ticket!==abertura)return;console.error(e);abrirHub();}
-}
-$('games-open').addEventListener('click',abrirHub);
-$('game-exit').addEventListener('click',parar);
-$('rotate-exit').addEventListener('click',parar);
-function pedidoPronto(){pronto=true;parar();$('badge').classList.add('ready');$('status-icon').textContent='✅';$('status-text').textContent='Pedido Pronto';$('message').textContent='Seu pedido está pronto para retirada!';$('sub').textContent='Dirija-se ao balcão para retirar seu pedido.';$('sound').textContent='🔔 Pedido pronto (simulação)';window.scrollTo({top:0,behavior:'smooth'});}
-$('ready').addEventListener('click',pedidoPronto);
-$('game-ready').addEventListener('click',pedidoPronto);
-
-$('reset').addEventListener('click',()=>{pronto=false;parar();$('badge').classList.remove('ready');$('status-icon').textContent='⏳';$('status-text').textContent='Em Preparo';$('message').textContent='Sua comida está sendo preparada com todo cuidado pelo nosso chef!';$('sub').textContent='Você receberá um aviso quando o pedido estiver pronto.';$('sound').textContent='🔔 Toque para ativar alerta sonoro e vibração';$('sound').setAttribute('aria-pressed','false');$('games-open').hidden=false;});
-$('sound').addEventListener('click',()=>{if(pronto)return;const on=$('sound').getAttribute('aria-pressed')!=='true';$('sound').setAttribute('aria-pressed',String(on));$('sound').textContent=on?'🔊 Alerta visual habilitado nesta simulação':'🔔 Toque para ativar alerta sonoro e vibração';});
+<script>
+/* O comprovante não importa jogos nem catálogo antes do clique. */
+const $=id=>document.getElementById(id);
+let jogosPromise=null;
+$('games-open').addEventListener('click',async()=>{
+  const b=$('games-open');b.disabled=true;
+  try{jogosPromise??=import('./games-shell.js?v=50');const modulo=await jogosPromise;modulo.abrir();}
+  catch(e){console.error(e);jogosPromise=null;alert('Não foi possível abrir os jogos. O acompanhamento do pedido continua disponível.');}
+  finally{b.disabled=false;}
+});
+for(const [id,classe] of [['contrast','contrast'],['font','large-text']])$(id).addEventListener('click',()=>{const ativo=document.body.classList.toggle(classe);$(id).setAttribute('aria-pressed',String(ativo));});
+/* O pedido continua independente, inclusive se os jogos nunca forem abertos. */
+$('ready').addEventListener('click',()=>{
+ document.body.dataset.pedidoPronto='true';
+ $('badge').classList.add('ready');$('status-icon').textContent='✅';$('status-text').textContent='Pedido Pronto';
+ $('message').textContent='Seu pedido está pronto para retirada!';
+ $('sub').textContent='Dirija-se ao balcão para retirar seu pedido.';
+ $('sound').textContent='🔔 Pedido pronto (simulação)';
+ window.dispatchEvent(new Event('avisaqui:pedido-pronto'));window.scrollTo(0,0);
+});
+$('reset').addEventListener('click',()=>{
+ document.body.dataset.pedidoPronto='false';
+ $('badge').classList.remove('ready');$('status-icon').textContent='⏳';$('status-text').textContent='Em Preparo';
+ $('message').textContent='Sua comida está sendo preparada com todo cuidado pelo nosso chef!';
+ $('sub').textContent='Você receberá um aviso quando o pedido estiver pronto.';
+ $('sound').textContent='🔔 Toque para ativar alerta sonoro e vibração';
+ window.dispatchEvent(new Event('avisaqui:pedido-reiniciado'));
+});
+$('sound').addEventListener('click',()=>{const b=$('sound');const ativo=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(ativo));b.textContent=ativo?'🔊 Alerta visual habilitado nesta simulação':'🔔 Toque para ativar alerta sonoro e vibração';});
 </script></body></html>
