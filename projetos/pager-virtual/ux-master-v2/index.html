@@ -78,6 +78,39 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 .internal-header .actions button{min-width:62px}
 #manager>.restaurant-context,#kds>.restaurant-context,#pairing>.restaurant-context,.print-container>.restaurant-context{margin-top:0;margin-bottom:18px}
 @media(max-width:380px){.internal-header{gap:8px}.internal-header .brand{width:min(160px,51vw)}.internal-header .actions button{padding:8px 11px}}
+/* Controles de teste de impressão ocultos no fluxo normal; disponíveis só com ?qa=1. */
+#printing .printing-qa{display:none}
+body.printing-qa-enabled #printing .printing-qa{display:block}
+
+/* UX-M008: fidelidade visual da RC em demonstração independente */
+.rc-client{max-width:512px;margin:auto;color:#f8fafc;font-size:16px}
+.rc-a11y{display:flex;justify-content:flex-end;gap:8px;margin-bottom:12px}.rc-a11y button{background:#1e293b;border:1px solid #334155;border-radius:99px;padding:6px 12px;min-height:36px;font-size:.8rem}
+.rc-client-card{background:#1e293b;border:2px solid #334155;border-radius:24px;overflow:hidden;box-shadow:0 10px 25px #0006}
+.rc-client-head{background:#0004;display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid #334155}
+.rc-bell{width:44px;height:44px;border-radius:12px;background:#f97316;display:grid;place-items:center;font-size:1.4rem}
+.rc-client-head h1{font-size:1.15rem;margin:0}.rc-client-head p{color:#94a3b8}
+.rc-order{text-align:center;padding:24px 18px}.rc-caption{display:block;font-size:.85rem;font-weight:800;color:#94a3b8;text-transform:uppercase}
+.rc-number{display:block;font-size:clamp(4rem,14vw,6rem);line-height:1.12;font-weight:900;margin:14px 0}
+.rc-order-badge{display:inline-flex;gap:9px;background:#f59e0b26;color:#fbbf24;border:1px solid #b8791f;border-radius:99px;padding:9px 18px;font-weight:800;margin:7px 0 15px}
+.rc-order-badge.rc-ready{background:#10b98133;color:#6ee7b7;border-color:#059669}
+.rc-emphasis{font-weight:700;margin:12px 0}.rc-sub{color:#cbd5e1;margin:14px 0 18px}
+.rc-order>button{width:100%;min-height:56px}.rc-diagnostic{padding:14px;border-top:1px solid #64748b;font-size:.9rem}
+.rc-diagnostic summary{cursor:pointer;font-weight:700}.rc-diagnostic p{color:#cbd5e1;margin:12px 0}
+.rc-game{text-align:center;padding:15px}.rc-back{text-align:center;margin:14px 0}
+.rc-client.rc-high .rc-client-card{background:#121212;border-color:white}.rc-client.rc-high .rc-order{background:#000}.rc-client.rc-large{font-size:18px}.rc-client.rc-large .rc-order{font-size:1.15em}
+.rc-auth-wrap{min-height:min(100vh,740px);display:grid;place-items:center;padding:20px 0;color:#f1f5f9}
+.rc-auth{width:100%;max-width:430px;background:#131c2e;border:1px solid #30435f;border-radius:22px;padding:28px 24px}
+.rc-auth.rc-setup{max-width:440px;border-radius:20px;padding:26px}
+.rc-auth h1{font-size:1.75rem;margin:0 0 6px}.rc-auth.rc-setup h1{font-size:1.55rem;margin-bottom:10px}
+.rc-auth p{color:#b1c0d7;line-height:1.45;margin:0 0 26px}.rc-auth.rc-setup p{color:#bac8de}
+.rc-auth label{display:block;font-weight:700;margin:18px 0 8px}
+.rc-auth input{display:block;width:100%;min-height:56px;font:inherit;font-size:1.1rem;padding:13px 15px;border-radius:10px;background:#0b1220;border:2px solid #4a5c78;color:#f8fafc}
+.rc-auth.rc-setup input{min-height:54px;padding:12px;font-size:1rem}
+.rc-auth input:focus-visible{outline:3px solid #93c5fd;outline-offset:3px}
+.rc-auth form>button{width:100%;min-height:58px;margin-top:22px;border-radius:12px;font-size:1.05rem;font-weight:800}
+.rc-auth .rc-note{color:#b1c0d7;font-size:.8rem;margin:14px 0 0}
+.rc-role{margin-top:18px}.rc-role summary{cursor:pointer;font-size:.85rem;color:#acbfd6}.rc-role select{margin-top:8px}
+@media(max-width:380px){.rc-auth{padding:22px 18px}}
 </style>
 </head>
 <body>
@@ -98,10 +131,27 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 <div class="kds-actions"><button data-modal="sequence">⚙️ Numeração</button><button data-modal="order">✚ Inserir pedido manual</button><button class="kds-outline" data-go="printing">🖨️ Integração de impressão</button><button class="kds-outline" data-go="master">← Voltar à administração</button></div>
 <div class="orders-grid" id="orders-grid"></div>
 </section>
-<section class="page" id="client" hidden><header class="header"><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"><button class="secondary" data-go="kds">Voltar</button></header><div class="status-card"><p>Acompanhamento do pedido</p><strong id="client-number">Pedido 101</strong><p id="client-status">Seu pedido está em preparo.</p><div class="toolbar" style="justify-content:center"><button class="secondary" data-action="sound">🔔 Som desligado</button><button class="secondary" data-action="games">Jogos</button></div></div></section>
+<section class="page" id="client" hidden><div class="rc-client">
+<div class="rc-a11y"><button id="rc-contrast" class="secondary" type="button" aria-pressed="false">Alto Contraste</button><button id="rc-font" class="secondary" type="button" aria-pressed="false">Texto A+</button></div>
+<main class="rc-client-card"><header class="rc-client-head"><span class="rc-bell">🔔</span><div><h1>Pager Virtual</h1><p>Acompanhamento do seu pedido</p></div></header>
+<div class="rc-order"><span class="rc-caption">Sua Senha de Retirada</span><strong id="client-number" class="rc-number">101</strong><div class="rc-order-badge">⏳ <span id="client-status">Em Preparo</span></div><p class="rc-emphasis">Sua comida está sendo preparada com todo cuidado pelo nosso chef!</p><p class="rc-sub">Você receberá um aviso quando o pedido estiver pronto.</p><button id="rc-sound" type="button" data-action="sound">🔔 Toque para ativar alerta sonoro e vibração</button></div>
+<details class="rc-diagnostic"><summary>Diagnóstico do aparelho (testes)</summary><p>Simulação visual, sem acesso aos recursos do aparelho.</p><button type="button" class="secondary" data-action="client-diagnostic">Verificar recursos</button></details>
+<div class="rc-game"><button type="button" class="secondary" data-action="games">🎮 Jogar enquanto aguarda</button></div></main>
+<div class="rc-back"><button class="secondary" type="button" data-go="kds">Voltar ao KDS</button></div></div></section>
 <section class="page" id="landing" hidden><header class="header"><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"><button data-go="login">Entrar</button></header><div class="hero"><h1>Seu cliente aproveita a espera. Você cuida dos pedidos.</h1><p>O aviso chega na hora. O cliente acompanha o pedido no navegador, sem instalar aplicativo.</p><div class="toolbar"><button data-go="client">Ver página do cliente</button><button class="secondary" data-modal="interest">Interesse no piloto</button></div></div><div class="grid2"><div class="card"><h3>QR Code</h3><p class="muted">Acesso direto à página do pedido.</p></div><div class="card"><h3>Aviso</h3><p class="muted">Notificação de pedido pronto.</p></div></div></section>
-<section class="page" id="login" hidden><div class="formview"><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui" style="margin:0 auto 16px"><form class="card" id="login-form"><h2>Entrar</h2><label>Login<input class="field" name="login" required autocomplete="off" placeholder="Acesso demonstrativo"></label><label>Senha<input class="field" type="password" name="password" required autocomplete="off" placeholder="Qualquer senha fictícia"></label><label>Perfil<select name="role"><option value="master">Master Admin</option><option value="manager">Gerente</option><option value="kds">Operador / KDS</option></select></label><button type="submit">Entrar na simulação</button><p class="muted small" style="margin-top:9px">Não use dados ou senhas reais.</p></form></div></section>
-<section class="page" id="setup" hidden><header class="header"><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"></header><div class="formview"><form class="card" id="setup-form"><h2>Primeiro acesso</h2><label>Nome<input class="field" name="name" required></label><label>Login<input class="field" name="login" required></label><label>Senha fictícia<input class="field" name="password" type="password" minlength="12" required></label><button type="submit">Continuar</button></form></div></section>
+<section class="page" id="login" hidden><div class="rc-auth-wrap"><main class="rc-auth">
+<h1>🔔 Avisaqui</h1><p>Entre para acessar o restaurante ou administrar a plataforma.</p>
+<form id="login-form"><label for="rc-user">Usuário</label><input id="rc-user" name="login" required maxlength="120" autocomplete="off" autocapitalize="none" placeholder="Usuário fictício">
+<label for="rc-pass">Senha</label><input id="rc-pass" name="password" type="password" required autocomplete="off" placeholder="Senha fictícia">
+<details class="rc-role"><summary>Escolher perfil da simulação</summary><label for="rc-profile">Perfil demonstrativo</label><select name="role" id="rc-profile"><option value="master">Master Admin</option><option value="manager">Gerente</option><option value="kds">Operador / KDS</option></select></details>
+<button type="submit">Entrar</button><p class="rc-note">Simulação: não use senhas reais. Nenhuma autenticação ocorre.</p></form></main></div></section>
+<section class="page" id="setup" hidden><div class="rc-auth-wrap"><main class="rc-auth rc-setup">
+<h1>🔔 Primeiro acesso ao Avisaqui</h1><p>Este cadastro ocorre apenas uma vez. No aplicativo real, é necessário um código temporário de configuração. Este protótipo não verifica códigos reais.</p>
+<form id="setup-form"><label for="rc-code">Código temporário (demonstração)</label><input id="rc-code" name="codigo" maxlength="48" autocomplete="off" placeholder="Não informe um código real">
+<label for="rc-name">Nome do administrador</label><input id="rc-name" name="name" required maxlength="120" autocomplete="off">
+<label for="rc-setup-user">Usuário de acesso</label><input id="rc-setup-user" name="login" required maxlength="120" autocomplete="off">
+<label for="rc-setup-pass">Senha (mínimo 12 caracteres)</label><input id="rc-setup-pass" name="password" type="password" minlength="12" required autocomplete="off" placeholder="Somente senha fictícia">
+<button type="submit">Criar Master Admin</button><p class="rc-note">Nenhum usuário ou credencial será criado.</p></form></main></div></section>
 <section class="page" id="printing" hidden>
 <div class="print-container"><header class="header internal-header"><div class="brand-area"><img class="brand" src="../landing/avisaqui-marca.svg" alt="Avisaqui"></div><div class="actions"><button class="secondary" type="button" data-go="login">Sair</button></div></header><div class="restaurant-context" aria-label="Restaurante em uso"><img class="restaurant-context-logo" alt="Logo demonstrativo do restaurante" src="./logo-restaurante-exemplo.svg"><div class="restaurant-context-text"><strong class="restaurant-context-name">Restaurante Exemplo</strong><span class="restaurant-context-detail">Gerente · restaurante-exemplo</span></div></div>
 <div class="section-heading"><h2>Integração de impressão</h2><button type="button" class="secondary" data-go="kds">Voltar ao KDS</button></div>
@@ -109,37 +159,36 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 <section class="print-card cashier-section" aria-labelledby="cashiers-title">
 <div class="cashiers-head"><div><h2 id="cashiers-title">Computadores de caixa</h2><p class="muted small">Restaurante Exemplo</p></div><span aria-hidden="true" class="cashiers-header-icon">▣</span></div>
 <div class="cashiers-metrics">
-<div class="cashiers-metric"><strong id="cashiers-linked">3</strong><span>Vinculados</span></div>
-<div class="cashiers-metric"><strong id="cashiers-no-signal">1</strong><span>Sem comunicação recente</span></div>
+<div class="cashiers-metric"><strong id="cashiers-linked">3</strong><span>Vínculos demonstrativos</span></div>
+<div class="cashiers-metric"><strong id="cashiers-no-signal">—</strong><span>Comunicação não verificada</span></div>
 </div>
 <button type="button" class="cashiers-add" data-go="pairing" data-pair-view="computer">＋ Vincular computador</button>
 <div id="cashiers-list" class="cashiers-list" aria-live="polite"><p class="muted">Carregando computadores demonstrativos…</p></div>
-<p class="muted small">Vínculo e comunicação são estados diferentes. Todas as informações desta área são fictícias.</p>
+<p class="muted small">Vínculo só é confirmado após ACK aceito pelo servidor. A comunicação atual e a fila de pedidos ainda não estão disponíveis nesta demonstração.</p>
 </section>
 <section class="print-card" id="windows-download" aria-labelledby="windows-download-title">
-<div class="print-step"><span class="step-number">2</span><div><h2 id="windows-download-title">Aplicativo Avisaqui para Windows</h2><p>Instale o aplicativo no computador do caixa. Depois, abra o aplicativo e autorize pelo celular do gerente.</p></div></div>
-<div class="windows-release"><div><strong id="windows-release-state">Nenhuma versão aprovada disponível</strong><p class="muted small">Versão: <span id="windows-release-version">Não publicada</span> · Publicação: <span id="windows-release-date">Não informada</span></p></div><span class="release-indicator" id="windows-release-indicator">Indisponível</span></div>
+<div class="print-step"><span class="step-number">2</span><div><h2 id="windows-download-title">Aplicativo Avisaqui para Windows</h2><p>Após instalar uma versão aprovada, abra o aplicativo no caixa, confira a URL HTTPS e selecione “Iniciar ou retomar pareamento”. O computador mostra o QR Code ou código temporário; o gerente confere e autoriza pelo celular. A confirmação do vínculo depende do servidor.</p></div></div>
+<div class="windows-release"><div><strong id="windows-release-state">Download para Windows indisponível — versão comercial ainda não aprovada</strong><p class="muted small">Versão: <span id="windows-release-version">Não publicada</span> · Publicação: <span id="windows-release-date">Não informada</span></p></div><span class="release-indicator" id="windows-release-indicator">Indisponível</span></div>
 <div class="flow"><button type="button" disabled id="windows-download-button">Baixar Avisaqui para Windows</button></div>
-<p id="windows-download-message" role="status" class="muted small">O download ficará disponível somente após aprovação e publicação controlada de um pacote Windows. Nenhum instalador é disponibilizado neste laboratório.</p>
-<details class="print-legacy"><summary>Simular estados da distribuição (apenas laboratório)</summary>
+<p id="windows-download-message" role="status" class="muted small">O instalador só será oferecido após autorização de distribuição. A prévia Windows dos testes não está disponível para operação comercial.</p>
+<details class="print-legacy printing-qa" hidden><summary>Testes de distribuição (somente QA)</summary>
 <div class="flow"><button class="secondary" type="button" data-action="release-approved">Versão aprovada (fictícia)</button><button class="secondary" type="button" data-action="release-unavailable">Pacote indisponível</button><button class="secondary" type="button" data-action="release-error">Falha ao baixar</button></div>
 <p class="muted small">Estas ações simulam a resposta do servidor. Não baixam arquivos e não publicam executáveis.</p></details>
+<p class="muted small">Versão, data, requisitos e compatibilidade serão exibidos quando uma versão oficial estiver aprovada.</p>
 </section>
 <section class="print-card">
-<div class="print-step"><span class="step-number">3</span><div><h2>Recebimentos e pendências</h2><p>Consulte os eventos recebidos dos caixas. Cada pedido precisa preservar restaurante, caixa, origem, evento e número comercial. Uma duplicidade não cria automaticamente outra chamada no KDS.</p></div></div>
+<div class="print-step"><span class="step-number">3</span><div><h2>Recebimentos e pendências</h2><p>Consulte o histórico de recebimentos e revise os casos que precisam de atenção. Os eventos abaixo são exemplos do laboratório, não dados do servidor.</p></div></div>
 <button id="print-refresh" type="button" class="secondary" data-action="refresh">Atualizar agora</button>
+<p class="muted small" role="status">Pendências não disponíveis — aguardando dados confirmados pelo servidor.</p>
 <ul class="print-events" id="print-events"><li>#208 · CRIADO · 15/11/2026, 14:41:07 · evento simulado</li><li>#207 · CRIADO · 15/11/2026, 12:15:23 · evento simulado</li><li>#206 · CRIADO · 15/11/2026, 12:15:22 · evento simulado</li><li>#205 · PENDENTE_DUPLICADO · 15/11/2026, 10:40:23 · evento simulado</li><li>#205 · CRIADO · 15/11/2026, 10:38:54 · evento simulado</li><li>#204 · CRIADO · 15/11/2026, 10:37:56 · evento simulado</li><li>#203 · CRIADO · 15/11/2026, 02:19:02 · evento simulado</li></ul>
 <div class="flow"><button type="button" data-go="pairing" data-pair-view="pending" class="secondary">Revisar pendências</button></div>
 </section>
-<section class="print-card"><div class="print-step"><span class="step-number">4</span><div><h2>Agente Windows</h2><p>O aplicativo mostra o QR Code no próprio computador. Após a autorização no celular, conclui o vínculo sem exigir outra confirmação do operador. O agente envia pedidos ao KDS e preserva eventos pendentes durante falhas de rede.</p></div></div>
-<p class="muted small">A impressão física e a inclusão manual continuam independentes. O pareamento não resolve, por si só, perda de arquivos de captura ou pedidos já impressos com o agente desligado.</p>
-</section>
 <details class="print-legacy" id="print-legacy"><summary>Credenciais anteriores e migração</summary>
-<div class="print-card"><h2>Computadores ainda não migrados</h2>
-<p>Chaves antigas seguem válidas até migração autorizada. O sistema não deve revogá-las automaticamente nem exigir novo pareamento sem planejamento.</p>
+<div class="print-card"><h2>Acessos anteriores</h2>
+<p>Consulte e gerencie somente credenciais antigas deste restaurante. O sistema atual ainda permite gerar e copiar uma credencial antiga quando necessário.</p>
 <div class="print-credentials" id="print-credentials"><div><strong>Credencial anterior · Identidade do caixa ainda não vinculada</strong><p class="muted small">exemplo-01 · Criada em 15/11/2026 (dados fictícios) · Ativa</p></div><button type="button" class="danger" data-action="revoke">Revogar</button></div>
-<p class="muted small">A revogação individual exige confirmação e não apaga eventos. Novos caixas devem usar o pareamento. Não há geração nem cópia de chave no fluxo comercial proposto.</p>
-<details class="legacy-reference"><summary>Consultar funcionamento anterior (somente referência)</summary><p>A versão atual permite criar manualmente uma credencial e copiá-la para o agente Windows. Esse comportamento é documentado como legado, não como experiência aprovada para novos computadores.</p><button type="button" class="secondary" data-action="credential">Ver comportamento anterior (simulação)</button><p id="credential-result" class="muted" aria-live="polite"></p></details>
+<p class="muted small">A revogação exige confirmação e não apaga o histórico. Novos computadores devem usar o pareamento por QR Code.</p><p class="muted small">Para caixas antigos, gerar e copiar credenciais continua possível no sistema atual. Essa operação não é executada nesta demonstração.</p>
+<details class="legacy-reference printing-qa" hidden><summary>Referência legada para QA</summary><p>A versão atual permite criar manualmente uma credencial e copiá-la para o agente Windows. Esse comportamento é documentado como legado, não como experiência aprovada para novos computadores.</p><button type="button" class="secondary" data-action="credential">Ver comportamento anterior (simulação)</button><p id="credential-result" class="muted" aria-live="polite"></p></details>
 </div></details>
 </div></section>
 <section class="page" id="pairing" hidden>
@@ -154,6 +203,7 @@ dialog{background:#131e31;color:#f1f5f9;border:1px solid #526987;border-radius:1
 (function(){
 'use strict';
 const $=id=>document.getElementById(id);
+if(new URLSearchParams(location.search).get('qa')==='1'){document.body.classList.add('printing-qa-enabled');document.querySelectorAll('#printing .printing-qa').forEach(el=>el.hidden=false)}
 const state={selected:1,entryRole:'gerente',restaurants:[{id:1,name:'Restaurante Exemplo',slug:'restaurante-exemplo',logo:'./logo-restaurante-exemplo.svg'},{id:2,name:'Café Demonstrativo',slug:'cafe-demonstrativo',logo:'./logo-cafe-demonstrativo.svg'}],terminals:[{name:'Caixa 1',active:true},{name:'Caixa 2',active:false}],interests:[],orders:[{number:203,status:'ready'},{number:204,status:'new'},{number:205,status:'new'},{number:206,status:'new'},{number:207,status:'new'},{number:208,status:'new'}],seq:11,sound:false,clientOrder:101};
 let dirty=false,modalType='';
 const modals={
@@ -182,29 +232,29 @@ const print=document.querySelector('#printing .identity');if(print)print.textCon
 const printName=document.querySelector('.cashiers-head .muted');if(printName)printName.textContent=r.name;
 const f=$('pairing-frame');if(f?.contentWindow){f.contentWindow.postMessage({avisaquiPreview:'restaurant-context',restaurant:{id:r.id,name:r.name,slug:r.slug,logo:r.logo||'./restaurante-ilustrativo.svg',role:state.entryRole}},location.origin)}
 }
-function navigate(id){if(!$(id)||!$(id).classList.contains('page'))id='master';document.querySelectorAll('.page').forEach(e=>e.hidden=e.id!==id);$('screen').value=id;history.replaceState(null,'','#'+id);updateRestaurantIdentity();window.scrollTo(0,0);if(id==='pairing')requestAnimationFrame(()=>{const f=$('pairing-frame');if(f&&f.contentWindow){f.contentWindow.postMessage({avisaquiPreview:'view',view:f.dataset.pairView||'computer'},location.origin);f.contentWindow.postMessage({avisaquiPreview:'measure'},location.origin)}})}
+function navigate(id){if(id==='landing'){window.location.assign(new URL('../landing/',document.baseURI).href);return;}if(!$(id)||!$(id).classList.contains('page'))id='master';document.querySelectorAll('.page').forEach(e=>e.hidden=e.id!==id);$('screen').value=id;history.replaceState(null,'','#'+id);updateRestaurantIdentity();window.scrollTo(0,0);if(id==='pairing')requestAnimationFrame(()=>{const f=$('pairing-frame');if(f&&f.contentWindow){f.contentWindow.postMessage({avisaquiPreview:'view',view:f.dataset.pairView||'computer'},location.origin);f.contentWindow.postMessage({avisaquiPreview:'measure'},location.origin)}})}
 function setWindowsRelease(mode){
 const approved=mode==='approved';
-$('windows-release-state').textContent=approved?'Pacote fictício aprovado (prévia)':mode==='error'?'Falha simulada na distribuição':'Nenhuma versão aprovada disponível';
+$('windows-release-state').textContent=approved?'Pacote fictício aprovado (prévia)':mode==='error'?'Falha simulada na distribuição':'Download para Windows indisponível — versão comercial ainda não aprovada';
 $('windows-release-version').textContent=approved?'DEMO — sem versão real':'Não publicada';
 $('windows-release-date').textContent=approved?'Data fictícia — não publicada':'Não informada';
 $('windows-release-indicator').textContent=approved?'Disponível (simulação)':'Indisponível';
 $('windows-release-indicator').className='release-indicator'+(approved?' release-approved':'');
 $('windows-download-button').disabled=!approved;
-$('windows-download-message').textContent=approved?'Prévia de uma versão aprovada. Ao clicar, será exibida uma demonstração; nenhum arquivo será baixado.':mode==='error'?'Não foi possível acessar o pacote demonstrativo. A versão anterior aprovada permaneceria disponível em produção.':'O download ficará disponível somente após aprovação e publicação controlada de um pacote Windows.';
+$('windows-download-message').textContent=approved?'Prévia de uma versão aprovada. Ao clicar, será exibida uma demonstração; nenhum arquivo será baixado.':mode==='error'?'Não foi possível acessar o pacote demonstrativo. A versão anterior aprovada permaneceria disponível em produção.':'O download ficará disponível somente após aprovação comercial. A prévia de teste não é um instalador comercial.';
 }
 $('windows-download-button').addEventListener('click',()=>toast('Download demonstrativo: nenhum executável foi enviado.'));
 function cashierAction(action,id,name){const f=$('pairing-frame');let newName;
 if(action==='rename'){const next=prompt('Nome amigável do caixa:',name||'');if(next===null)return;newName=next.trim().slice(0,50);if(!newName){toast('Informe um nome válido.');return}}
 f.dataset.pairView='devices';if(action==='manage')navigate('pairing');f.contentWindow?.postMessage({avisaquiPreview:'device-action',action,id,newName},location.origin)}
 function renderCashiers(devices){
-const list=$('cashiers-list');list.replaceChildren();const linked=devices.filter(d=>d.status==='vinculado');const noSignal=linked.filter(d=>!/recente confirmada/.test(d.connection.toLowerCase()));$('cashiers-linked').textContent=linked.length;$('cashiers-no-signal').textContent=noSignal.length;
-for(const d of devices){const card=el('article',undefined,'cashier-card');const top=el('div',undefined,'cashier-top');const title=el('h3','▣ '+d.name);const status=el('span',d.status==='revogado'?'Revogado':'Vinculado','cashier-link'+(d.status==='revogado'?' revoked':''));top.append(title,status);
-const online=/recente confirmada/.test(d.connection.toLowerCase());const comm=el('p',(online?'◉ ': '◌ ')+d.connection,'cashier-comm '+(online?'':'offline'));
-const details=el('p','ID: '+d.id+' · Última comunicação: '+d.last,'cashier-detail');const buttons=el('div',undefined,'cashier-buttons');
+const list=$('cashiers-list');list.replaceChildren();const linked=devices.filter(d=>d.status==='vinculado');$('cashiers-linked').textContent=linked.length;$('cashiers-no-signal').textContent='—';
+for(const d of devices){const card=el('article',undefined,'cashier-card');const top=el('div',undefined,'cashier-top');const title=el('h3','▣ '+d.name);const status=el('span',d.status==='revogado'?'Revogado (simulação)':'Vínculo demonstrativo','cashier-link'+(d.status==='revogado'?' revoked':''));top.append(title,status);
+const comm=el('p','◌ Comunicação não verificada no servidor','cashier-comm unknown');
+const details=el('p','ID de exemplo: '+d.id+' · Última comunicação: não disponível','cashier-detail');const buttons=el('div',undefined,'cashier-buttons');
 for(const [name,action] of [['Renomear','rename'],['Gerenciar','manage']]){const b=el('button',name,'secondary');if(d.status==='revogado'&&action==='rename')b.disabled=true;b.onclick=()=>cashierAction(action,d.id,d.name);buttons.append(b)}
-card.append(top,comm,details,buttons);if(d.pending)card.append(el('p',d.pending+' evento(s) local(is) pendente(s) — revisão necessária','cashier-pending'));list.append(card)}
-if(!devices.length)list.append(el('p','Nenhum computador vinculado na demonstração.','muted'))}
+card.append(top,comm,details,buttons);if(d.pending)card.append(el('p','Pendências não disponíveis (demonstração sem telemetria)','cashier-pending'));list.append(card)}
+if(!devices.length)list.append(el('p','Nenhum computador no cenário de demonstração.','muted'))}
 window.addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==$('pairing-frame').contentWindow)return;const data=e.data;if(data?.avisaquiPreview==='devices'&&Array.isArray(data.devices)){renderCashiers(data.devices);return}if(data?.avisaquiPreview!=='height'||!Number.isFinite(data.height))return;const h=Math.min(12000,Math.max(760,Math.ceil(data.height)));$('pairing-frame').style.height=h+'px'})
 function renderRestaurants(){
 $('rest-count').textContent=state.restaurants.length;
@@ -238,7 +288,7 @@ function renderOrders(){
  });
  if(!running.length)root.append(el('p','Cozinha em dia! Nenhum pedido pendente.','muted'));renderClient()
 }
-function renderClient(){const order=state.orders.find(o=>o.number===state.clientOrder);$('client-number').textContent='Pedido '+state.clientOrder;$('client-status').textContent=!order?'Pedido demonstrativo':order.status==='new'?'Seu pedido está em preparo.':order.status==='ready'?'Seu pedido está pronto!':'Pedido finalizado.'}
+function renderClient(){const order=state.orders.find(o=>o.number===state.clientOrder);$('client-number').textContent=String(state.clientOrder);$('client-status').textContent=!order?'Em Preparo':order.status==='new'?'Em Preparo':order.status==='ready'?'Pronto para retirada':'Finalizado';const badge=$('client-status').closest('.rc-order-badge');badge.classList.toggle('rc-ready',order?.status==='ready');const message=$('client').querySelector('.rc-emphasis');message.textContent=order?.status==='ready'?'Seu pedido está pronto para retirada!':order?.status==='done'?'Pedido finalizado.':'Sua comida está sendo preparada com todo cuidado pelo nosso chef!';}
 function openModal(type){const m=modals[type];if(!m)return;modalType=type;dirty=false;$('modal-title').textContent=m[0];$('modal-fields').innerHTML=m[1];$('modal-submit').textContent=m[2];$('modal-form').reset();if(type==='manager'){const sel=$('modal-restaurant');state.restaurants.forEach(r=>sel.add(new Option(r.name,r.id)))}if(type==='order')$('modal-form').elements.number.value=state.seq;if(type==='sequence')$('modal-form').elements.number.value=state.seq;$('modal').showModal()}
 function closeModal(){if(dirty&&!confirm('Descartar alterações não salvas?'))return;$('modal').close()}
 $('modal-form').addEventListener('input',()=>dirty=true);
@@ -252,7 +302,9 @@ $('modal-cancel').onclick=closeModal;$('modal-x').onclick=closeModal;$('modal').
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.go){if(b.dataset.go==='pairing')$('pairing-frame').dataset.pairView=b.dataset.pairView||'computer';navigate(b.dataset.go);}if(b.dataset.modal)openModal(b.dataset.modal);if(b.dataset.master){document.querySelectorAll('[data-master]').forEach(x=>x.classList.toggle('current',x===b));['restaurants','interests','settings'].forEach(k=>$('master-'+k).hidden=k!==b.dataset.master)}if(b.dataset.action==='refresh')toast('Lista de demonstração atualizada.');
 if(b.dataset.action==='release-approved')setWindowsRelease('approved');
 if(b.dataset.action==='release-unavailable')setWindowsRelease('unavailable');
-if(b.dataset.action==='release-error')setWindowsRelease('error');if(b.dataset.action==='credential'){$('credential-result').textContent='Antes: a credencial era mostrada para copiar. Novo fluxo aprovado: pareamento sem exibir ou copiar a chave. Nenhum segredo foi gerado.'}if(b.dataset.action==='revoke'){if(confirm('Revogar esta credencial anterior? Ela deixará de enviar pedidos. Os demais caixas continuam funcionando. Eventos pendentes permanecem para revisão.')){$('print-credentials').textContent='Credencial anterior revogada na simulação · Histórico e pendências preservados.';toast('Revogação demonstrativa confirmada. Nenhum servidor foi alterado.')}}if(b.dataset.action==='sound'){state.sound=!state.sound;b.textContent=state.sound?'🔔 Som ligado':'🔔 Som desligado'}if(b.dataset.action==='games')toast('Jogos em estudo separado.');if(b.dataset.action==='reset'){if(confirm('Reiniciar a demonstração?'))location.reload()}});
+if(b.dataset.action==='release-error')setWindowsRelease('error');if(b.dataset.action==='credential'){$('credential-result').textContent='Antes: a credencial era mostrada para copiar. Novo fluxo aprovado: pareamento sem exibir ou copiar a chave. Nenhum segredo foi gerado.'}if(b.dataset.action==='revoke'){if(confirm('Revogar esta credencial anterior? Ela deixará de enviar pedidos. Os demais caixas continuam funcionando. Eventos pendentes permanecem para revisão.')){$('print-credentials').textContent='Credencial anterior revogada na simulação · Histórico e pendências preservados.';toast('Revogação demonstrativa confirmada. Nenhum servidor foi alterado.')}}if(b.dataset.action==='sound'){state.sound=!state.sound;b.textContent=state.sound?'🔔 Alerta ativado (simulação)':'🔔 Toque para ativar alerta sonoro e vibração';b.setAttribute('aria-pressed',String(state.sound))}if(b.dataset.action==='client-diagnostic')toast('Recursos não verificados no laboratório.');if(b.dataset.action==='games')toast('Jogos em estudo separado.');if(b.dataset.action==='reset'){if(confirm('Reiniciar a demonstração?'))location.reload()}});
+$('rc-contrast').addEventListener('click',e=>{const v=$('client').querySelector('.rc-client').classList.toggle('rc-high');e.currentTarget.setAttribute('aria-pressed',String(v))});
+$('rc-font').addEventListener('click',e=>{const v=$('client').querySelector('.rc-client').classList.toggle('rc-large');e.currentTarget.setAttribute('aria-pressed',String(v))});
 $('screen').addEventListener('change',e=>{if(e.target.value==='pairing')$('pairing-frame').dataset.pairView='computer';navigate(e.target.value)});
 $('pairing-frame').addEventListener('load',()=>{const f=$('pairing-frame');updateRestaurantIdentity();f.contentWindow?.postMessage({avisaquiPreview:'measure'},location.origin);if(!$('pairing').hidden)f.contentWindow?.postMessage({avisaquiPreview:'view',view:f.dataset.pairView||'computer'},location.origin)});
 $('login-form').addEventListener('submit',e=>{e.preventDefault();const role=new FormData(e.currentTarget).get('role');state.entryRole=role==='master'?'master':'gerente';state.selected=state.selected||state.restaurants[0]?.id;e.currentTarget.reset();navigate(role);toast('Acesso demonstrativo, sem autenticação real.')});
