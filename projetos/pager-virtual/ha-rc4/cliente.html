@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <title>Seu pedido · Avisaqui</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.2);
+      --success-border: #059669;
+      --focus-ring: #60a5fa;
+      --font-scale: 1rem;
+    }
+
+    body.high-contrast {
+      --bg: #000000;
+      --card-bg: #121212;
+      --card-border: #ffffff;
+      --text-main: #ffffff;
+      --text-muted: #e2e8f0;
+      --primary: #93c5fd;
+      --warning: #fde047;
+      --warning-bg: #000000;
+      --success: #86efac;
+      --success-bg: #000000;
+      --success-border: #ffffff;
+      --focus-ring: #ffffff;
+    }
+
+    body.large-text {
+      --font-scale: 1.15rem;
+    }
+
+    /* Elementos ocultos nao podem ocupar espaco em layouts flex/grid. */
+    [hidden] { display: none !important; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-size: var(--font-scale);
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      transition: background-color 0.2s, color 0.2s;
+      overflow-x: hidden;
+    }
+
+    /* UX-M017 — marca transparente, cabeçalho compacto mobile; nenhuma mudança na lógica de pedidos */
+    .restaurant-header { flex-direction:column;align-items:flex-start;gap:3px;padding:12px 16px; }
+    .brand-logo-client { display:block;width:150px;max-width:65%;height:auto;object-fit:contain;background:transparent; }
+    .restaurant-info h1 { font-size:1.05rem; }
+    .client-restaurant-context { display:flex;align-items:center;gap:12px;margin:9px 0 0;padding:9px 12px;background:#18283f;border-radius:12px;width:100%;border:1px solid #46617d }
+    .client-restaurant-symbol { width:48px;height:48px;flex:none;background:#2c4968;color:#fff;border-radius:10px;display:grid;place-items:center;font-weight:800 }
+    .client-restaurant-symbol img { width:48px;height:48px;object-fit:contain;border-radius:10px;background:#fff }
+    .client-restaurant-context strong { overflow-wrap:anywhere;min-width:0 }
+    .restaurant-info p { margin:0;font-size:.85rem; }
+    @media(max-width:375px) { .brand-logo-client { width:135px; } .restaurant-header { padding:11px 13px; } }
+
+    /* EFEITO VISÃO PERIFÉRICA: Iluminação nas bordas da tela em amarelo (Edge Lighting) */
+    .edge-glow-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 99999;
+      opacity: 0;
+      transition: opacity 0.25s ease-in-out;
+    }
+
+    .edge-glow-overlay.active {
+      opacity: 1;
+      animation: edgePulseYellow 1.2s infinite ease-in-out;
+    }
+
+    @keyframes edgePulseYellow {
+      0% {
+        box-shadow: inset 0 0 30px 10px rgba(251, 191, 36, 0.5), inset 0 0 65px 20px rgba(245, 158, 11, 0.3);
+      }
+      50% {
+        box-shadow: inset 0 0 55px 18px rgba(251, 191, 36, 1), inset 0 0 100px 35px rgba(245, 158, 11, 0.7);
+      }
+      100% {
+        box-shadow: inset 0 0 30px 10px rgba(251, 191, 36, 0.5), inset 0 0 65px 20px rgba(245, 158, 11, 0.3);
+      }
+    }
+
+    :focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 3px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .a11y-bar {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .btn-chip {
+      background: #1e293b;
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      border-radius: 9999px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-chip.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary-hover);
+    }
+
+    .app-card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card-bg);
+      border: 2px solid var(--card-border);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .restaurant-header {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      background: #f97316;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .restaurant-info h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .restaurant-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .order-status-card {
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .order-number-tag {
+      display: inline-block;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .order-number {
+      font-size: 3.8rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 16px;
+      letter-spacing: -0.04em;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+
+    .status-badge.preparo {
+      background: var(--warning-bg);
+      color: var(--warning);
+      border: 1px solid var(--warning);
+    }
+
+    .status-badge.pronto {
+      background: var(--success-bg);
+      color: var(--success);
+      border: 2px solid var(--success-border);
+      animation: pulseAlert 0.9s infinite;
+    }
+
+    .status-badge.entregue {
+      background: rgba(148, 163, 184, 0.15);
+      color: var(--text-muted);
+      border: 1px solid var(--card-border);
+    }
+
+    @keyframes pulseAlert {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1.06); box-shadow: 0 0 0 16px rgba(16, 185, 129, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .flash-alert {
+      background: #064e3b !important;
+      animation: bgFlash 0.7s infinite alternate;
+    }
+
+    @keyframes bgFlash {
+      from { border-color: #10b981; }
+      to { border-color: #fbbf24; }
+    }
+
+    .status-message {
+      font-size: 1.1rem;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .sub-message {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    /* Botão Toggle de Alerta Sonoro e Vibração */
+    .sound-toggle-btn {
+      width: 100%;
+      background: #0f172a;
+      border: 2px dashed #475569;
+      color: var(--text-main);
+      padding: 14px 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      transition: all 0.2s;
+    }
+
+    .sound-toggle-btn.enabled {
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid var(--success);
+      color: #6ee7b7;
+    }
+
+    .sound-toggle-btn.muted {
+      background: rgba(239, 68, 68, 0.1);
+      border: 2px solid #ef4444;
+      color: #fca5a5;
+    }
+
+    .order-details {
+      border-top: 1px solid var(--card-border);
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .order-details h2 {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .item-list {
+      list-style: none;
+    }
+
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+      font-size: 0.95rem;
+    }
+
+    .item-row:last-child {
+      border-bottom: none;
+    }
+
+    .item-total {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding-top: 10px;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .review-box {
+      margin-top: 16px;
+      padding: 18px;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .star-rating {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .star-btn {
+      background: none;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #fbbf24;
+      line-height: 1;
+    }
+
+    .coupon-badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: #0f172a;
+      border: 1px dashed #fbbf24;
+      color: #fef08a;
+      font-weight: 700;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 1.05rem;
+    }
+  </style>
+  <script src="./mock-api.js"></script>
+</head>
+<body>
+
+  <!-- Overlay para o efeito de iluminação periférica nas laterais da tela -->
+  <div id="edge-glow" class="edge-glow-overlay" aria-hidden="true"></div>
+
+  <!-- Barra de acessibilidade rápida para o cliente -->
+  <aside class="a11y-bar" aria-label="Acessibilidade">
+    <button id="toggle-contrast" class="btn-chip" aria-pressed="false" title="Alternar modo de alto contraste">
+      Alto Contraste
+    </button>
+    <button id="toggle-font" class="btn-chip" aria-pressed="false" title="Aumentar tamanho do texto">
+      Texto A+
+    </button>
+  </aside>
+
+  <!-- Região ARIA para anúncios dinâmicos em leitores de tela -->
+  <div id="live-announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- Cartão do Pager do Cliente -->
+  <main id="app-card" class="app-card">
+    <header class="restaurant-header">
+      <img class="brand-logo-client" src="./avisaqui-marca-transparente.svg" alt="Avisaqui">
+      <div class="restaurant-info">
+        <h1>Seu pedido</h1>
+        <p>Acompanhamento do seu pedido</p>
+      </div>
+      <div id="client-restaurant-context" class="client-restaurant-context" role="status" aria-live="polite" hidden><span id="client-restaurant-symbol" class="client-restaurant-symbol" aria-hidden="true"></span><strong id="client-restaurant-name"></strong></div>
+    </header>
+
+    <section class="order-status-card">
+      <span class="order-number-tag">Sua Senha de Retirada</span>
+      <div class="order-number" id="order-num">—</div>
+
+      <div id="status-badge" class="status-badge preparo">
+        <span id="status-icon" aria-hidden="true">⏳</span>
+        <span id="status-text">Em Preparo</span>
+      </div>
+
+      <p id="status-message" class="status-message">
+        Sua comida está sendo preparada com todo cuidado pelo nosso chef!
+      </p>
+
+      <p id="sub-message" class="sub-message">
+        Você receberá um aviso quando o pedido estiver pronto.
+      </p>
+
+      <!-- Botão de Toggle: Ativa e Desativa o som e vibração a qualquer momento -->
+      <button id="btn-sound-test" class="sound-toggle-btn" aria-label="Ativar ou desativar alerta sonoro e vibração">
+        <span id="sound-icon" aria-hidden="true">🔔</span>
+        <span id="sound-label">Toque para ativar alerta sonoro e vibração</span>
+      </button>
+
+      <section id="push-guide" hidden aria-live="polite" style="border:1px solid #64748b;border-radius:12px;padding:12px;margin-top:14px;text-align:left;background:#162238;">
+        <p id="push-message" style="line-height:1.5;font-size:.9rem"></p>
+        <button id="push-enable" type="button" hidden style="margin-top:10px;padding:10px 14px;border:0;border-radius:9px;background:#fbbf24;color:#111827;font-weight:700;cursor:pointer;">Ativar notificações</button>
+      </section>
+
+      <!-- Botão de emergência para silenciar alarme enquanto toca -->
+      <button id="btn-silence" class="btn-chip" style="display: none; margin: 0 auto 16px; background: #dc2626; color: white;" aria-label="Silenciar toque do pedido">
+        🔇 Silenciar Alarme Agora
+      </button>
+
+      <!-- Botao Google Wallet (Android) -->
+      <div id="wallet-box" hidden style="margin-top: 14px;">
+        <a id="wallet-btn-link" href="#" target="_blank" rel="noopener noreferrer" style="text-decoration:none; display:block;">
+          <button type="button" style="width:100%; display:flex; align-items:center; justify-content:center; gap:10px; background:#000000; color:#ffffff; border:1px solid #475569; border-radius:12px; padding:12px 16px; font-size:0.95rem; font-weight:700; cursor:pointer;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
+              <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" fill="#3b82f6"/>
+            </svg>
+            Salvar no Google Carteira
+          </button>
+        </a>
+      </div>
+    </section>
+
+    <!-- Produtos opcionais: exibidos apenas quando presentes no QR. -->
+    <section class="order-details" id="order-details" aria-labelledby="order-details-title" hidden>
+      <h2 id="order-details-title">Itens do pedido</h2>
+      <ul class="item-list"></ul>
+    </section>
+    <footer id="diagnosticos" style="margin-top:18px;padding:14px;border-top:1px solid #64748b;font-size:.9rem;">
+      <details>
+        <summary style="cursor:pointer;font-weight:700;">Diagnóstico do aparelho (testes)</summary>
+        <p>Testes locais. Não alteram o pedido nem enviam dados.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+          <button type="button" id="diag-check" class="btn-chip">Verificar recursos</button>
+          <button type="button" id="diag-wake" class="btn-chip">Testar tela acesa</button>
+          <button type="button" id="diag-vibrate" class="btn-chip">Testar vibração</button>
+          <button type="button" id="diag-audio" class="btn-chip">Testar som</button>
+        </div>
+        <output id="diag-result" role="status" aria-live="polite" style="display:block;white-space:pre-wrap;overflow-wrap:anywhere;text-align:left;">Toque em Verificar recursos.</output>
+        <p style="font-size:.8rem;">A vibração depende do aparelho e das configurações. Um retorno positivo da API não comprova vibração física. O teste de tela acesa não funciona com bloqueio manual.</p>
+      </details>
+    </footer>
+    <section id="games-area" style="margin:20px auto;max-width:620px;text-align:center">
+      <button id="games-open" type="button" class="btn-chip" hidden>🎮 Jogar enquanto aguarda</button>
+      <div id="games-content" hidden></div>
+    </section>
+  </main>
+
+  <script>
+    // --- IDENTIFICAÇÃO DO PEDIDO E SESSÃO (PÁGINA CASCA) ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderNumber = urlParams.get('pedido') || '—';
+    const token = urlParams.get('token') || urlParams.get('sessao') || '';
+    // Identidade visual obtida do SSE autenticado pelo token do pedido,
+    // sem confiar em um nome arbitrário fornecido na URL.
+    document.getElementById('order-num').textContent = '#' + orderNumber;
+    function showRestaurantIdentity(name,logoUrl) {
+      if(typeof name !== 'string' || !name.trim())return;
+      const restaurantName=name.trim();
+      const context=document.getElementById('client-restaurant-context');
+      const symbol=document.getElementById('client-restaurant-symbol');
+      document.getElementById('client-restaurant-name').textContent=restaurantName;
+      symbol.replaceChildren();symbol.textContent=restaurantName.slice(0,1).toUpperCase();
+      if(typeof logoUrl==='string' && /^https:\/\//i.test(logoUrl)) {
+        const image=document.createElement('img');image.src=logoUrl;image.alt='';image.referrerPolicy='no-referrer';
+        image.addEventListener('error',()=>{symbol.textContent=restaurantName.slice(0,1).toUpperCase()},{once:true});symbol.replaceChildren(image);
+      }
+      context.hidden=false;
+      document.title='Seu pedido · '+restaurantName+' · Avisaqui';
+    }
+
+    // Dados opcionais do pedido vêm da URL e não geram consultas extras.
+    const rawItens = urlParams.get('itens');
+    if (rawItens) {
+      const itens = rawItens.split(',').map(i => i.trim()).filter(Boolean);
+      if (itens.length) {
+        const lista = document.querySelector('.item-list');
+        itens.forEach(item => {
+          const li = document.createElement('li');
+          li.className = 'item-row';
+          li.textContent = item; // Nunca interpretar texto da URL como HTML.
+          lista.appendChild(li);
+        });
+        document.getElementById('order-details').hidden = false;
+      }
+    }
+
+    // --- ELEMENTOS DO DOM ---
+    const appCard = document.getElementById('app-card');
+    const edgeGlow = document.getElementById('edge-glow');
+    const statusBadge = document.getElementById('status-badge');
+    const statusIcon = document.getElementById('status-icon');
+    const statusText = document.getElementById('status-text');
+    const statusMessage = document.getElementById('status-message');
+    const subMessage = document.getElementById('sub-message');
+    const liveAnnouncer = document.getElementById('live-announcer');
+    const btnSoundTest = document.getElementById('btn-sound-test');
+    const soundIcon = document.getElementById('sound-icon');
+    const soundLabel = document.getElementById('sound-label');
+    const btnSilence = document.getElementById('btn-silence');
+
+    const toggleContrast = document.getElementById('toggle-contrast');
+    const toggleFont = document.getElementById('toggle-font');
+
+    // --- SÍNTESE DE ÁUDIO & VIBRAÇÃO HÁPTICA POTENTE ---
+    let audioContext = null;
+    let alarmInterval = null;
+    let isSoundEnabled = false; // Controle de toggle
+    let isCurrentlyReady = false;
+    let wakeLock = null;
+
+    // 1. SCREEN WAKE LOCK: Impede que a tela do celular apague/bloqueie sozinha
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator && typeof navigator.wakeLock.request === 'function') {
+          wakeLock = await navigator.wakeLock.request('screen');
+          console.log('[WakeLock] Tela travada acordada com sucesso.');
+          wakeLock.addEventListener('release', () => {
+            console.log('[WakeLock] Tela liberada.');
+          });
+        }
+      } catch (err) {
+        console.warn('[WakeLock] Falha ou não suportado:', err);
+      }
+    }
+
+    // Re-solicita o Wake Lock se a aba voltar para o foco
+    document.addEventListener('visibilitychange', async () => {
+      if (document.visibilityState === 'visible' && !wakeLock && !isCurrentlyReady) {
+        await requestWakeLock();
+      }
+    });
+
+    function getAudioContext() {
+      if (!audioContext) {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        audioContext = new AudioCtx();
+      }
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+      return audioContext;
+    }
+
+    // Executa vibração contínua e forte no hardware do aparelho
+    function triggerVibration(pattern) {
+      try {
+        if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
+          // Padrão longo e potente
+          navigator.vibrate(pattern);
+        }
+      } catch (e) {
+        console.warn('Vibração não suportada pelo navegador/sistema.', e);
+      }
+    }
+
+    // Sequência penetrante de pager: ondas harmônicas saturadas (Som alto tipo Buzzer)
+    function playChime(isReadyAlert = false) {
+      if (!isSoundEnabled) return;
+      const ctx = getAudioContext();
+      if (!ctx) return;
+
+      const now = ctx.currentTime;
+      // Frequências penetrantes de sirene/pager industrial (1200Hz a 1800Hz)
+      const notes = isReadyAlert ? [1108, 1318, 1567, 1864] : [880, 1108];
+      
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        // Onda quadrada/dente de serra tem harmônicos muito mais estridentes que senoide
+        osc.type = isReadyAlert ? 'sawtooth' : 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+
+        // Ganho aumentado no limite de headroom para máxima pressão sonora
+        gain.gain.setValueAtTime(0.9, now + idx * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.12);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now + idx * 0.08);
+        osc.stop(now + idx * 0.08 + 0.13);
+      });
+
+      // Vibração reforçada e agressiva para sentir no bolso mesmo andando
+      if (isReadyAlert) {
+        triggerVibration([300, 100, 300, 100, 500]);
+      } else {
+        triggerVibration(200);
+      }
+    }
+
+    // Loop rápido do alarme: repete a cada 1.2 segundos (cadência de pager insistente)
+    function startAlarmLoop() {
+      stopAlarmLoop();
+      isCurrentlyReady = true;
+
+      // Ativa efeito de visão periférica (Edge Lighting Amarelo)
+      edgeGlow.classList.add('active');
+
+      if (isSoundEnabled) {
+        playChime(true);
+        btnSilence.style.display = 'inline-block';
+      }
+
+      alarmInterval = setInterval(() => {
+        if (isCurrentlyReady) {
+          if (isSoundEnabled) {
+            playChime(true);
+          } else {
+            // Se o som estiver desativado, ainda vibra forte o celular e pisca
+            triggerVibration([300, 100, 300, 100, 500]);
+          }
+        }
+      }, 1200);
+    }
+
+    function stopAlarmLoop() {
+      if (alarmInterval) {
+        clearInterval(alarmInterval);
+        alarmInterval = null;
+      }
+      triggerVibration(0);
+      edgeGlow.classList.remove('active');
+      btnSilence.style.display = 'none';
+    }
+
+    // --- TOGGLE DE ATIVAÇÃO / DESATIVAÇÃO DO ALERTA ---
+    async function toggleSound() {
+      isSoundEnabled = !isSoundEnabled;
+
+      if (isSoundEnabled) {
+        getAudioContext();
+        await requestWakeLock(); // Trava a tela ligada
+        triggerVibration([200, 100, 200]); // Confirmação tátil de ativação
+        btnSoundTest.className = 'sound-toggle-btn enabled';
+        soundIcon.textContent = '🔊';
+        soundLabel.textContent = 'Alerta sonoro ativado (com a página aberta)';
+        liveAnnouncer.textContent = 'Alerta sonoro e vibração ativados nesta página.';
+        playChime(false); // Bipe de confirmação
+      } else {
+        btnSoundTest.className = 'sound-toggle-btn muted';
+        soundIcon.textContent = '🔇';
+        soundLabel.textContent = 'Alerta Silenciado (Toque para Ativar)';
+        liveAnnouncer.textContent = 'Alerta silenciado.';
+        stopAlarmLoop();
+        triggerVibration(0);
+        if (wakeLock) {
+          try { wakeLock.release(); } catch(e){}
+          wakeLock = null;
+        }
+      }
+    }
+
+    // Diagnósticos opcionais: sem alterações no pedido, permissões ou inscrições push.
+    const diagResult = document.getElementById('diag-result');
+    const diagWrite = (message) => { diagResult.textContent = message; };
+    document.getElementById('diag-check').addEventListener('click', () => {
+      const lines = [
+        'Contexto seguro (HTTPS/localhost): ' + (window.isSecureContext ? 'sim' : 'não'),
+        'Endereço HTTPS: ' + (location.protocol === 'https:' ? 'sim' : 'não'),
+        'Wake Lock: ' + (typeof navigator.wakeLock?.request === 'function' ? 'API disponível' : 'indisponível'),
+        'Vibração: ' + (typeof navigator.vibrate === 'function' ? 'API disponível' : 'indisponível'),
+        'Web Audio: ' + (window.AudioContext || window.webkitAudioContext ? 'API disponível' : 'indisponível'),
+        'Service Worker: ' + ('serviceWorker' in navigator ? 'disponível' : 'indisponível'),
+        'Push: ' + ('PushManager' in window ? 'API disponível' : 'indisponível'),
+        'Notificações: ' + ('Notification' in window ? Notification.permission : 'API indisponível'),
+        'Página: ' + document.visibilityState
+      ];
+      diagWrite(lines.join('\n'));
+    });
+    document.getElementById('diag-wake').addEventListener('click', async () => {
+      if (typeof navigator.wakeLock?.request !== 'function') {
+        diagWrite('Wake Lock indisponível neste contexto. Verifique HTTPS e navegador.');
+        return;
+      }
+      try {
+        if (wakeLock && !wakeLock.released) {
+          diagWrite('Wake Lock já está ativo. Observe se a tela permanece acesa.');
+          return;
+        }
+        await requestWakeLock();
+        diagWrite(wakeLock && !wakeLock.released
+          ? 'Wake Lock concedido. Observe se a tela permanece acesa.'
+          : 'Wake Lock não confirmado. Confira o navegador e as condições do aparelho.');
+      } catch (err) {
+        diagWrite('Falha no Wake Lock: ' + (err?.name || 'erro desconhecido'));
+      }
+    });
+    document.getElementById('diag-vibrate').addEventListener('click', () => {
+      if (typeof navigator.vibrate !== 'function') {
+        diagWrite('API de vibração indisponível.');
+        return;
+      }
+      try {
+        const accepted = navigator.vibrate([250, 150, 250]);
+        diagWrite(accepted ? 'Padrão de vibração aceito pela API. Você sentiu vibrar?'
+          : 'O navegador não aceitou o padrão de vibração.');
+      } catch (err) {
+        diagWrite('Falha na vibração: ' + (err?.name || 'erro desconhecido'));
+      }
+    });
+    document.getElementById('diag-audio').addEventListener('click', async () => {
+      try {
+        const ctx = getAudioContext();
+        await ctx.resume();
+        if (ctx.state !== 'running') {
+          diagWrite('Áudio não iniciou. Estado: ' + ctx.state);
+          return;
+        }
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(0.05, ctx.currentTime);
+        osc.frequency.value = 660;
+        osc.connect(gain).connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.18);
+        diagWrite('Som de teste enviado. Você ouviu o bipe?');
+      } catch (err) {
+        diagWrite('Falha no áudio: ' + (err?.name || 'erro desconhecido'));
+      }
+    });
+
+    btnSoundTest.addEventListener('click', toggleSound);
+
+    btnSilence.addEventListener('click', () => {
+      stopAlarmLoop();
+      appCard.classList.remove('flash-alert');
+      liveAnnouncer.textContent = 'Alarme silenciado.';
+    });
+
+    // --- TRANSIÇÕES DE ESTADO DO CLIENTE ---
+    function applyStatus(status) {
+      pongAllowed = status === 'preparo';
+      if (!pongAllowed) fecharJogos();
+      else gamesOpen.hidden = !!gamesExit || gamesOpen.disabled;
+      stopAlarmLoop();
+      appCard.classList.remove('flash-alert');
+
+      if (status === 'preparo') {
+        isCurrentlyReady = false;
+        statusBadge.className = 'status-badge preparo';
+        statusIcon.textContent = '⏳';
+        statusText.textContent = 'Em Preparo';
+        statusMessage.textContent = 'Sua comida está sendo preparada com todo cuidado pelo nosso chef!';
+        subMessage.textContent = 'Você receberá um aviso quando o pedido estiver pronto.';
+        liveAnnouncer.textContent = 'Pedido ' + orderNumber + ' em preparo.';
+      } 
+      else if (status === 'pronto') {
+        statusBadge.className = 'status-badge pronto';
+        statusIcon.textContent = '🔔';
+        statusText.textContent = 'PRONTO PARA RETIRADA!';
+        statusMessage.innerHTML = '<strong>Seu pedido está no balcão de entrega!</strong>';
+        subMessage.textContent = 'Apresente a senha #' + orderNumber + ' no balcão.';
+        appCard.classList.add('flash-alert');
+
+        startAlarmLoop();
+        liveAnnouncer.textContent = 'Atenção! Seu pedido ' + orderNumber + ' está pronto para retirada!';
+      } 
+      else if (status === 'entregue') {
+        isCurrentlyReady = false;
+        statusBadge.className = 'status-badge entregue';
+        statusIcon.textContent = '✓';
+        statusText.textContent = 'Pedido Entregue';
+        statusMessage.textContent = 'Bom apetite! Esperamos que aproveite sua refeição.';
+        subMessage.textContent = 'Pedido finalizado com sucesso.';
+        liveAnnouncer.textContent = 'Pedido ' + orderNumber + ' retirado com sucesso. Bom apetite!';
+      }
+    }
+
+    // Biblioteca opcional: jogos e manifesto somente após toque do cliente.
+    const gamesOpen = document.getElementById('games-open');
+    const gamesContent = document.getElementById('games-content');
+    let gamesExit = null;
+    let gamesGeneration = 0;
+    let pongAllowed = false;
+    function fecharJogos() {
+      gamesGeneration++;
+      const sair = gamesExit;
+      gamesExit = null;
+      try { sair?.(); } catch (erro) { console.warn('Falha ao encerrar jogo:', erro); }
+      gamesContent.replaceChildren();
+      gamesContent.hidden = true;
+      gamesOpen.hidden = !pongAllowed;
+      gamesOpen.disabled = false;
+    }
+    // Reconsulta ao iniciar: uma falha de rede na abertura da página não bloqueia o Pong para sempre.
+    const baseJogos = window.location.pathname.endsWith('/cliente.html')
+      ? window.location.pathname.slice(0, -'/cliente.html'.length)
+      : window.location.pathname.replace(/\/$/, '');
+    async function consultarPongDisponivel() {
+      try {
+        const resposta = await fetch(baseJogos + '/api/jogos/pong/disponivel', {
+          cache: 'no-store', credentials: 'omit'
+        });
+        // Uma rota ausente indica que o Pong experimental pode estar desativado.
+        // A biblioteca local (incluindo Jogo da Velha) continua independente.
+        return { disponivel: resposta.ok, codigo: resposta.status };
+      } catch {
+        return { disponivel: false, codigo: 0 };
+      }
+    }
+    gamesOpen.addEventListener('click', async () => {
+      if (!pongAllowed || !token || gamesExit || gamesOpen.disabled) return;
+      const atual = ++gamesGeneration;
+      gamesOpen.disabled = true;
+      gamesOpen.textContent = 'Carregando biblioteca...';
+      try {
+        const { criarBibliotecaJogos } = await import('./games/biblioteca.js');
+        if (!pongAllowed || atual !== gamesGeneration) return;
+        gamesContent.hidden = false;
+        const biblioteca = criarBibliotecaJogos({
+          container: gamesContent,
+          etiquetaPedido: 'Pedido #' + orderNumber + ' · Em preparo',
+          onExit: () => {
+            // Fechar a tela cheia deve voltar à comanda e permitir abrir novamente.
+            if (atual === gamesGeneration) fecharJogos();
+          },
+          iniciarPong: async (container, mode) => {
+            if (!pongAllowed) return () => {};
+            const disponibilidade = await consultarPongDisponivel();
+            if (!pongAllowed || atual !== gamesGeneration) return () => {};
+            if (!disponibilidade.disponivel) {
+              throw new Error(disponibilidade.codigo === 404
+                ? 'Pong indisponível: confira se o modo experimental está habilitado no add-on.'
+                : 'Pong indisponível neste momento. Tente novamente.');
+            }
+            const { iniciarPong } = await import('./pong.js');
+            if (!pongAllowed || atual !== gamesGeneration) return () => {};
+            const sair = await iniciarPong({ token, mode, container, onExit: () => {
+              // A saída pelo botão interno do Pong volta à lista, sem recriar o jogo.
+              if (pongAllowed && atual === gamesGeneration) {
+                const voltar = document.querySelector('#game-screen button[data-games-back]');
+                voltar?.click();
+              }
+            } });
+            if (!pongAllowed || atual !== gamesGeneration) { sair?.(); return () => {}; }
+            return sair;
+          }
+        });
+        gamesExit = biblioteca.encerrar;
+        gamesOpen.hidden = true;
+      } catch {
+        if (atual === gamesGeneration) {
+          gamesContent.hidden = false;
+          gamesContent.textContent = 'Não foi possível abrir a biblioteca. Seu pedido continua sendo acompanhado.';
+        }
+      } finally {
+        if (atual === gamesGeneration) {
+          gamesOpen.disabled = false;
+          gamesOpen.textContent = '🎮 Jogar enquanto aguarda';
+        }
+      }
+    });
+
+    // --- RECEPTOR DE EVENTOS EM TEMPO REAL VIA SSE (NATIVO & ULTRALEVE) ---
+    const appBasePath = window.location.pathname.replace(/\/cliente\.html$/, '').replace(/\/$/, '');
+    function connectSSE() {
+      if (!token) return;
+      const sseUrl = `${appBasePath}/api/pedidos/stream/${encodeURIComponent(token)}`;
+      const eventSource = new EventSource(sseUrl);
+
+      eventSource.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if(data.restaurante_nome)showRestaurantIdentity(data.restaurante_nome,data.restaurante_logo_url);
+          if (data.status) {
+            applyStatus(data.status);
+          }
+        } catch (e) {
+          console.error('Erro ao processar evento SSE:', e);
+        }
+      };
+
+      eventSource.onerror = (err) => {
+        console.warn('Conexão SSE oscilou, reconectando automaticamente...', err);
+      };
+    }
+
+    // Avisos do sistema complementam o SSE: só solicitamos permissão após toque.
+    const pushGuide = document.getElementById('push-guide');
+    const pushMessage = document.getElementById('push-message');
+    const pushEnable = document.getElementById('push-enable');
+    const iosDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+    const pushAvailable = window.isSecureContext && 'serviceWorker' in navigator &&
+      'PushManager' in window && 'Notification' in window;
+    let pushKey = null;
+    let pushRegistration = null;
+
+    function showPushGuide(message, allowButton = false) {
+      pushMessage.textContent = message;
+      pushEnable.hidden = !allowButton;
+      pushGuide.hidden = false;
+    }
+
+    function decodeVapidKey(value) {
+      const padding = '='.repeat((4 - value.length % 4) % 4);
+      const bytes = atob((value + padding).replace(/-/g, '+').replace(/_/g, '/'));
+      return Uint8Array.from(bytes, c => c.charCodeAt(0));
+    }
+
+    async function registerPushSubscription() {
+      if (!token || !pushRegistration || !pushKey || Notification.permission !== 'granted') return false;
+      const sub = await pushRegistration.pushManager.subscribe({
+        userVisibleOnly: true, applicationServerKey: decodeVapidKey(pushKey)
+      });
+      const result = await fetch(appBasePath + '/api/push/assinaturas/' + encodeURIComponent(token), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(sub.toJSON())
+      });
+      if (!result.ok) throw new Error('Registro de notificação falhou');
+      pushGuide.hidden = true; // Experiência pronta: não mostrar instruções desnecessárias.
+      return true;
+    }
+
+    async function initPush() {
+      if (!token || isCurrentlyReady) return;
+      const keepOpen = 'Mantenha esta tela aberta e ativa enquanto espera seu pedido para não perder o aviso.';
+      if (iosDevice && !standalone) {
+        showPushGuide('No iPhone, avisos em segundo plano exigem adicionar o Bipou à Tela de Início e permitir notificações. ' + keepOpen);
+        return;
+      }
+      if (!pushAvailable) {
+        showPushGuide('Este navegador ou esta conexão não oferece avisos em segundo plano para o Bipou. ' + keepOpen);
+        return;
+      }
+      if (Notification.permission === 'denied') {
+        showPushGuide('As notificações estão bloqueadas no navegador. Libere nas configurações ou ' + keepOpen.toLowerCase());
+        return;
+      }
+      try {
+        const config = await fetch(appBasePath + '/api/push/public-key').then(r => r.json());
+        if (!config.enabled || !config.publicKey) throw new Error('Push não configurado');
+        pushKey = config.publicKey;
+        pushRegistration = await navigator.serviceWorker.register(appBasePath + '/push-sw.js', { scope: appBasePath + '/' });
+        if (Notification.permission === 'granted') {
+          await registerPushSubscription();
+        } else {
+          showPushGuide('Quer usar outros aplicativos enquanto espera? Ative as notificações do Bipou para receber avisos em segundo plano. O som depende das configurações do aparelho.', true);
+        }
+      } catch (error) {
+        console.warn('[PUSH] Indisponível', error);
+        showPushGuide('Não foi possível ativar avisos em segundo plano neste aparelho. ' + keepOpen);
+      }
+    }
+
+    pushEnable.addEventListener('click', async () => {
+      pushEnable.disabled = true;
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          await registerPushSubscription();
+        } else {
+          showPushGuide('As notificações não foram permitidas. Mantenha esta tela aberta e ativa enquanto aguarda seu pedido.');
+        }
+      } catch {
+        showPushGuide('Não foi possível ativar as notificações. Mantenha esta tela aberta e ativa enquanto aguarda seu pedido.');
+      } finally {
+        pushEnable.disabled = false;
+      }
+    });
+
+
+    void initPush();
+
+    // Google Wallet: carregar link para aparelhos Android
+    async function initGoogleWallet() {
+      if (!token) return;
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      if (!isAndroid) return;
+      try {
+        const res = await fetch(appBasePath + '/api/pedidos/' + encodeURIComponent(token) + '/wallet/google');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.url) {
+            const walletBox = document.getElementById('wallet-box');
+            const walletLink = document.getElementById('wallet-btn-link');
+            if (walletBox && walletLink) {
+              walletLink.href = data.url;
+              walletBox.hidden = false;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Google Wallet indisponivel:', e);
+      }
+    }
+    void initGoogleWallet();
+
+    connectSSE();
+
+
+    // Acessibilidade
+    toggleContrast.addEventListener('click', () => {
+      const isHigh = document.body.classList.toggle('high-contrast');
+      toggleContrast.classList.toggle('active', isHigh);
+      toggleContrast.setAttribute('aria-pressed', isHigh);
+    });
+
+    toggleFont.addEventListener('click', () => {
+      const isLarge = document.body.classList.toggle('large-text');
+      toggleFont.classList.toggle('active', isLarge);
+      toggleFont.setAttribute('aria-pressed', isLarge);
+    });
+
+    document.querySelectorAll('.star-btn').forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.star-btn').forEach((s, idx) => {
+          s.style.opacity = idx <= index ? '1' : '0.3';
+        });
+        liveAnnouncer.textContent = `Avaliação registrada: ${index + 1} estrelas.`;
+      });
+    });
+  </script>
+</body>
+</html>
