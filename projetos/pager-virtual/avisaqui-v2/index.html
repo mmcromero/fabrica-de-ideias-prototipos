@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avisaqui — O Aviso que Chega na Hora</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @keyframes pulseAlert {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1.03); box-shadow: 0 0 0 16px rgba(16, 185, 129, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    .pulse-ready { animation: pulseAlert 1.1s infinite; }
+    .glass-nav {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .hero-glow {
+      background: radial-gradient(circle at 50% 20%, rgba(245, 158, 11, 0.15) 0%, rgba(15, 23, 42, 0) 70%);
+    }
+  </style>
+</head>
+<body class="bg-[#090d16] text-slate-100 min-h-full font-sans antialiased flex flex-col">
+
+  <!-- ======================================================== -->
+  <!-- BARRA DE NAVEGAÇÃO RÁPIDA / SELETOR DE TELAS (SHOWCASE)   -->
+  <!-- ======================================================== -->
+  <header class="sticky top-0 z-50 glass-nav px-4 py-2.5">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <!-- Marca -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="navigate('landing')">
+        <div class="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-400/40 flex items-center justify-center text-amber-400 font-black text-sm shadow-inner">
+          🔔
+        </div>
+        <div>
+          <span class="font-extrabold text-base tracking-tight text-white">Avisaqui</span>
+          <span class="text-[10px] text-amber-400/90 font-semibold tracking-wider uppercase ml-1">SaaS</span>
+        </div>
+      </div>
+
+      <!-- Switcher das Telas da Plataforma -->
+      <nav class="flex items-center bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs font-semibold overflow-x-auto max-w-full">
+        <button id="nav-landing" onclick="navigate('landing')" class="px-3 py-1.5 rounded-lg text-white bg-slate-800 shadow transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <span>🌐</span> Comercial
+        </button>
+        <button id="nav-login" onclick="navigate('login')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <span>🔐</span> Login
+        </button>
+        <button id="nav-master" onclick="navigate('master')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <span>👑</span> Master Admin
+        </button>
+        <button id="nav-gerente" onclick="navigate('gerente')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <span>🏪</span> Painel do Restaurante
+        </button>
+        <button id="nav-kds" onclick="navigate('kds')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <span>🍳</span> Cozinha KDS
+        </button>
+        <button id="nav-cliente" onclick="navigate('cliente')" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <span>📱</span> Pager do Cliente
+        </button>
+      </nav>
+
+      <!-- Status do Sistema em Tempo Real -->
+      <div class="hidden lg:flex items-center gap-2 text-[11px] text-slate-400 font-medium">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Conexão em Tempo Real</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================================================== -->
+  <!-- CONTAINER DE TELAS                                       -->
+  <!-- ======================================================== -->
+  <main class="flex-1 flex flex-col">
+
+    <!-- ---------------------------------------------------- -->
+    <!-- TELA 1: LANDING PAGE COMERCIAL ("O AVISO QUE CHEGA") -->
+    <!-- ---------------------------------------------------- -->
+    <section id="view-landing" class="view-panel flex-1 hero-glow">
+      <div class="max-w-6xl mx-auto px-4 py-12 lg:py-20 flex flex-col items-center text-center">
+        <!-- Tagline -->
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-bold tracking-wide uppercase mb-6">
+          <span>🔔</span> O AVISO QUE CHEGA NA HORA
+        </div>
+
+        <!-- Headline Principal -->
+        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight max-w-4xl leading-[1.15]">
+          A revolução do atendimento.<br>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-orange-400 to-amber-200">
+            Diga adeus aos pagers de plástico.
+          </span>
+        </h1>
+
+        <p class="mt-6 text-base sm:text-lg text-slate-300 max-w-2xl font-normal leading-relaxed">
+          Notifique clientes de comida pronta direto no celular por QR Code. Sem download de aplicativo, sem peças perdidas ou quebradas e com alerta nativo na <strong>Carteira do Google</strong>.
+        </p>
+
+        <!-- CTAs -->
+        <div class="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center">
+          <button onclick="navigate('kds')" class="px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black rounded-2xl shadow-xl shadow-amber-500/20 active:scale-95 transition-all text-sm uppercase tracking-wider flex items-center justify-center gap-2">
+            <span>🍳</span> Abrir Cozinha KDS ao Vivo
+          </button>
+          <button onclick="navigate('cliente')" class="px-8 py-4 bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-white font-bold rounded-2xl active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
+            <span>📱</span> Ver Experiência do Cliente
+          </button>
+        </div>
+
+        <!-- 3 Pilares de Destaque -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 w-full text-left">
+          <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 hover:border-slate-700 transition-all">
+            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 border border-blue-500/30 text-blue-400 text-2xl flex items-center justify-center mb-4">
+              📲
+            </div>
+            <h3 class="text-base font-bold text-white mb-2">100% Web & Zero Download</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              O cliente escaneia o QR Code impresso no cupom e acompanha tudo no navegador. Leve, rápido e acessível em qualquer smartphone.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 hover:border-slate-700 transition-all">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-2xl flex items-center justify-center mb-4">
+              🔔
+            </div>
+            <h3 class="text-base font-bold text-white mb-2">Alerta na Tela Bloqueada</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Integração nativa com a Carteira do Google (Google Wallet). Quando a cozinha chama, o celular acende a tela de bloqueio e toca o alarme no bolso.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 hover:border-slate-700 transition-all">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-2xl flex items-center justify-center mb-4">
+              💰
+            </div>
+            <h3 class="text-base font-bold text-white mb-2">Economia Imediata de Hardware</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Elimine o custo de R$ 3.000 a R$ 5.000 de kits de pagers transmissores, fontes queimadas, quedas no chão e furtos com a bandeja.
+            </p>
+          </div>
+        </div>
+
+        <!-- Calculadora de Economia Real -->
+        <div class="mt-16 w-full max-w-3xl bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 text-left shadow-2xl">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xl">📊</span>
+            <h3 class="text-lg font-bold text-white">Calculadora de Economia para seu Restaurante</h3>
+          </div>
+          <p class="text-xs text-slate-400 mb-6">
+            Compare o custo de pagers físicos tradicionais com a implementação do Avisaqui.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">
+                  Pedidos atendidos por dia: <span id="calc-orders-val" class="text-amber-400 font-bold">180</span>
+                </label>
+                <input type="range" id="calc-orders" min="50" max="600" value="180" oninput="updateCalc()" class="w-full accent-amber-500">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 mb-1">
+                  Pagers físicos perdidos/quebrados por ano: <span id="calc-pagers-val" class="text-amber-400 font-bold">8 unidades</span>
+                </label>
+                <input type="range" id="calc-pagers" min="2" max="25" value="8" oninput="updateCalc()" class="w-full accent-amber-500">
+              </div>
+            </div>
+
+            <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-5 text-center">
+              <span class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold block">Economia Anual Estimada</span>
+              <span id="calc-savings" class="text-3xl sm:text-4xl font-black text-emerald-400 block my-2">R$ 4.240,00</span>
+              <span class="text-[11px] text-slate-400 block">Redução de 85% nos custos operacionais de chamada</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------- -->
+    <!-- TELA 2: LOGIN DO SISTEMA                             -->
+    <!-- ---------------------------------------------------- -->
+    <section id="view-login" class="view-panel hidden flex-1 flex items-center justify-center p-4 py-12">
+      <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl">
+        <!-- Logo -->
+        <div class="text-center mb-6">
+          <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/40 text-amber-400 font-black text-2xl flex items-center justify-center mx-auto mb-3 shadow-inner">
+            🔔
+          </div>
+          <h2 class="text-2xl font-black text-white tracking-tight">Acesso à Plataforma</h2>
+          <p class="text-xs text-slate-400 mt-1">Entre com suas credenciais ou escolha um perfil</p>
+        </div>
+
+        <!-- Seletor Rápido de Perfis -->
+        <div class="mb-6 space-y-2">
+          <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Escolha de Perfil:</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="fillLogin('master')" class="p-2.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-amber-500/50 text-left transition-all">
+              <div class="text-base">👑</div>
+              <div class="text-[11px] font-bold text-white mt-1">Master</div>
+              <div class="text-[9px] text-slate-400">Diretoria</div>
+            </button>
+            <button onclick="fillLogin('gerente')" class="p-2.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-blue-500/50 text-left transition-all">
+              <div class="text-base">🏪</div>
+              <div class="text-[11px] font-bold text-white mt-1">Gerente</div>
+              <div class="text-[9px] text-slate-400">King Burger</div>
+            </button>
+            <button onclick="fillLogin('kds')" class="p-2.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-emerald-500/50 text-left transition-all">
+              <div class="text-base">🍳</div>
+              <div class="text-[11px] font-bold text-white mt-1">Cozinha</div>
+              <div class="text-[9px] text-slate-400">Terminal KDS</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Formulário -->
+        <form onsubmit="handleLogin(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">E-mail corporativo</label>
+            <input type="email" id="login-email" required value="gerente@kingburger.com.br" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500 transition-all">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Senha de acesso</label>
+            <input type="password" id="login-pass" required value="••••••••••••" class="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-sm text-white focus:outline-none focus:border-amber-500 transition-all">
+          </div>
+          <button type="submit" class="w-full py-3.5 bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-black rounded-xl text-sm tracking-wide uppercase transition-all shadow-lg shadow-amber-500/20">
+            Entrar no Sistema
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------- -->
+    <!-- TELA 3: MASTER ADMIN (DIRETORIA SAAS)                -->
+    <!-- ---------------------------------------------------- -->
+    <section id="view-master" class="view-panel hidden flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">👑</span>
+            <h2 class="text-2xl font-black text-white">Painel Master Admin</h2>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Visão consolidada de todos os restaurantes, planos e volume de chamadas.</p>
+        </div>
+        <button class="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md">
+          <span>+</span> Novo Restaurante
+        </button>
+      </div>
+
+      <!-- 4 Métricas de Negócio -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+          <div class="text-[11px] text-slate-400 uppercase font-semibold">Receita Recorrente (MRR)</div>
+          <div class="text-2xl lg:text-3xl font-black text-white mt-1">R$ 28.450</div>
+          <div class="text-[11px] text-emerald-400 font-semibold mt-1">↑ +14% este mês</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+          <div class="text-[11px] text-slate-400 uppercase font-semibold">Restaurantes Ativos</div>
+          <div class="text-2xl lg:text-3xl font-black text-white mt-1">54 lojas</div>
+          <div class="text-[11px] text-emerald-400 font-semibold mt-1">100% online hoje</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+          <div class="text-[11px] text-slate-400 uppercase font-semibold">Chamadas Hoje</div>
+          <div class="text-2xl lg:text-3xl font-black text-white mt-1">4.892</div>
+          <div class="text-[11px] text-amber-400 font-semibold mt-1">Pico: 12h45 (Almoço)</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+          <div class="text-[11px] text-slate-400 uppercase font-semibold">Tempo Médio de Retirada</div>
+          <div class="text-2xl lg:text-3xl font-black text-white mt-1">1m 58s</div>
+          <div class="text-[11px] text-emerald-400 font-semibold mt-1">Alertas eficientes</div>
+        </div>
+      </div>
+
+      <!-- Tabela de Lojas / Clientes -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl">
+        <h3 class="text-sm font-bold text-white mb-4">Restaurantes Conectados</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="text-slate-400 border-b border-slate-800 pb-2">
+                <th class="pb-3 font-semibold">Restaurante</th>
+                <th class="pb-3 font-semibold">Localização</th>
+                <th class="pb-3 font-semibold">Plano</th>
+                <th class="pb-3 font-semibold">Chamadas Hoje</th>
+                <th class="pb-3 font-semibold">Status do KDS</th>
+                <th class="pb-3 font-semibold text-right">Ação</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 font-medium">
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="py-3 font-bold text-white flex items-center gap-2">
+                  <span>🍔</span> The King Burger
+                </td>
+                <td class="py-3 text-slate-300">Shopping Morumbi / SP</td>
+                <td class="py-3"><span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 font-bold">Pro Enterprise</span></td>
+                <td class="py-3 font-mono font-bold text-slate-200">624 pedidos</td>
+                <td class="py-3"><span class="flex items-center gap-1.5 text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Operando</span></td>
+                <td class="py-3 text-right">
+                  <button onclick="navigate('gerente')" class="text-amber-400 hover:text-amber-300 font-bold">Gerenciar →</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="py-3 font-bold text-white flex items-center gap-2">
+                  <span>🍕</span> Cantina Bella Itália
+                </td>
+                <td class="py-3 text-slate-300">Shopping Eldorado / SP</td>
+                <td class="py-3"><span class="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 font-bold">Pro</span></td>
+                <td class="py-3 font-mono font-bold text-slate-200">418 pedidos</td>
+                <td class="py-3"><span class="flex items-center gap-1.5 text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Operando</span></td>
+                <td class="py-3 text-right"><span class="text-slate-500">Configurado</span></td>
+              </tr>
+              <tr class="hover:bg-slate-800/40 transition-colors">
+                <td class="py-3 font-bold text-white flex items-center gap-2">
+                  <span>☕</span> Grão Nobre Cafeteria
+                </td>
+                <td class="py-3 text-slate-300">Av. Paulista / SP</td>
+                <td class="py-3"><span class="px-2 py-0.5 rounded-full bg-slate-700 text-slate-200 font-bold">Básico</span></td>
+                <td class="py-3 font-mono font-bold text-slate-200">195 pedidos</td>
+                <td class="py-3"><span class="flex items-center gap-1.5 text-emerald-400"><span class="w-2 h-2 rounded-full bg-emerald-400"></span> Operando</span></td>
+                <td class="py-3 text-right"><span class="text-slate-500">Configurado</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------- -->
+    <!-- TELA 4: PAINEL DO GERENTE (KING BURGER)              -->
+    <!-- ---------------------------------------------------- -->
+    <section id="view-gerente" class="view-panel hidden flex-1 p-4 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-4">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🍔</span>
+            <h2 class="text-2xl font-black text-white">The King Burger · Painel Gerencial</h2>
+          </div>
+          <p class="text-xs text-slate-400 mt-1">Configurações de identidade visual, terminais conectados e fluxo de pedidos.</p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="navigate('kds')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow">
+            <span>🍳</span> Abrir KDS da Cozinha
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="space-y-4">
+          <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl">
+            <h3 class="text-sm font-bold text-white mb-3">Terminais da Loja</h3>
+            <div class="space-y-2.5 text-xs">
+              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
+                <div>
+                  <div class="font-bold text-white">Caixa 01 (Balcão Principal)</div>
+                  <div class="text-[10px] text-slate-400">Impressão Térmica QR Code: Pareada</div>
+                </div>
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              </div>
+              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
+                <div>
+                  <div class="font-bold text-white">Caixa 02 (Autoatendimento)</div>
+                  <div class="text-[10px] text-slate-400">Totem Touch: Pareado</div>
+                </div>
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              </div>
+              <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center">
+                <div>
+                  <div class="font-bold text-white">KDS Cozinha (Chapa & Fogão)</div>
+                  <div class="text-[10px] text-slate-400">Display 24" Touch: Ativo</div>
+                </div>
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 shadow-xl">
+            <h3 class="text-sm font-bold text-white mb-2">Desempenho no Turno</h3>
+            <div class="text-3xl font-black text-amber-400 mt-1">42 Pedidos</div>
+            <p class="text-xs text-slate-400 mt-1">Nenhum cliente extraviado hoje. Alertas de tela bloqueada ativos.</p>
+          </div>
+        </div>
+
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-5">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div>
+              <h3 class="text-sm font-bold text-white">Personalização da Identidade da Loja</h3>
+              <p class="text-xs text-slate-400 mt-0.5">As cores e mensagens abaixo são refletidas no comprovante Web e na Carteira do Google.</p>
+            </div>
+            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full">
+              Sincronizado
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Nome Visível no Cartão</label>
+              <input type="text" value="The King Burger" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-medium">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Cor Primária do Pager & Carteira</label>
+              <div class="flex items-center gap-2">
+                <input type="color" value="#881337" class="w-10 h-10 rounded-xl bg-transparent border-0 cursor-pointer">
+                <input type="text" value="#881337 (Vinho Burger)" readonly class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono">
+              </div>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Mensagem de Preparo</label>
+              <input type="text" value="Seu lanche está na chapa com nossos chefs!" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-medium">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Mensagem de Pronto / Chamada</label>
+              <input type="text" value="🔔 PRONTO! Retire no balcão com a senha." class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white font-medium">
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-800 flex justify-end gap-3">
+            <button onclick="navigate('cliente')" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition-all shadow-md">
+              Visualizar como o Cliente Vê →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------- -->
+    <!-- TELA 5: KDS COZINHA (TELA OPERACIONAL TOUCH)         -->
+    <!-- ---------------------------------------------------- -->
+    <section id="view-kds" class="view-panel hidden flex-1 p-4 lg:p-6 flex flex-col space-y-4">
+      <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-800 gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-400 font-black text-xl flex items-center justify-center">
+            🍳
+          </div>
+          <div>
+            <h2 class="text-xl font-black text-white leading-none">Cozinha KDS · Balcão de Produção</h2>
+            <p class="text-xs text-slate-400 mt-1">Toque no botão para chamar o cliente e acender a tela dele instantaneamente.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="novoPedidoManual()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs border border-slate-700 flex items-center gap-1.5">
+            <span>+</span> Novo Pedido
+          </button>
+          <button onclick="navigate('cliente')" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs flex items-center gap-1.5 shadow">
+            <span>📱</span> Abrir Celular do Cliente
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 flex-1">
+        <!-- Coluna 1: Em Preparo -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 flex flex-col">
+          <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
+            <h3 class="text-sm font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>⏳</span> Em Preparo (<span id="count-preparo">2</span>)
+            </h3>
+            <span class="text-[11px] font-bold text-slate-400">Na Chapa</span>
+          </div>
+
+          <div id="col-preparo" class="space-y-3 flex-1 overflow-y-auto">
+            <div id="card-kds-42" class="bg-slate-950 border-2 border-amber-500/50 rounded-2xl p-4 shadow-lg flex flex-col justify-between">
+              <div>
+                <div class="flex justify-between items-start">
+                  <span class="text-3xl font-black text-white">#42</span>
+                  <span id="timer-42" class="text-xs font-mono font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/30">06:24</span>
+                </div>
+                <div class="text-xs font-semibold text-slate-300 mt-2">
+                  1x Smash Burger Especial<br>
+                  1x Batata Rústica com Cheddar
+                </div>
+              </div>
+              <button onclick="chamarPedido42()" class="mt-4 w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-black rounded-xl text-xs tracking-wider uppercase transition-all shadow-lg flex items-center justify-center gap-2">
+                <span>🔔</span> CHAMAR PEDIDO (PRONTO)
+              </button>
+            </div>
+
+            <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4">
+              <div class="flex justify-between items-start">
+                <span class="text-2xl font-black text-white">#43</span>
+                <span class="text-xs font-mono font-bold text-slate-400 bg-slate-900 px-2 py-0.5 rounded-full">02:10</span>
+              </div>
+              <div class="text-xs font-medium text-slate-400 mt-2">
+                2x Burger Clássico Salada
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coluna 2: Prontos (Aguardando Retirada) -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 flex flex-col">
+          <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
+            <h3 class="text-sm font-black text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>🔔</span> No Balcão (<span id="count-pronto">1</span>)
+            </h3>
+            <span class="text-[11px] font-bold text-slate-400">Chamando</span>
+          </div>
+
+          <div id="col-pronto" class="space-y-3 flex-1 overflow-y-auto">
+            <div id="card-kds-41" class="bg-slate-950 border border-emerald-500/40 rounded-2xl p-4">
+              <div class="flex justify-between items-start">
+                <span class="text-2xl font-black text-white">#41</span>
+                <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">Chamando...</span>
+              </div>
+              <div class="text-xs font-medium text-slate-400 mt-2">
+                1x Combo Shake Chocolate
+              </div>
+              <button onclick="entregarPedido(41)" class="mt-3 w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-lg text-xs">
+                Dar Baixa / Entregue
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Coluna 3: Entregues -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-3xl p-4 flex flex-col opacity-80">
+          <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
+            <h3 class="text-sm font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <span>✓</span> Finalizados
+            </h3>
+            <span class="text-[11px] font-bold text-slate-500">Últimos</span>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800/80 flex justify-between items-center">
+              <span class="font-bold text-slate-300">#40 · Entregue</span>
+              <span class="text-[10px] text-slate-500">19:35</span>
+            </div>
+            <div class="p-3 bg-slate-950 rounded-xl border border-slate-800/80 flex justify-between items-center">
+              <span class="font-bold text-slate-300">#39 · Entregue</span>
+              <span class="text-[10px] text-slate-500">19:28</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------- -->
+    <!-- TELA 6: CELULAR DO CLIENTE (O PAGER VIRTUAL REAL)    -->
+    <!-- ---------------------------------------------------- -->
+    <section id="view-cliente" class="view-panel hidden flex-1 p-4 py-8 flex flex-col items-center justify-center">
+      <div class="w-full max-w-[360px] bg-slate-950 border-4 border-slate-800 rounded-[44px] p-4 shadow-2xl relative overflow-hidden">
+        
+        <div class="w-36 h-4 bg-slate-800 rounded-b-xl mx-auto mb-3"></div>
+
+        <div class="flex justify-between items-center text-[11px] text-slate-400 px-3 mb-3">
+          <span>19:42</span>
+          <div class="flex items-center gap-1.5">
+            <span>5G</span>
+            <span>🔋 92%</span>
+          </div>
+        </div>
+
+        <div id="phone-app-card" class="bg-slate-900 border border-slate-800 rounded-3xl p-5 text-center transition-all duration-300">
+          <div class="text-[11px] uppercase tracking-wider font-bold text-slate-400">The King Burger</div>
+          <div class="text-5xl font-black text-white tracking-tight my-2">#42</div>
+          
+          <div id="phone-status-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 mb-3">
+            <span id="phone-badge-icon">⏳</span>
+            <span id="phone-badge-text">Em Preparo</span>
+          </div>
+
+          <p id="phone-status-msg" class="text-xs text-slate-300 mb-4 leading-relaxed">
+            Sua comida está sendo preparada com todo cuidado pelo chef!
+          </p>
+
+          <div class="bg-slate-950/90 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-300 flex items-center justify-center gap-2 mb-3">
+            <span>🔔</span>
+            <span>Alerta sonoro e vibração ativos</span>
+          </div>
+
+          <div class="mt-2 pt-3 border-t border-slate-800">
+            <button onclick="salvarCarteiraDemo()" class="w-full bg-black border border-slate-700 hover:border-slate-500 text-white rounded-xl p-2.5 flex items-center justify-center gap-2 shadow transition-all active:scale-95">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" fill="#3b82f6"/>
+              </svg>
+              <span class="text-xs font-bold tracking-wide">Salvar no Google Carteira</span>
+            </button>
+            <span class="text-[9px] text-slate-400 mt-1 block">Receba aviso na tela bloqueada</span>
+          </div>
+
+          <button onclick="toggleJogosPhone()" class="mt-3 w-full bg-indigo-950/80 border border-indigo-800/60 hover:bg-indigo-900 text-indigo-300 rounded-xl p-2.5 text-xs font-bold flex items-center justify-center gap-2 transition-all">
+            <span>🎮</span>
+            <span id="phone-jogos-label">Jogar enquanto aguarda</span>
+          </button>
+
+          <div id="phone-game-box" class="hidden mt-3 p-3 bg-slate-950 rounded-2xl border border-slate-800 text-left">
+            <div class="flex justify-between items-center text-[10px] text-slate-400 font-bold mb-2">
+              <span>Jogo da Velha (Contra o Robô)</span>
+              <button onclick="resetGame()" class="text-amber-400 hover:underline">Reiniciar</button>
+            </div>
+            <div class="grid grid-cols-3 gap-1.5 text-center font-black text-lg">
+              <button onclick="playCell(0)" id="c-0" class="h-10 bg-slate-900 rounded-lg text-white hover:bg-slate-800"></button>
+              <button onclick="playCell(1)" id="c-1" class="h-10 bg-slate-900 rounded-lg text-white hover:bg-slate-800"></button>
+              <button onclick="playCell(2)" id="c-2" class="h-10 bg-slate-900 rounded-lg text-white hover:bg-slate-800"></button>
+              <button onclick="playCell(3)" id="c-3" class="h-10 bg-slate-900 rounded-lg text-white hover:bg-slate-800"></button>
+              <button onclick="playCell(4)" id="c-4" class="h-10 bg-slate-900 rounded-lg text-white hover:bg-slate-800"></button>
+              <button onclick="playCell(5)" id="c-5" class="h-10 bg-slate-900 rounded-lg text-white hover:bg-slate-800"></button>
+              <button onclick="playCell(6)" id="c-6" class="h-10 bg-slate-900 rounded-lg text-white hover:bg-slate-800"></button>
+              <button onclick="playCell(7)" id="c-7" class="h-10 bg-slate-900 rounded-lg text-white hover:bg-slate-800"></button>
+              <button onclick="playCell(8)" id="c-8" class="h-10 bg-slate-900 rounded-lg text-white hover:bg-slate-800"></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 text-center">
+          <button onclick="chamarPedido42()" id="btn-quick-trigger" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold rounded-xl border border-slate-700 shadow">
+            ⚡ Simular Cozinha Chamando #42
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    function navigate(viewName) {
+      document.querySelectorAll('.view-panel').forEach(el => el.classList.add('hidden'));
+      const target = document.getElementById('view-' + viewName);
+      if (target) target.classList.remove('hidden');
+
+      ['landing', 'login', 'master', 'gerente', 'kds', 'cliente'].forEach(id => {
+        const btn = document.getElementById('nav-' + id);
+        if (id === viewName) {
+          btn.className = 'px-3 py-1.5 rounded-lg text-white bg-slate-800 shadow transition-all flex items-center gap-1.5 whitespace-nowrap';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-1.5 whitespace-nowrap';
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateCalc() {
+      const orders = parseInt(document.getElementById('calc-orders').value);
+      const pagersLost = parseInt(document.getElementById('calc-pagers').value);
+      document.getElementById('calc-orders-val').textContent = orders;
+      document.getElementById('calc-pagers-val').textContent = pagersLost + ' unidades';
+
+      const annualHardwareSavings = pagersLost * 380;
+      const operationalGains = orders * 8;
+      const totalSavings = annualHardwareSavings + (operationalGains * 0.4);
+
+      document.getElementById('calc-savings').textContent = 
+        'R$ ' + Math.round(totalSavings).toLocaleString('pt-BR') + ',00';
+    }
+
+    function fillLogin(role) {
+      if (role === 'master') {
+        document.getElementById('login-email').value = 'diretoria@avisaqui.com.br';
+      } else if (role === 'gerente') {
+        document.getElementById('login-email').value = 'gerente@kingburger.com.br';
+      } else if (role === 'kds') {
+        document.getElementById('login-email').value = 'cozinha@kingburger.com.br';
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      if (email.includes('diretoria') || email.includes('admin')) {
+        navigate('master');
+      } else if (email.includes('cozinha') || email.includes('kds')) {
+        navigate('kds');
+      } else {
+        navigate('gerente');
+      }
+    }
+
+    function playBuzzerSound() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        const now = ctx.currentTime;
+        [1108, 1318, 1567, 1864].forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+          gain.gain.setValueAtTime(0.8, now + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.12);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.13);
+        });
+      } catch (e) {
+        console.warn('Audio Web:', e);
+      }
+    }
+
+    let isOrder42Ready = false;
+
+    function chamarPedido42() {
+      isOrder42Ready = true;
+      playBuzzerSound();
+
+      const card42 = document.getElementById('card-kds-42');
+      const colPronto = document.getElementById('col-pronto');
+      if (card42 && colPronto) {
+        card42.classList.remove('border-amber-500/50');
+        card42.classList.add('border-emerald-500/70', 'bg-emerald-950/20');
+        card42.innerHTML = `
+          <div class="flex justify-between items-start">
+            <span class="text-3xl font-black text-white">#42</span>
+            <span class="text-xs font-bold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-full border border-emerald-500/30">Chamando Balcão</span>
+          </div>
+          <div class="text-xs font-medium text-slate-300 mt-2">Smash Burger & Batata</div>
+          <button onclick="entregarPedido(42)" class="mt-3 w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-lg text-xs">
+            Dar Baixa / Entregue
+          </button>
+        `;
+        colPronto.prepend(card42);
+        document.getElementById('count-preparo').textContent = '1';
+        document.getElementById('count-pronto').textContent = '2';
+      }
+
+      const phoneCard = document.getElementById('phone-app-card');
+      const phoneBadge = document.getElementById('phone-status-badge');
+      const phoneIcon = document.getElementById('phone-badge-icon');
+      const phoneText = document.getElementById('phone-badge-text');
+      const phoneMsg = document.getElementById('phone-status-msg');
+
+      phoneCard.classList.add('pulse-ready', 'border-emerald-500', 'bg-emerald-950/50');
+      phoneBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 mb-3';
+      phoneIcon.textContent = '🔔';
+      phoneText.textContent = 'PRONTO PARA RETIRADA!';
+      phoneMsg.innerHTML = '<strong class="text-emerald-300 text-sm block">Seu pedido está no balcão de entrega!</strong>Apresente a senha #42.';
+
+      const btnTrigger = document.getElementById('btn-quick-trigger');
+      if (btnTrigger) {
+        btnTrigger.textContent = '✓ Pedido #42 no Balcão';
+        btnTrigger.className = 'px-4 py-2 bg-emerald-900/60 text-emerald-300 text-xs font-bold rounded-xl border border-emerald-700 shadow';
+      }
+    }
+
+    function entregarPedido(num) {
+      alert(`Pedido #${num} entregue ao cliente com sucesso! Canal encerrado.`);
+      navigate('kds');
+    }
+
+    function salvarCarteiraDemo() {
+      alert('Comprovante #42 adicionado com sucesso à Carteira do Google!\n\nAgora o celular está protegido para acender a tela de bloqueio quando a cozinha chamar.');
+    }
+
+    let board = ['', '', '', '', '', '', '', '', ''];
+    function toggleJogosPhone() {
+      const box = document.getElementById('phone-game-box');
+      box.classList.toggle('hidden');
+    }
+
+    function playCell(idx) {
+      if (board[idx] !== '' || isOrder42Ready) return;
+      board[idx] = 'X';
+      document.getElementById('c-' + idx).textContent = 'X';
+      document.getElementById('c-' + idx).classList.add('text-amber-400');
+
+      const emptyIndices = board.map((val, i) => val === '' ? i : null).filter(v => v !== null);
+      if (emptyIndices.length > 0) {
+        const botMove = emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+        board[botMove] = 'O';
+        document.getElementById('c-' + botMove).textContent = 'O';
+        document.getElementById('c-' + botMove).classList.add('text-blue-400');
+      }
+    }
+
+    function resetGame() {
+      board = ['', '', '', '', '', '', '', '', ''];
+      for (let i = 0; i < 9; i++) {
+        const btn = document.getElementById('c-' + i);
+        btn.textContent = '';
+        btn.className = 'h-10 bg-slate-900 rounded-lg text-white hover:bg-slate-800';
+      }
+    }
+  </script>
+</body>
+</html>
