@@ -53,6 +53,7 @@
     if(/^\/api\/admin\/restaurantes\/[^/]+\/logo$/.test(p))return json({ok:true});
     if(/^\/api\/admin\/restaurantes\/[^/]+\/gerentes/.test(p))return json(method==='GET'?[]:{id:'gerente-demo',ok:true});
     if(p==='/api/admin/interesses-piloto')return json([]);
+    if(p==='/api/piloto/interesse')return json({ok:true,mensagem:'Interesse registrado apenas nesta demonstração.'});
     if(p==='/api/admin/terminais')return json(method==='GET'?[]:{id:'demo-terminal',ok:true});
     if(p.startsWith('/api/admin/terminais/'))return json({ok:true});
     if(p.startsWith('/api/admin/contexto/')){sessionStorage.setItem(contextKey,p);return json({ok:true})}
@@ -84,11 +85,16 @@
   };
   window.EventSource=class {
     constructor(url){
-      this.url=url;this.readyState=1;this.onmessage=null;this.onerror=null;
+      this.url=url;this.readyState=1;this.onmessage=null;this.onerror=null;this._events={};
       this._listener=event=>{
         const order=event.data;
-        if(this.url.includes('/api/kds/stream')||this.url.includes(encodeURIComponent(order.token)))
-          this.onmessage?.({data:JSON.stringify({type:'pedido_atualizado',pedido:order,status:order.status,restaurante_nome:'Restaurante Exemplo'})});
+        if(this.url.includes('/api/kds/stream')){
+          const kind=order.status==='preparo'?'novo_pedido':'status_alterado';
+          const payload={data:JSON.stringify({...order,itens:[],created_at:new Date().toISOString()})};
+          (this._events[kind]||[]).forEach(fn=>fn(payload));
+        }else if(this.url.includes(encodeURIComponent(order.token))){
+          this.onmessage?.({data:JSON.stringify({status:order.status,restaurante_nome:'Restaurante Exemplo'})});
+        }
       };
       sync.addEventListener('message',this._listener);
       if(this.url.includes('/api/pedidos/stream/')){
@@ -96,8 +102,8 @@
         if(order)queueMicrotask(()=>this.onmessage?.({data:JSON.stringify({status:order.status,restaurante_nome:order.restaurante_nome})}));
       }
     }
-    addEventListener(name,fn){if(name==='message')this.onmessage=fn}
-    removeEventListener(name,fn){if(name==='message'&&this.onmessage===fn)this.onmessage=null}
+    addEventListener(name,fn){(this._events[name]||=new Set()).add(fn)}
+    removeEventListener(name,fn){this._events[name]?.delete(fn)}
     close(){sync.removeEventListener('message',this._listener);this.readyState=2}
   };
   window.addEventListener('DOMContentLoaded',()=>{
