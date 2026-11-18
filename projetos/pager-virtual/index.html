@@ -388,10 +388,9 @@
         <span id="finished-count">0</span> Finalizados
       </div>
 
-      <button id="btn-open-manual" class="btn-sim-order" type="button">➕ Inserir pedido manual</button>
-      <!-- BOTÃO DE TESTE: SIMULA ENTRADA DE NOVO PEDIDO DO PDV -->
-      <button id="btn-add-sim-order" class="btn-sim-order" title="Simula novo pedido recebido da impressora/PDV">
-        ➕ Simular Novo Pedido (PDV)
+      <!-- Mesmo botão da abertura anterior: agora apresenta o formulário antes de criar pedido. -->
+      <button id="btn-add-sim-order" class="btn-sim-order" type="button" title="Abrir cadastro de pedido manual">
+        ➕ Inserir pedido manual
       </button>
     </div>
   </header>
@@ -639,37 +638,13 @@
       }, 300);
     };
 
-    // AÇÃO: Adicionar novo pedido do pool em loop (senhas sequenciais 44, 45, 46... e fila FIFO)
-    document.getElementById('btn-add-sim-order').addEventListener('click', () => {
-      orderCounter++;
-      const template = orderPool[poolIndex % orderPool.length];
-      poolIndex++;
-
-      const newOrder = {
-        id: String(orderCounter),
-        items: template.items,
-        status: 'preparo',
-        createdAt: Date.now()
-      };
-
-      // Adiciona ao final da fila (FIFO: pedidos recentes entram no final da esteira)
-      activeOrders.push(newOrder);
-      renderOrders();
-
-      const newCard = document.getElementById('card-' + newOrder.id);
-      if (newCard) {
-        newCard.classList.add('fade-in');
-      }
-    });
-
-
     // Pedido manual: prévia local sem API; campos opcionais continuam recolhidos por padrão.
     const manualDialog = document.getElementById('manual-order-dialog');
     const manualForm = document.getElementById('manual-order-form');
     const manualNumber = document.getElementById('manual-order-number');
     const manualDetails = document.getElementById('manual-client-details');
     const manualError = document.getElementById('manual-order-error');
-    const manualOpen = document.getElementById('btn-open-manual');
+    const manualOpen = document.getElementById('btn-add-sim-order');
     let manualInitialNumber = '';
     function closeManualDialog() {
       const changed = manualNumber.value !== manualInitialNumber ||
