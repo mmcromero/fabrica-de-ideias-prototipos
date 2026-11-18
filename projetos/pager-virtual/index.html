@@ -588,6 +588,12 @@
           </div>
         `;
 
+        if (order.clienteNome) {
+          const nameLine = document.createElement('div');
+          nameLine.className = 'order-client-name';
+          nameLine.textContent = order.clienteNome;
+          card.querySelector('.order-summary')?.prepend(nameLine);
+        }
         grid.appendChild(card);
 
         // Renderiza o QR Code em miniatura
@@ -664,9 +670,11 @@
     const manualDetails = document.getElementById('manual-client-details');
     const manualError = document.getElementById('manual-order-error');
     const manualOpen = document.getElementById('btn-open-manual');
+    let manualInitialNumber = '';
     function closeManualDialog() {
-      const changed = Array.from(manualForm.elements).some(field =>
-        (field.tagName === 'INPUT') && field.value.trim());
+      const changed = manualNumber.value !== manualInitialNumber ||
+        Boolean(document.getElementById('manual-order-name').value.trim()) ||
+        Boolean(document.getElementById('manual-order-phone').value.trim());
       if (changed && !window.confirm('Descartar dados deste pedido?')) return;
       manualDialog.close();
       manualOpen.focus();
@@ -676,6 +684,7 @@
       manualDetails.open = false;
       manualError.textContent = '';
       manualNumber.value = String(orderCounter + 1);
+      manualInitialNumber = manualNumber.value;
       manualDialog.showModal();
       manualNumber.focus();
     });
@@ -704,16 +713,7 @@
       activeOrders.push(newOrder);
       orderCounter = Math.max(orderCounter, number);
       renderOrders();
-      const card = document.getElementById('card-' + number);
-      if (card) {
-        card.classList.add('fade-in');
-        if (nome) {
-          const line = document.createElement('div');
-          line.textContent = nome;
-          line.className = 'order-client-name';
-          card.querySelector('.order-summary')?.prepend(line);
-        }
-      }
+      document.getElementById('card-' + number)?.classList.add('fade-in');
       manualDialog.close();
       manualOpen.focus();
     });
