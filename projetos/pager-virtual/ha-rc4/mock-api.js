@@ -35,7 +35,8 @@
       return nativeFetch(resource,init);
     }
     const p=path.slice(at); const body=parse(init);
-    if(p==='/api/setup/status')return json({needs_setup:false});
+    if(p==='/api/setup/status')return json({needs_setup:location.pathname.endsWith('/setup.html')});
+    if(p==='/api/setup/master')return json({ok:true});
     if(p==='/api/auth/login' && method==='POST'){
       const r=String(body.login||'').trim().toLowerCase();
       if(!['master','gerente','operador'].includes(r)||body.senha!=='AvisaquiDemo123!')
