@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090e17"><title>Administração · Avisaqui</title>
+<style>
+  * { box-sizing:border-box } body { margin:0;padding:18px;background:#090e17;color:#f1f5f9;font:16px system-ui,-apple-system,sans-serif }
+  main { max-width:1180px;margin:0 auto } header { display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid #334155;margin-bottom:20px }
+  h1 { margin:0;font-size:1.55rem } h2 { font-size:1.15rem;margin:0 0 18px } .card { background:#131c2e;border:1px solid #30435f;border-radius:16px;padding:20px;margin:16px 0 }
+  label { display:block;font-weight:650;margin:12px 0 6px } input,select { width:100%;font:inherit;min-height:50px;padding:11px 12px;border:2px solid #51627d;border-radius:10px;background:#0b1220;color:white }
+  button,a.action { min-height:48px;display:inline-flex;align-items:center;justify-content:center;padding:11px 16px;background:#3b82f6;color:#fff;border:0;border-radius:10px;font:inherit;font-weight:700;text-decoration:none;cursor:pointer }
+  button.secondary,a.secondary { background:#334155 } button:disabled { opacity:.6;cursor:wait } button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible { outline:3px solid #93c5fd;outline-offset:3px }
+  form button { width:100%;margin-top:16px } .list { display:grid;gap:10px } .line { display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:12px;border:1px solid #30435f;border-radius:12px }
+  .field-error { color:#fca5a5;font-size:.9rem;margin:5px 0 0 }
+  input[aria-invalid="true"],select[aria-invalid="true"] { border-color:#fca5a5 }
+  .action-feedback { min-height:22px;margin:8px 0 0;color:#c4f2d4 }
+  .action-feedback.error { color:#fca5a5 }
+  .muted { color:#b1c0d7;font-size:.9rem } .status { min-height:24px;margin-top:12px;color:#c4f2d4 } .error { color:#fca5a5 }
+  .brand-logo { display:block;width:min(190px,55vw);height:auto;border:0;border-radius:0;background:transparent }
+  .admin-session-header { display:flex;flex-direction:column;align-items:stretch;gap:8px }
+  .admin-session-top { display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;min-width:0 }
+  .admin-nav { display:flex;gap:10px;flex-wrap:wrap;margin:0 0 16px }
+  .admin-tab { flex:1 1 190px }
+  .admin-panel { min-width:0 }
+  .admin-toolbar { display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 16px }
+  .admin-toolbar h2 { margin:0 }
+  .admin-dialog { width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow:auto;background:#131c2e;color:#f1f5f9;border:1px solid #51627d;border-radius:18px;padding:22px }
+  .admin-dialog::backdrop { background:rgba(3,8,18,.78) }
+  .admin-dialog .card { border:0;padding:0;margin:0 }
+  .admin-dialog-header { display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px }
+  .admin-dialog-header h2 { margin:0 }
+  .admin-dialog-close { min-width:48px;font-size:1.3rem }
+  .admin-dialog-actions { display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px }
+  .admin-dialog-actions button { flex:1 1 140px }
+  .admin-dialog form button[type=submit] { width:auto;margin-top:0 }
+  @media(max-width:430px) { .admin-dialog { padding:15px } }
+
+  .admin-panel .card { margin-top:0 }
+  @media(min-width:1024px) {
+    #master-area,#manager-area { display:grid;grid-template-columns:220px minmax(0,1fr);align-items:start;gap:18px }
+    .admin-nav { flex-direction:column;position:sticky;top:16px }
+    .admin-panels { min-width:0 }
+  }
+  @media(max-width:430px) {
+    body { padding:12px }
+    header { align-items:flex-start }
+    .card { padding:15px }
+    .admin-tab { flex:1 1 120px;padding:10px 8px;font-size:.9rem }
+  }
+  [hidden] { display:none !important } .row { display:flex;gap:8px;flex-wrap:wrap }
+
+  /* AVISAQUI-PACOTE-002: melhorias mobile-first do Master Admin */
+  #master-area { min-width:0 }
+  .master-stats { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 18px }
+  .master-stat { min-width:0;padding:14px;border:1px solid #30435f;border-radius:14px;background:#131c2e }
+  .master-stat strong { display:block;font-size:1.65rem;line-height:1.2;font-variant-numeric:tabular-nums }
+  .master-stat span { display:block;margin-top:4px;color:#b1c0d7;font-size:.85rem }
+  .restaurant-logo { width:48px;height:48px;object-fit:contain;border-radius:10px;background:#e9eef6;flex:0 0 48px }
+  .restaurant-logo-fallback { width:48px;height:48px;border-radius:10px;background:#23466c;color:white;display:grid;place-items:center;font-weight:750;flex:0 0 48px }
+  #restaurant-identity:not([hidden]) {display:flex!important;align-items:center;gap:10px}
+  #master-area #restaurants-list .line { align-items:center;flex-wrap:nowrap;min-width:0;gap:12px }
+  #master-area #restaurants-list .line > span { flex:1;min-width:0;overflow-wrap:anywhere }
+  #master-area #restaurants-list button { flex:0 0 auto }
+  #master-area .admin-toolbar { gap:10px }
+  #master-area .admin-toolbar h2 { flex:1 1 100%;margin:0 }
+  #master-area .admin-toolbar button { font-size:.9rem;min-height:44px;padding:9px 12px }
+  @media(max-width:700px) {
+    header { flex-wrap:nowrap;align-items:center;padding-bottom:12px;margin-bottom:16px }
+    header > div:first-child { min-width:0;flex:1 }
+    .brand-logo { width:min(180px,48vw);max-width:100%;height:auto }
+    #identity { display:block;font-size:.78rem;margin-top:4px;overflow-wrap:anywhere }
+    header .row { flex-wrap:nowrap }
+    header .row button,header .row a { min-height:44px;padding:8px 12px }
+    #master-area .admin-nav { display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:16px }
+    #master-area .admin-tab { min-width:0;min-height:50px;padding:8px 5px;font-size:clamp(.69rem,2.75vw,.84rem);line-height:1.25;white-space:normal;overflow-wrap:anywhere }
+    #master-area .admin-toolbar { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:12px }
+    #master-area .admin-toolbar h2 { grid-column:1/-1 }
+    #master-area .admin-toolbar button { width:100%;min-width:0;white-space:normal }
+    #master-area #restaurants-list .line { padding:11px 12px }
+    #master-area #restaurants-list button { min-height:42px;padding:8px 10px;font-size:.82rem }
+    #master-area .card { padding:14px;margin:0 }
+  }
+  @media(max-width:350px) {
+    #master-area #restaurants-list .line { flex-wrap:wrap }
+    #master-area #restaurants-list button { width:100% }
+  }
+</style>
+  <script src="./mock-api.js"></script>
+</head>
+<body>
+<main>
+<header class="admin-session-header"><div class="admin-session-top"><h1><img class="brand-logo" src="./avisaqui-marca-transparente.svg" alt="Avisaqui"></h1><button class="secondary" id="logout">Sair</button></div>
+<span class="muted" id="identity">Carregando conta...</span><div id="restaurant-identity" class="card" hidden style="display:none;padding:10px 14px;margin:5px 0 0;font-weight:700" role="status" aria-live="polite"></div></header>
+
+<section id="master-area" hidden>
+  <nav class="admin-nav" aria-label="Áreas do Master Admin"><button type="button" class="admin-tab" data-admin-tab="restaurants" aria-current="page">Restaurantes</button><button type="button" class="admin-tab secondary" data-admin-tab="interests">Interessados no piloto</button><button type="button" class="admin-tab secondary" data-admin-tab="settings">Configurações</button></nav>
+  <div id="admin-panels" class="admin-panels"></div>
+  <div class="card"><h2>Novo restaurante</h2><form id="restaurant-form">
+  <label for="restaurant-name">Nome do restaurante</label><input id="restaurant-name" required maxlength="120">
+  <label for="restaurant-slug">Identificador</label><input id="restaurant-slug" required maxlength="80" pattern="[a-z0-9-]{3,80}" placeholder="ex.: restaurante-centro">
+  <button type="submit">Cadastrar restaurante</button></form></div>
+  <div class="card"><h2>Gerente inicial</h2><form id="manager-form">
+  <label for="manager-restaurant">Restaurante</label><select id="manager-restaurant" required></select>
+  <label for="manager-name">Nome do gerente</label><input id="manager-name" maxlength="120" required>
+  <label for="manager-login">Login do gerente</label><input id="manager-login" maxlength="120" required autocapitalize="none">
+  <label for="manager-password">Senha inicial</label><input id="manager-password" type="password" minlength="12" required autocomplete="new-password">
+  <button type="submit">Criar acesso do gerente</button></form></div>
+  <div class="card"><h2>Restaurantes cadastrados</h2><div id="restaurants-list" class="list"></div></div>
+  <div class="card"><h2>Interessados no piloto</h2><p class="muted">Contatos enviados pelo formulário da landing page. Acesso exclusivo do Master Admin.</p><button type="button" class="secondary" id="refresh-interesses">Atualizar lista</button><p id="interesses-count" class="muted"></p><div id="interesses-list" class="list" aria-live="polite"></div></div>
+</section>
+
+<section id="manager-area" hidden>
+  <nav class="admin-nav" aria-label="Áreas do gerente"><a class="action secondary" href="./kds.html" id="go-kds" hidden>Ir ao KDS</a><button type="button" class="admin-tab" data-manager-tab="terminals" aria-current="page">Terminais</button><button type="button" class="admin-tab secondary" data-manager-tab="settings">Configurações</button><a class="action secondary" href="./impressao.html" id="manager-print-link" style="display:inline-flex;align-items:center;justify-content:center;min-height:48px">🖨️ Integração de impressão</a></nav>
+  <div id="manager-panels" class="admin-panels"></div>
+  <div class="card"><h2>Novo terminal operacional</h2><form id="terminal-form">
+  <label for="terminal-name">Nome do terminal</label><input id="terminal-name" placeholder="Ex.: Caixa 1" maxlength="120" required>
+  <label for="terminal-login">Login do terminal</label><input id="terminal-login" maxlength="120" required autocapitalize="none">
+  <label for="terminal-password">Senha de acesso</label><input id="terminal-password" type="password" minlength="12" required autocomplete="new-password">
+  <button type="submit">Criar terminal</button></form></div>
+  <div class="card"><h2>Terminais do restaurante</h2><div id="terminals-list" class="list"></div></div>
+</section>
+<section class="card" id="password-area">
+  <h2>Alterar minha senha</h2>
+  <form id="my-password-form">
+    <label for="current-password">Senha atual</label><input id="current-password" type="password" required autocomplete="current-password">
+    <label for="new-password">Nova senha (mínimo 12 caracteres)</label><input id="new-password" type="password" minlength="12" maxlength="256" required autocomplete="new-password">
+    <button type="submit">Alterar senha</button>
+  </form>
+</section>
+<p id="message" class="status" role="status" aria-live="polite"></p>
+</main>
+<script>
+const basePath = location.pathname.replace(/\/[^/]*$/, '');
+  const $ = id => document.getElementById(id);
+  // Etapas 1–3: áreas por papel e modais; preservar IDs, rotas e permissões.
+  (function organizeMasterSections(){
+    const master=$('master-area'), host=$('admin-panels');
+    const cards=Array.from(master.querySelectorAll(':scope > .card'));
+    if(cards.length!==4) return;
+    const sections=[
+      {id:'restaurants',title:'Restaurantes',cards:[cards[2],cards[0],cards[1]]},
+      {id:'interests',title:'Interessados no piloto',cards:[cards[3]]},
+      {id:'settings',title:'Configurações',cards:[]}
+    ];
+    for(const group of sections){
+      const panel=document.createElement('section');
+      panel.className='admin-panel';panel.id='admin-panel-'+group.id;
+      panel.setAttribute('aria-label',group.title);
+      panel.hidden=group.id!=='restaurants';
+      for(const card of group.cards) panel.append(card);
+      host.append(panel);
+    }
+    // Cadastro sob demanda: listas permanecem visíveis, formulários abrem em modais.
+    const restaurantPanel=$('admin-panel-restaurants');
+    const stats=document.createElement('div');
+    stats.id='master-stats';stats.className='master-stats';stats.setAttribute('aria-label','Resumo da administração');
+    stats.innerHTML='<div class="master-stat"><strong id="master-restaurants-count" aria-live="polite">—</strong><span>Restaurantes</span></div><div class="master-stat"><strong id="master-interests-count" aria-live="polite">—</strong><span>Interessados no piloto</span></div>';
+    restaurantPanel.prepend(stats);
+    const toolbar=document.createElement('div');toolbar.className='admin-toolbar';
+    const title=document.createElement('h2');title.textContent='Restaurantes';
+    const newButton=document.createElement('button');newButton.type='button';newButton.textContent='+ Novo restaurante';
+    toolbar.append(title,newButton);restaurantPanel.prepend(toolbar);
+    function createAdminDialog(card,trigger,label){
+      const dialog=document.createElement('dialog');dialog.className='admin-dialog';
+      dialog.setAttribute('aria-label',label);
+      const header=document.createElement('div');header.className='admin-dialog-header';
+      const heading=document.createElement('h2');heading.textContent=label;
+      const close=document.createElement('button');close.type='button';close.className='secondary admin-dialog-close';close.textContent='×';close.setAttribute('aria-label','Fechar');
+      header.append(heading,close);
+      const originalHeading=card.querySelector('h2');if(originalHeading)originalHeading.remove();
+      dialog.append(header,card);
+      const form=card.querySelector('form'),initial=new Map();
+      const actions=document.createElement('div');actions.className='admin-dialog-actions';
+      const cancel=document.createElement('button');cancel.type='button';cancel.className='secondary';cancel.textContent='Cancelar';
+      const submitButton=form.querySelector('button[type="submit"]');actions.append(cancel,submitButton);form.append(actions);
+      const snapshot=()=>{initial.clear();for(const field of form.querySelectorAll('input,select,textarea'))initial.set(field,field.value);};
+      const changed=()=>Array.from(initial).some(([field,value])=>field.value!==value);
+      const dismiss=()=>{
+        if(changed()&&!confirm('Descartar as alterações não salvas?'))return;
+        dialog.close();
+      };
+      close.addEventListener('click',dismiss);cancel.addEventListener('click',dismiss);
+      dialog.addEventListener('cancel',event=>{event.preventDefault();dismiss();});
+      // O navegador devolve o foco ao botão que abriu o diálogo.
+      trigger.addEventListener('click',()=>{snapshot();dialog.returnValue='';dialog.showModal();});
+      document.body.append(dialog);
+      return {dialog,snapshot,trigger};
+    }
+    const restaurantDialog=createAdminDialog(cards[0],newButton,'Novo restaurante');
+    const managerButton=document.createElement('button');managerButton.type='button';managerButton.className='secondary';managerButton.textContent='Criar acesso de gerente';
+    toolbar.append(managerButton);
+    const managerDialog=createAdminDialog(cards[1],managerButton,'Criar acesso de gerente');
+    window.adminDialogs={restaurant:restaurantDialog,manager:managerDialog};
+    for(const tab of master.querySelectorAll('[data-admin-tab]')){
+      tab.addEventListener('click',()=>{
+        const active=tab.dataset.adminTab;
+        for(const panel of host.children)panel.hidden=panel.id!=='admin-panel-'+active;
+        for(const item of master.querySelectorAll('[data-admin-tab]')){
+          const selected=item.dataset.adminTab===active;
+          item.classList.toggle('secondary',!selected);
+          if(selected)item.setAttribute('aria-current','page');else item.removeAttribute('aria-current');
+        }
+      });
+    }
+  })();
+  // Configurações são exclusivas da área do usuário autenticado.
+  (function organizeAccountAreas(){
+    const password=$('password-area');
+    const masterSettings=$('admin-panel-settings');
+    const manager=$('manager-area'),host=$('manager-panels');
+    const cards=Array.from(manager.querySelectorAll(':scope > .card'));
+    if(cards.length!==2||!masterSettings)return;
+    const terminals=document.createElement('section');
+    terminals.id='manager-panel-terminals';terminals.className='admin-panel';
+    terminals.setAttribute('aria-label','Terminais');
+    const settings=document.createElement('section');
+    settings.id='manager-panel-settings';settings.className='admin-panel';settings.hidden=true;
+    const printCard=document.createElement('div');printCard.className='card';
+    const printTitle=document.createElement('h2');printTitle.textContent='Integração de impressão';
+    const printLink=document.createElement('a');printLink.className='action secondary';printLink.href='./impressao.html';printLink.textContent='🖨️ Configurar impressora Windows';
+    printCard.append(printTitle,printLink);settings.append(printCard);
+    settings.setAttribute('aria-label','Configurações');
+    const toolbar=document.createElement('div');toolbar.className='admin-toolbar';
+    const heading=document.createElement('h2');heading.textContent='Terminais';
+    const create=document.createElement('button');create.type='button';create.textContent='+ Novo terminal';
+    toolbar.append(heading,create);terminals.append(toolbar,cards[1]);
+    host.append(terminals,settings);
+    const card=cards[0],dialog=document.createElement('dialog');dialog.className='admin-dialog';
+    dialog.setAttribute('aria-label','Novo terminal');
+    const header=document.createElement('div');header.className='admin-dialog-header';
+    const title=document.createElement('h2');title.textContent='Novo terminal';
+    const close=document.createElement('button');close.type='button';close.className='secondary admin-dialog-close';
+    close.textContent='×';close.setAttribute('aria-label','Fechar');
+    header.append(title,close);
+    const oldTitle=card.querySelector('h2');if(oldTitle)oldTitle.remove();
+    dialog.append(header,card);document.body.append(dialog);
+    const form=$('terminal-form');let snapshot=[];
+    const actions=document.createElement('div');actions.className='admin-dialog-actions';
+    const cancel=document.createElement('button');cancel.type='button';cancel.className='secondary';cancel.textContent='Cancelar';
+    actions.append(cancel,form.querySelector('button[type="submit"]'));form.append(actions);
+    const remember=()=>{snapshot=Array.from(form.querySelectorAll('input')).map(el=>[el,el.value]);};
+    const dismiss=()=>{
+      if(snapshot.some(([el,value])=>el.value!==value)&&!confirm('Descartar as alterações não salvas?'))return;
+      dialog.close();
+    };
+    create.addEventListener('click',()=>{remember();dialog.showModal();});
+    close.addEventListener('click',dismiss);cancel.addEventListener('click',dismiss);
+    dialog.addEventListener('cancel',event=>{event.preventDefault();dismiss();});
+    window.terminalDialog={dialog,remember,trigger:create};
+    function showManagerPanel(id){
+      terminals.hidden=id!=='terminals';settings.hidden=id!=='settings';
+      for(const tab of manager.querySelectorAll('[data-manager-tab]')){
+        const active=tab.dataset.managerTab===id;
+        tab.classList.toggle('secondary',!active);
+        if(active)tab.setAttribute('aria-current','page');else tab.removeAttribute('aria-current');
+      }
+    }
+    for(const tab of manager.querySelectorAll('[data-manager-tab]'))
+      tab.addEventListener('click',()=>showManagerPanel(tab.dataset.managerTab));
+    window.placeAccountSettings=(role)=>{
+      if(role==='master')masterSettings.append(password);
+      else if(role==='gerente')settings.append(password);
+    };
+  })();
+  async function loadInteresses() {
+    const list=$('interesses-list');list.textContent='Carregando...';
+    try {
+      const data=await api(basePath + '/api/admin/interesses-piloto');
+      list.replaceChildren();$('interesses-count').textContent=data.length+' contato(s) exibido(s)';
+      $('master-interests-count').textContent=String(data.length);
+      for (const item of data) {
+        const line=document.createElement('div');line.className='line';
+        const info=document.createElement('div');
+        const name=document.createElement('strong');name.textContent=item.nome;
+        const details=document.createElement('div');details.className='muted';
+        details.textContent=item.telefone+' · '+item.email+' · '+new Date(item.criado_em).toLocaleString('pt-BR');
+        info.append(name,details);line.append(info);list.append(line);
+      }
+      if(!data.length)list.textContent='Nenhum interessado cadastrado.';
+    }catch(e){list.textContent='Erro ao consultar contatos: '+e.message;}
+  }
+  $('refresh-interesses').addEventListener('click',loadInteresses);
+
+  const message = (text, error=false) => { $('message').textContent = text; $('message').className = error ? 'status error' : 'status'; };
+  // Feedback junto à ação, sem rolagem ou mudança automática de foco.
+  let feedbackSerial=0;
+  function actionStatus(anchor){
+    let status=anchor.nextElementSibling;
+    if(!status?.classList.contains('action-feedback'))status=null;
+    if(!status){
+      status=document.createElement('p');status.className='action-feedback';
+      status.id='action-feedback-'+(++feedbackSerial);
+      status.setAttribute('role','status');status.setAttribute('aria-live','polite');
+      anchor.insertAdjacentElement('afterend',status);
+    }
+    return (text,isError=false)=>{
+      status.textContent=text;
+      status.classList.toggle('error',isError);
+    };
+  }
+  function clearFieldError(field){
+    field.removeAttribute('aria-invalid');
+    const id=field.getAttribute('data-error-id');
+    if(id){
+      const error=document.getElementById(id);
+      if(error)error.remove();
+      const described=(field.getAttribute('aria-describedby')||'').split(/\s+/).filter(v=>v&&v!==id);
+      if(described.length)field.setAttribute('aria-describedby',described.join(' '));
+      else field.removeAttribute('aria-describedby');
+      field.removeAttribute('data-error-id');
+    }
+  }
+  function showFieldError(field,text){
+    clearFieldError(field);
+    const id='field-error-'+(++feedbackSerial);
+    const p=document.createElement('p');p.className='field-error';p.id=id;p.textContent=text;
+    field.insertAdjacentElement('afterend',p);
+    field.setAttribute('aria-invalid','true');
+    field.setAttribute('aria-describedby',[(field.getAttribute('aria-describedby')||''),id].filter(Boolean).join(' '));
+    field.setAttribute('data-error-id',id);
+  }
+  function validateForm(form){
+    let valid=true;
+    for(const field of form.querySelectorAll('input,select,textarea')){
+      clearFieldError(field);
+      if(field.disabled||field.type==='hidden')continue;
+      if(!field.checkValidity()){
+        const validity=field.validity;
+        const text=validity.valueMissing?'Preencha este campo.':
+          validity.patternMismatch?'Use somente letras minúsculas sem acento, números e hífens (3 a 80 caracteres).':
+          validity.tooShort?'Informe pelo menos '+field.minLength+' caracteres.':
+          validity.tooLong?'O limite é de '+field.maxLength+' caracteres.':
+          'Confira o valor informado.';
+        showFieldError(field,text);valid=false;
+      }
+    }
+    return valid;
+  }
+  function setupFormValidation(form){
+    form.noValidate=true;
+    form.addEventListener('input',event=>{
+      const field=event.target;
+      if(field.matches('input,textarea'))clearFieldError(field);
+    });
+    form.addEventListener('change',event=>{
+      const field=event.target;
+      if(field.matches('select'))clearFieldError(field);
+    });
+  }
+  function pendingButton(button,label){
+    const original=button.textContent;
+    button.disabled=true;button.setAttribute('aria-busy','true');button.textContent=label;
+    return ()=>{button.disabled=false;button.removeAttribute('aria-busy');button.textContent=original;};
+  }
+  async function api(url, options={}) {
+    const response = await fetch(url, { credentials:'same-origin', ...options });
+    const data = await response.json();
+    if (response.status === 401) { location.replace(basePath + '/login.html'); throw new Error('Sessão expirada'); }
+    if (!response.ok) throw new Error(data.error || 'Operação não concluída');
+    return data;
+  }
+  async function post(url, data) { return api(url, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}); }
+  const val = id => $(id).value.trim();
+  function restaurantLogo(url,name){
+    const fallback=document.createElement('span');fallback.className='restaurant-logo-fallback';fallback.textContent=(name||'R').trim().slice(0,1).toUpperCase();fallback.setAttribute('aria-label','Logo não cadastrado');
+    if(typeof url!=='string'||!/^https:\/\//i.test(url))return fallback;
+    const img=document.createElement('img');img.className='restaurant-logo';img.alt='Logo de '+name;img.src=url;img.referrerPolicy='no-referrer';img.addEventListener('error',()=>img.replaceWith(fallback),{once:true});return img;
+  }
+
+  // Gestão contextual de gerentes: exige contexto Master, reautenticação e restauração da sessão.
+  async function manageRestaurantManagers(rest, trigger) {
+    const dialog=document.createElement('dialog');dialog.className='admin-dialog';
+    dialog.setAttribute('aria-label','Gerentes de '+rest.nome);
+    const head=document.createElement('div');head.className='admin-dialog-header';
+    const title=document.createElement('h2');title.textContent='Gerentes — '+rest.nome;
+    const close=document.createElement('button');close.type='button';close.className='secondary admin-dialog-close';
+    close.textContent='×';close.setAttribute('aria-label','Fechar');
+    head.append(title,close);
+    const info=document.createElement('p');info.className='muted';
+    info.textContent='Esta área usa o contexto do restaurante selecionado. Redefinir senha encerra todas as sessões do gerente.';
+    const state=document.createElement('p');state.setAttribute('role','status');state.setAttribute('aria-live','polite');
+    state.textContent='Consultando gerentes…';
+    const list=document.createElement('div');list.className='list';
+    const refresh=document.createElement('button');refresh.type='button';refresh.className='secondary';
+    refresh.textContent='Atualizar lista';refresh.disabled=true;
+    const footer=document.createElement('div');footer.className='admin-dialog-actions';
+    const done=document.createElement('button');done.type='button';done.className='secondary';done.textContent='Voltar';
+    footer.append(refresh,done);dialog.append(head,info,state,list,footer);document.body.append(dialog);
+    let busy=true,initialContext=null,contextChanged=false,unsaved=()=>false;
+    const contextUrl=basePath+'/api/admin/contexto/';
+    const managerUrl=basePath+'/api/admin/restaurantes/'+encodeURIComponent(rest.id)+'/gerentes';
+    async function restoreContext(){
+      if(!contextChanged)return;
+      const endpoint=initialContext?contextUrl+encodeURIComponent(initialContext):basePath+'/api/admin/contexto/sair';
+      await post(endpoint,{});
+      contextChanged=false;
+    }
+    async function dismiss(){
+      if(busy)return;
+      if(unsaved()&&!confirm('Descartar as alterações não salvas?'))return;
+      busy=true;close.disabled=true;done.disabled=true;state.textContent='Restaurando o contexto anterior…';
+      try{await restoreContext();dialog.close();dialog.remove();trigger.focus();}
+      catch(error){state.textContent='Não foi possível restaurar o contexto anterior: '+error.message;
+        close.disabled=false;done.disabled=false;busy=false;}
+    }
+    close.addEventListener('click',()=>void dismiss());
+    done.addEventListener('click',()=>void dismiss());
+    dialog.addEventListener('cancel',event=>{event.preventDefault();void dismiss();});
+    refresh.addEventListener('click',async()=>{
+      if(busy)return;
+      if(unsaved()&&!confirm('Descartar alterações não salvas e atualizar a lista?'))return;
+      busy=true;refresh.disabled=true;close.disabled=true;done.disabled=true;
+      try{await refreshManagers();}
+      catch(error){state.textContent='Não foi possível atualizar gerentes: '+error.message;}
+      finally{busy=false;refresh.disabled=false;close.disabled=false;done.disabled=false;}
+    });
+    async function refreshManagers(){
+      state.textContent='Carregando gerentes…';
+      // Manter a lista e as entradas até que a nova consulta seja confirmada.
+      const managers=await api(managerUrl);
+      if(!Array.isArray(managers))throw Error('Lista de gerentes inválida');
+      list.replaceChildren();unsaved=()=>false;
+      if(!managers.length){state.textContent='Nenhum gerente cadastrado neste restaurante.';return;}
+      state.textContent=managers.length+' gerente(s) cadastrado(s).';
+      for(const item of managers){
+        const line=document.createElement('div');line.className='line';
+        const name=document.createElement('strong');
+        name.textContent=item.nome+' · '+item.login+(item.ativo?'':' · Inativo');
+        line.append(name);
+        if(item.ativo){
+          const reset=document.createElement('button');reset.type='button';reset.className='secondary';
+          reset.textContent='Redefinir senha';
+          const section=document.createElement('form');section.hidden=true;section.style.cssText='width:100%;min-width:0';
+          const labelNew=document.createElement('label');labelNew.textContent='Nova senha do gerente';
+          const password=document.createElement('input');password.type='password';password.required=true;
+          password.minLength=12;password.maxLength=256;password.autocomplete='new-password';
+          labelNew.append(password);
+          const labelMaster=document.createElement('label');labelMaster.textContent='Sua senha atual de Master Admin';
+          const masterPassword=document.createElement('input');masterPassword.type='password';masterPassword.required=true;
+          masterPassword.autocomplete='current-password';labelMaster.append(masterPassword);
+          const notice=document.createElement('p');notice.className='muted';
+          notice.textContent='Após a confirmação, todas as sessões deste gerente serão encerradas.';
+          const feedback=document.createElement('p');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
+          const actions=document.createElement('div');actions.className='admin-dialog-actions';
+          const cancel=document.createElement('button');cancel.type='button';cancel.className='secondary';cancel.textContent='Cancelar';
+          const save=document.createElement('button');save.type='submit';save.textContent='Confirmar nova senha';
+          actions.append(cancel,save);section.append(labelNew,labelMaster,notice,feedback,actions);
+          reset.addEventListener('click',()=>{section.hidden=false;reset.hidden=true;password.focus();});
+          cancel.addEventListener('click',()=>{if((password.value||masterPassword.value)&&
+            !confirm('Descartar as alterações não salvas?'))return;
+            password.value='';masterPassword.value='';section.hidden=true;reset.hidden=false;reset.focus();});
+          section.addEventListener('submit',async event=>{
+            event.preventDefault();if(busy||save.disabled)return;
+            if(!section.reportValidity())return;
+            if(!confirm('Redefinir a senha de '+item.nome+' e encerrar todas as sessões desse gerente?'))return;
+            busy=true;save.disabled=true;cancel.disabled=true;close.disabled=true;done.disabled=true;
+            save.textContent='Salvando…';feedback.textContent='Confirmando a redefinição…';
+            try{
+              await api(managerUrl+'/'+encodeURIComponent(item.id)+'/senha',{
+                method:'PATCH',headers:{'Content-Type':'application/json'},
+                body:JSON.stringify({senha:password.value,senha_master_atual:masterPassword.value})
+              });
+              password.value='';masterPassword.value='';section.hidden=true;reset.hidden=false;
+              try{await refreshManagers();state.textContent='Senha redefinida. As sessões do gerente foram encerradas.';}
+              catch(error){state.textContent='Senha redefinida e sessões encerradas, mas a lista não pôde ser atualizada: '+error.message;}
+            }catch(error){
+              feedback.textContent=error instanceof TypeError?
+                'Não foi possível confirmar a operação. Consulte o resultado antes de tentar novamente.':error.message;
+            }finally{
+              masterPassword.value='';busy=false;save.disabled=false;cancel.disabled=false;
+              close.disabled=false;done.disabled=false;save.textContent='Confirmar nova senha';
+            }
+          });
+          line.append(reset,section);
+          unsaved=(()=>{const previous=unsaved;return ()=>previous()||(!section.hidden&&!!(password.value||masterPassword.value));})();
+        }
+        list.append(line);
+      }
+    }
+    dialog.showModal();
+    try{
+      const me=await api(basePath+'/api/auth/me');
+      if(me.papel!=='master')throw Error('Esta operação exige Master Admin');
+      initialContext=me.restaurante_id||null;
+      if(initialContext!==rest.id){
+        await post(contextUrl+encodeURIComponent(rest.id),{});
+        contextChanged=true;
+      }
+      await refreshManagers();
+    }catch(error){state.textContent='Não foi possível consultar gerentes: '+error.message;}
+    finally{busy=false;refresh.disabled=false;close.disabled=false;done.disabled=false;}
+  }
+
+  async function loadRestaurants() {
+    const list = $('restaurants-list'), select = $('manager-restaurant');
+    list.textContent='Carregando restaurantes…';
+    let data;
+    try{data=await api(basePath + '/api/admin/restaurantes');if(!Array.isArray(data))throw new Error('Resposta inválida');}
+    catch(error){list.textContent='Não foi possível carregar os restaurantes: '+error.message;throw error;}
+    const previousSelection=select.value;
+    $('master-restaurants-count').textContent=String(data.length);
+    list.replaceChildren(); select.replaceChildren();
+    for (const rest of data) {
+      const line = document.createElement('div'); line.className = 'line';
+      const span = document.createElement('span');
+      span.textContent = rest.nome + ' (' + rest.slug + ')' + (rest.ativo ? '' : ' · Inativo');
+      line.appendChild(restaurantLogo(rest.logo_url,rest.nome));
+      line.appendChild(span);
+      const logoButton=document.createElement('button');
+      logoButton.type='button';logoButton.className='secondary';logoButton.textContent='Editar logo';
+      logoButton.addEventListener('click',async()=>{
+        const overlay=document.createElement('div');overlay.setAttribute('role','presentation');overlay.style.cssText='position:fixed;inset:0;background:#000b;display:grid;place-items:center;z-index:1000;padding:16px';
+        const dialog=document.createElement('section');dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-label','Editar logo de '+rest.nome);dialog.style.cssText='width:min(100%,480px);max-height:90vh;overflow:auto;background:#131c2e;border:1px solid #51627d;border-radius:16px;padding:20px';
+        const heading=document.createElement('div');heading.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:12px';
+        const title=document.createElement('h2');title.textContent='Logo de '+rest.nome;
+        const close=document.createElement('button');close.type='button';close.className='secondary';close.textContent='×';close.setAttribute('aria-label','Fechar');
+        heading.append(title,close);
+        const form=document.createElement('form');const label=document.createElement('label');label.textContent='URL HTTPS da imagem';
+        const field=document.createElement('input');field.type='url';field.value=rest.logo_url||'';field.placeholder='https://exemplo.com/logo.png';field.autocomplete='url';field.maxLength=2048;label.append(field);
+        const hint=document.createElement('p');hint.className='muted';hint.textContent='Deixe vazio para remover o logo. Sem imagem, será mostrada a inicial do restaurante.';
+        const feedback=document.createElement('p');feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');
+        const actions=document.createElement('div');actions.className='row';
+        const cancel=document.createElement('button');cancel.type='button';cancel.className='secondary';cancel.textContent='Cancelar';
+        const save=document.createElement('button');save.type='submit';save.textContent='Salvar logo';actions.append(cancel,save);
+        form.append(label,hint,feedback,actions);dialog.append(heading,form);overlay.append(dialog);document.body.append(overlay);field.focus();
+        let busy=false;const initial=field.value;
+        const dismiss=()=>{if(busy)return;if(field.value!==initial&&!confirm('Descartar alterações do logo?'))return;document.removeEventListener('keydown',onKey);overlay.remove();logoButton.focus();};
+        const onKey=event=>{if(event.key==='Escape'){event.preventDefault();dismiss();}else if(event.key==='Tab'){const focusables=[close,field,cancel,save];const index=focusables.indexOf(document.activeElement);if(event.shiftKey&&index===0){event.preventDefault();save.focus();}else if(!event.shiftKey&&index===focusables.length-1){event.preventDefault();close.focus();}}};
+        close.addEventListener('click',dismiss);cancel.addEventListener('click',dismiss);document.addEventListener('keydown',onKey);
+        form.addEventListener('submit',async event=>{event.preventDefault();if(busy)return;busy=true;save.disabled=true;save.textContent='Salvando…';feedback.textContent='Salvando logo…';
+          try{await api(basePath+'/api/admin/restaurantes/'+encodeURIComponent(rest.id)+'/logo',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({logo_url:field.value.trim()})});document.removeEventListener('keydown',onKey);overlay.remove();await loadRestaurants();}
+          catch(error){feedback.textContent=error.message;busy=false;save.disabled=false;save.textContent='Salvar logo';}
+        });
+      });
+      line.appendChild(logoButton);
+      if(rest.ativo){
+        const manage=document.createElement('button');manage.type='button';manage.className='secondary';
+        manage.textContent='Gerenciar gerentes';
+        manage.addEventListener('click',()=>void manageRestaurantManagers(rest,manage));
+        line.appendChild(manage);
+      }
+      if (rest.ativo) {
+        const enter = document.createElement('button');
+        enter.textContent = 'Entrar no restaurante';
+        enter.title = 'Abrir KDS deste restaurante com sua sessão Master Admin';
+        enter.addEventListener('click', async () => {
+          const status=actionStatus(enter);const release=pendingButton(enter,'Entrando…');status('Abrindo restaurante…');
+          try {
+            await post(basePath + '/api/admin/contexto/' + encodeURIComponent(rest.id), {});
+            location.assign(basePath + '/kds.html');
+          } catch (error) {
+            release();
+            status(error.message, true);
+          }
+        });
+        line.appendChild(enter);
+      }
+      list.appendChild(line);
+      if (rest.ativo) { const op = document.createElement('option'); op.value=rest.id;op.textContent=rest.nome;select.appendChild(op); }
+    }
+    if(previousSelection&&Array.from(select.options).some(option=>option.value===previousSelection))select.value=previousSelection;
+    if (!data.length) list.textContent='Nenhum restaurante cadastrado.';
+  }
+  async function loadTerminals() {
+    const list=$('terminals-list');list.textContent='Carregando terminais…';
+    let data;
+    try{data=await api(basePath + '/api/admin/terminais');if(!Array.isArray(data))throw new Error('Resposta inválida');}
+    catch(error){list.textContent='Não foi possível carregar os terminais: '+error.message;throw error;}
+    list.replaceChildren();
+    for (const terminal of data) {
+      const line=document.createElement('div');line.className='line';
+      const name=document.createElement('span');name.textContent=terminal.nome+' · '+terminal.login+(terminal.ativo?'':' (desativado)');
+      const button=document.createElement('button');button.className='secondary';
+      button.textContent=terminal.ativo?'Desativar':'Reativar';
+      button.addEventListener('click',async()=>{
+        const status=actionStatus(button);const release=pendingButton(button,'Atualizando…');status('Processando…');
+        try {
+          await api(basePath + '/api/admin/terminais/'+encodeURIComponent(terminal.id)+'/ativo',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({ativo:!terminal.ativo})});
+          status('Acesso atualizado.');
+          try { await loadTerminals(); }
+          catch(error){status('Acesso atualizado, mas a lista não pôde ser carregada: '+error.message,true);}
+        } catch(e){status(e.message,true);} finally{release();}
+      });
+      const change = document.createElement('button');change.className='secondary';change.textContent='Redefinir senha';
+      const credentials = document.createElement('form'); credentials.hidden=true;
+      credentials.style.width='100%';
+      const fieldLabel=document.createElement('label');
+      const field=document.createElement('input');field.type='password';field.minLength=12;field.maxLength=256;
+      field.id='terminal-password-reset-'+terminal.id;
+      fieldLabel.htmlFor=field.id;fieldLabel.textContent='Nova senha do terminal';
+      field.required=true;field.autocomplete='new-password';field.placeholder='Nova senha (mín. 12 caracteres)';
+      const save=document.createElement('button');save.type='submit';save.textContent='Salvar nova senha';
+      credentials.append(fieldLabel,field,save);
+      change.addEventListener('click',()=>{credentials.hidden=!credentials.hidden;if(!credentials.hidden)field.focus();});
+      setupFormValidation(credentials);
+      credentials.addEventListener('submit',async event=>{
+        event.preventDefault();
+        const status=actionStatus(save);
+        if(save.disabled)return;
+        if(!validateForm(credentials)){status('Confira a nova senha.',true);return;}
+        const release=pendingButton(save,'Salvando…');status('Processando…');
+        try{
+          await api(basePath + '/api/admin/terminais/'+encodeURIComponent(terminal.id)+'/senha',{
+            method:'PATCH',headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({senha:field.value})
+          });
+          field.value='';credentials.hidden=true;
+          actionStatus(change)('Senha alterada. Sessões anteriores encerradas.');
+        }catch(e){status(e.message,true);}finally{release();}
+      });
+      line.append(name,button,change,credentials);list.appendChild(line);
+    }
+    if(!data.length)list.textContent='Nenhum terminal cadastrado.';
+  }
+  function submit(formId, work) {
+    const form=$(formId);setupFormValidation(form);
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();
+      const button=form.querySelector('button[type="submit"]');
+      const status=actionStatus(button);
+      if(button.disabled)return;
+      if(!validateForm(form)){status('Confira os campos destacados.',true);return;}
+      const release=pendingButton(button,'Salvando…');
+      status('Processando solicitação…');
+      try {
+        await work();
+        form.reset();
+        for(const field of form.querySelectorAll('input,select,textarea'))clearFieldError(field);
+        status('Operação confirmada.');
+        if(formId==='terminal-form'&&window.terminalDialog?.dialog.open){
+          window.terminalDialog.remember();window.terminalDialog.dialog.close('saved');
+          actionStatus(window.terminalDialog.trigger)('Terminal cadastrado.');
+        }
+        if(formId==='restaurant-form'||formId==='manager-form'){
+          const item=window.adminDialogs?.[formId==='restaurant-form'?'restaurant':'manager'];
+          if(item?.dialog.open){item.snapshot();item.dialog.close('saved');
+            actionStatus(item.trigger)(formId==='restaurant-form'?'Restaurante cadastrado.':'Acesso de gerente criado.');}
+        }
+      }catch(error){
+        status(error instanceof TypeError?'Não foi possível confirmar a operação. Verifique antes de tentar novamente.':error.message,true);
+      }finally{release();}
+    });
+  }
+  submit('restaurant-form',async()=>{
+    await post(basePath + '/api/admin/restaurantes',{nome:val('restaurant-name'),slug:val('restaurant-slug')});
+    try { await loadRestaurants(); }
+    catch(error){ $('restaurants-list').textContent='Restaurante cadastrado. Não foi possível atualizar a lista: '+error.message; }
+  });
+  submit('manager-form',async()=>{
+    const restId=val('manager-restaurant');
+    await post(basePath + '/api/admin/restaurantes/'+encodeURIComponent(restId)+'/gerentes',{nome:val('manager-name'),login:val('manager-login'),senha:$('manager-password').value});
+  });
+  submit('terminal-form',async()=>{
+    await post(basePath + '/api/admin/terminais',{nome:val('terminal-name'),login:val('terminal-login'),senha:$('terminal-password').value});
+    try { await loadTerminals(); }
+    catch(error){ $('terminals-list').textContent='Terminal cadastrado. Não foi possível atualizar a lista: '+error.message; }
+  });
+  submit('my-password-form',async()=>{
+    await post(basePath + '/api/auth/password',{
+      senha_atual:$('current-password').value,
+      nova_senha:$('new-password').value
+    });
+    location.replace(basePath + '/login.html');
+  });
+  // BFCache pode restaurar uma tela antiga sem solicitar o HTML ao servidor.
+  // Bloqueie a interface imediatamente e valide a sessão em cada restauração.
+  let sessionCheckSequence=0;
+  let logoutInProgress=false;
+  const sessionGuard=document.createElement('div');
+  sessionGuard.id='session-guard';
+  sessionGuard.setAttribute('role','status');
+  sessionGuard.setAttribute('aria-live','polite');
+  sessionGuard.style.cssText='position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;background:#101827;color:white;font:600 18px system-ui;text-align:center;padding:24px';
+  sessionGuard.textContent='Verificando sessão…';
+  document.body.appendChild(sessionGuard);
+  async function validateRestoredSession(){
+    const sequence=++sessionCheckSequence;
+    sessionGuard.style.display='flex';
+    try{
+      const response=await fetch(basePath+'/api/auth/me',{credentials:'same-origin',cache:'no-store'});
+      if(sequence!==sessionCheckSequence||logoutInProgress)return;
+      if(!response.ok){location.replace(basePath+'/login.html');return;}
+      const user=await response.json();
+      if(user.papel!=='master'&&user.papel!=='gerente'){
+        location.replace(basePath+'/login.html');return;
+      }
+      sessionGuard.style.display='none';
+    }catch{
+      if(sequence===sessionCheckSequence&&!logoutInProgress)
+        location.replace(basePath+'/login.html');
+    }
+  }
+  window.addEventListener('pagehide',()=>{sessionGuard.style.display='flex';});
+  window.addEventListener('pageshow',()=>{if(!logoutInProgress)void validateRestoredSession();});
+  $('logout').addEventListener('click',async()=>{
+    logoutInProgress=true;
+    ++sessionCheckSequence;
+    sessionGuard.style.display='flex';
+    try {await api(basePath + '/api/auth/logout',{method:'POST'});}finally{location.replace(basePath + '/login.html');}
+  });
+  (async()=>{
+    try {
+      const user=await api(basePath + '/api/auth/me');
+      $('identity').textContent=user.nome+' · '+(user.papel==='master'?'Master Admin':'Gerente');
+      const restaurantName=typeof user.restaurante_nome==='string'?user.restaurante_nome.trim():'';
+      const restaurantIdentity=$('restaurant-identity');
+      if(user.restaurante_id && restaurantName){
+        const details=document.createElement('div');const title=document.createElement('strong');title.textContent=restaurantName;
+        const role=document.createElement('div');role.className='muted';role.style.fontSize='.85rem';role.textContent=(user.papel==='master'?'Master Admin':'Gerente')+(user.restaurante_slug?' · '+user.restaurante_slug:'');
+        details.append(title,role);restaurantIdentity.replaceChildren(restaurantLogo(user.restaurante_logo_url,restaurantName),details);
+        restaurantIdentity.hidden=false;restaurantIdentity.style.display='block';
+      }else if(user.papel==='gerente'){
+        restaurantIdentity.textContent='Restaurante não identificado. Contate a administração.';
+        restaurantIdentity.hidden=false;restaurantIdentity.style.display='block';
+        $('manager-print-link').hidden=true;$('manager-print-link').style.display='none';
+      }
+      if(user.papel==='master'){window.placeAccountSettings('master');$('master-area').hidden=false;await loadRestaurants();await loadInteresses();}
+      else if(user.papel==='gerente'){window.placeAccountSettings('gerente');$('manager-area').hidden=false;$('go-kds').hidden=false;await loadTerminals();}
+      else location.replace(basePath + '/kds.html');
+    }catch(e){message(e.message,true);}
+  })();
+</script>
+</body>
+</html>
