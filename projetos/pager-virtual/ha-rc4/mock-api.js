@@ -10,9 +10,9 @@
     {id:'demo-42',numero:42,token:'demo-42',status:'preparo',created_at:new Date(Date.now()-180000).toISOString(),itens:[],cliente_nome:'',cliente_telefone:'',restaurante_nome:'Restaurante Exemplo'}
   ];
   let orders;
-  try { orders=JSON.parse(sessionStorage.getItem(storeKey)||'null')||defaultOrders; }
+  try { orders=JSON.parse(localStorage.getItem(storeKey)||'null')||defaultOrders; }
   catch { orders=defaultOrders; }
-  const save = () => sessionStorage.setItem(storeKey,JSON.stringify(orders));
+  const save = () => localStorage.setItem(storeKey,JSON.stringify(orders));
   save();
   let role=sessionStorage.getItem(roleKey)||'master';
   const restaurants=[{id:'demo-rest',nome:'Restaurante Exemplo',slug:'restaurante-exemplo',ativo:true,logo_url:''}];
