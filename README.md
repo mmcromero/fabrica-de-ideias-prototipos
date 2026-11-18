@@ -35,14 +35,16 @@ O arquivo `prototipos.json` é a fonte de dados da vitrine. Para incluir ou atua
 
 A página inicial carrega o JSON e cria os cards automaticamente. **Não edite `index.html` para adicionar projetos.** Edite a página inicial apenas quando a alteração solicitada for no laboratório em si.
 
-### 4. Fluxo de publicação seguro
-1. Crie uma branch com nome descritivo, como `prototype/<id>-<objetivo>`, a partir da `main` mais recente.
-2. Modifique somente `projetos/<id>/...` e seu registro em `prototipos.json`.
-3. Teste sintaxe do JSON, existência de `index.html`, links relativos, navegação em celular e desktop e ausência de segredos.
-4. Abra um Pull Request para `main`, com resumo, arquivos alterados, testes e limitações.
-5. **Não faça merge, publique em produção ou mude configurações do Pages sem autorização explícita do proprietário.**
-6. Antes de integrar, confira se `main` ou `prototipos.json` mudou desde a criação da branch. Se mudou, atualize sua branch e preserve os registros de outros projetos.
-7. Após merge autorizado, verifique o endereço publicado e o card da vitrine. Um PR criado não equivale a publicação.
+### 4. Fluxo de publicação seguro — `main` de laboratório liberada (decisão do proprietário em 18/11/2026)
+**A `main` deste repositório é um laboratório público compartilhado e está liberada para publicar protótipos navegáveis de todos os projetos.** A proibição de publicar código-fonte de desenvolvimento na `main` do PG Virtual privado **não se aplica** a protótipos estáticos neste laboratório. Não confundir `main` de fonte privada, `main` de add-ons e `main` de protótipos.
+
+1. Consulte `main`, este README, `prototipos.json` e a pasta `projetos/<id>/` antes de editar. Reutilize o ID e a pasta existentes.
+2. **Pode fazer commit diretamente na `main`** para publicar protótipos estáticos do projeto autorizado; PR e branch de revisão são opcionais quando úteis, não impedimentos obrigatórios. Não fazer force-push nem reescrever histórico.
+3. Altere **somente** `projetos/<id>/...` e, quando necessário, o registro correspondente em `prototipos.json`. Preserve todos os outros projetos e registros; não modificar a vitrine global sem pedido específico.
+4. Verifique JSON válido, página `index.html`, links relativos, visualização mobile/desktop, arquivos estáticos e ausência de segredos, dados pessoais reais e código de backend privado.
+5. Antes da escrita, compare HEAD atual; se mudou, incorpore as alterações e preserve o catálogo e demais pastas, sem sobrescrever trabalho de outro projeto.
+6. Depois da publicação, confira o SHA e a URL navegável no GitHub Pages; código na `main` não garante publicação imediata no Pages.
+7. A permissão de publicação do laboratório **não autoriza** alterar configurações do Pages, outros repositórios, serviços, credenciais, produção ou dados reais; operações fora do escopo precisam de autorização própria.
 
 ### 5. Segurança e limites
 - GitHub Pages hospeda arquivos estáticos, não backend, banco de dados ou autenticação segura.
@@ -65,5 +67,5 @@ A marca **Fábrica de Ideias** pertence à página do laboratório. As páginas 
 - [ ] Catálogo válido e registro sem duplicação
 - [ ] Dados sintéticos e nenhum segredo
 - [ ] Links relativos e telas verificadas
-- [ ] PR criado, sem merge não autorizado
+- [ ] Alteração publicada na `main` do laboratório ou PR de revisão quando útil; escopo e SHA conferidos
 - [ ] URL pública verificada **após** publicação autorizada
