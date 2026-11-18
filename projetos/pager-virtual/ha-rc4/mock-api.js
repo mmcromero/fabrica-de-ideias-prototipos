@@ -28,6 +28,7 @@
   function notify(order) { sync.postMessage({id:order.id,token:order.token,numero:order.numero,status:order.status,restaurante_nome:order.restaurante_nome}); }
   window.fetch=async (resource,init={})=>{
     const u=new URL(typeof resource==='string'?resource:resource.url,location.href);
+    if(u.origin!==location.origin) return json({error:'Integração externa desativada nesta prévia'},403);
     const path=u.pathname; const method=(init.method||'GET').toUpperCase();
     const at=path.indexOf('/api/');
     if(at<0){
