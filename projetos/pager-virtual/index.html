@@ -342,6 +342,30 @@
       border: 2px dashed var(--card-border);
       border-radius: 16px;
     }
+
+    /* Proposta de abertura manual — conteúdo adicional recolhido por padrão */
+    .manual-dialog { border:0;padding:0;background:transparent;color:var(--text);width:min(100% - 24px,430px);max-height:calc(100dvh - 24px);margin:auto;overflow:visible }
+    .manual-dialog::backdrop { background:rgba(0,0,0,.78) }
+    .manual-panel { background:#1e293b;border:2px solid var(--card-border);border-radius:20px;padding:20px;box-shadow:0 14px 48px rgba(0,0,0,.48);max-height:calc(100dvh - 24px);overflow-y:auto }
+    .manual-heading { display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px }
+    .manual-heading h2 { font-size:1.25rem }
+    .manual-close { border:0;border-radius:9px;background:#334155;color:#fff;font-size:1.6rem;width:44px;height:44px;cursor:pointer }
+    .manual-label { display:block;font-size:.9rem;font-weight:700;margin:0 0 8px }
+    .manual-input { width:100%;border:1px solid #64748b;border-radius:11px;padding:12px;background:#0f172a;color:#fff;font-size:1rem;min-height:48px }
+    .manual-number { font-size:1.7rem;text-align:center;min-height:62px }
+    .manual-extra { margin-top:15px;border:1px solid #475569;border-radius:12px;background:#172235;overflow:hidden }
+    .manual-extra summary { cursor:pointer;list-style:none;padding:15px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700;min-height:52px }
+    .manual-extra summary::-webkit-details-marker { display:none }
+    .manual-extra summary::after { content:'⌄';font-size:1.25rem;line-height:1;transition:transform .15s }
+    .manual-extra[open] summary::after { transform:rotate(180deg) }
+    .manual-extra[open] summary { border-bottom:1px solid #475569 }
+    .manual-extra-content { display:grid;gap:12px;padding:15px }
+    .manual-optional { font-size:.76rem;font-weight:500;color:var(--text-muted) }
+    .manual-actions { display:grid;gap:10px;margin-top:18px }
+    .manual-primary { background:var(--primary);color:#fff;border:0;border-radius:11px;min-height:48px;font-size:1rem;font-weight:700;cursor:pointer }
+    .manual-feedback { min-height:20px;margin-top:10px;font-size:.86rem;color:#fca5a5 }
+    .manual-dialog button:focus-visible,.manual-dialog summary:focus-visible,.manual-input:focus-visible { outline:3px solid #93c5fd;outline-offset:3px }
+    @media(max-width:430px) { .manual-panel { padding:16px } .manual-heading h2 { font-size:1.1rem } }
   </style>
 </head>
 <body>
@@ -364,6 +388,7 @@
         <span id="finished-count">0</span> Finalizados
       </div>
 
+      <button id="btn-open-manual" class="btn-sim-order" type="button">➕ Inserir pedido manual</button>
       <!-- BOTÃO DE TESTE: SIMULA ENTRADA DE NOVO PEDIDO DO PDV -->
       <button id="btn-add-sim-order" class="btn-sim-order" title="Simula novo pedido recebido da impressora/PDV">
         ➕ Simular Novo Pedido (PDV)
@@ -373,6 +398,39 @@
 
   <!-- GRID DE CARTÕES DE PEDIDOS -->
   <main id="orders-grid" class="orders-grid"></main>
+
+
+  <!-- Demonstração local da abertura manual, sem backend ou dados reais -->
+  <dialog id="manual-order-dialog" class="manual-dialog" aria-labelledby="manual-order-title">
+    <div class="manual-panel">
+      <div class="manual-heading">
+        <h2 id="manual-order-title">Inserir pedido manual</h2>
+        <button type="button" class="manual-close" id="manual-order-x" aria-label="Fechar">×</button>
+      </div>
+      <form id="manual-order-form">
+        <label class="manual-label" for="manual-order-number">Número do pedido</label>
+        <input class="manual-input manual-number" id="manual-order-number" type="number" min="1" step="1" inputmode="numeric" placeholder="Ex.: 44" required>
+        <details id="manual-client-details" class="manual-extra">
+          <summary>Dados do cliente <span class="manual-optional">Opcional</span></summary>
+          <div class="manual-extra-content">
+            <div>
+              <label class="manual-label" for="manual-order-name">Nome <span class="manual-optional">(opcional)</span></label>
+              <input class="manual-input" id="manual-order-name" type="text" maxlength="80" autocomplete="off" placeholder="Nome do cliente">
+            </div>
+            <div>
+              <label class="manual-label" for="manual-order-phone">WhatsApp <span class="manual-optional">(opcional)</span></label>
+              <input class="manual-input" id="manual-order-phone" type="tel" inputmode="tel" autocomplete="off" placeholder="DDD + número">
+            </div>
+          </div>
+        </details>
+        <p id="manual-order-error" class="manual-feedback" role="alert" aria-live="polite"></p>
+        <div class="manual-actions">
+          <button id="manual-order-submit" class="manual-primary" type="submit">✓ Criar pedido</button>
+          <button id="manual-order-cancel" class="btn-close-modal" type="button" style="margin:0">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
 
   <!-- MODAL DE QR CODE AMPLIADO (DISPLAY DO CAIXA) -->
   <div id="qr-modal" class="modal-backdrop">
@@ -596,6 +654,68 @@
       if (newCard) {
         newCard.classList.add('fade-in');
       }
+    });
+
+
+    // Pedido manual: prévia local sem API; campos opcionais continuam recolhidos por padrão.
+    const manualDialog = document.getElementById('manual-order-dialog');
+    const manualForm = document.getElementById('manual-order-form');
+    const manualNumber = document.getElementById('manual-order-number');
+    const manualDetails = document.getElementById('manual-client-details');
+    const manualError = document.getElementById('manual-order-error');
+    const manualOpen = document.getElementById('btn-open-manual');
+    function closeManualDialog() {
+      const changed = Array.from(manualForm.elements).some(field =>
+        (field.tagName === 'INPUT') && field.value.trim());
+      if (changed && !window.confirm('Descartar dados deste pedido?')) return;
+      manualDialog.close();
+      manualOpen.focus();
+    }
+    manualOpen.addEventListener('click', () => {
+      manualForm.reset();
+      manualDetails.open = false;
+      manualError.textContent = '';
+      manualNumber.value = String(orderCounter + 1);
+      manualDialog.showModal();
+      manualNumber.focus();
+    });
+    document.getElementById('manual-order-x').addEventListener('click', closeManualDialog);
+    document.getElementById('manual-order-cancel').addEventListener('click', closeManualDialog);
+    manualDialog.addEventListener('cancel', event => {
+      event.preventDefault();
+      closeManualDialog();
+    });
+    manualForm.addEventListener('submit', event => {
+      event.preventDefault();
+      if (!manualForm.reportValidity()) return;
+      const number = Number(manualNumber.value);
+      if (!Number.isSafeInteger(number) || number < 1) {
+        manualError.textContent = 'Informe um número de pedido válido.';
+        return;
+      }
+      if (activeOrders.some(order => order.id === String(number))) {
+        manualError.textContent = 'Este número já está em uso na lista de pedidos ativos.';
+        return;
+      }
+      const nome = document.getElementById('manual-order-name').value.trim();
+      const telefone = document.getElementById('manual-order-phone').value.trim();
+      const newOrder = { id:String(number), items:'Pedido manual', clienteNome:nome,
+        clienteTelefone:telefone, status:'preparo', createdAt:Date.now() };
+      activeOrders.push(newOrder);
+      orderCounter = Math.max(orderCounter, number);
+      renderOrders();
+      const card = document.getElementById('card-' + number);
+      if (card) {
+        card.classList.add('fade-in');
+        if (nome) {
+          const line = document.createElement('div');
+          line.textContent = nome;
+          line.className = 'order-client-name';
+          card.querySelector('.order-summary')?.prepend(line);
+        }
+      }
+      manualDialog.close();
+      manualOpen.focus();
     });
 
     // Atualiza os minutos decorridos a cada 30 segundos
