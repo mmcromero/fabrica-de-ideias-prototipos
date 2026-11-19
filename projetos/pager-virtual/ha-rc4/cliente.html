@@ -586,6 +586,9 @@
       .client-topbar .a11y-bar .btn-chip {font-size:.54rem;padding:5px 4px}
     }
 
+
+    #games-open.game-library:not([hidden]) {display:block!important;width:100%;margin:10px 0 0;border:1px solid #375d8a;border-radius:10px;background:#1b3658;color:#ecf6ff;font-size:.8rem;font-weight:750;min-height:38px;padding:8px}
+    .game-tile:disabled {opacity:.55;cursor:default;transform:none;filter:none}
 </style>
   <script src="./mock-api.js"></script>
 </head>
@@ -669,11 +672,11 @@
     <section id="games-area" class="experience-games" aria-labelledby="games-title">
       <div class="experience-title"><span class="experience-icon" aria-hidden="true">🎮</span><div><h2 id="games-title">Enquanto espera</h2><p>Jogue enquanto aguarda.</p></div></div>
       <div class="game-tile-grid">
-        <button type="button" class="game-tile game-pong" data-open-games="pong" aria-label="Abrir biblioteca de jogos: Pong"><span class="game-art" aria-hidden="true">◖ ● ◗</span><strong>Pong</strong><span class="game-play" aria-hidden="true">▶</span></button>
-        <button type="button" class="game-tile game-tictactoe" data-open-games="jogo-da-velha" aria-label="Abrir biblioteca de jogos: Jogo da Velha"><span class="game-art" aria-hidden="true">✕ ◯<br>◯ ✕</span><strong>Jogo da Velha</strong><span class="game-play" aria-hidden="true">▶</span></button>
+        <button type="button" class="game-tile game-pong" data-open-games="pong" disabled aria-label="Abrir biblioteca de jogos: Pong"><span class="game-art" aria-hidden="true">◖ ● ◗</span><strong>Pong</strong><span class="game-play" aria-hidden="true">▶</span></button>
+        <button type="button" class="game-tile game-tictactoe" data-open-games="jogo-da-velha" disabled aria-label="Abrir biblioteca de jogos: Jogo da Velha"><span class="game-art" aria-hidden="true">✕ ◯<br>◯ ✕</span><strong>Jogo da Velha</strong><span class="game-play" aria-hidden="true">▶</span></button>
         <div class="game-tile game-memory" aria-label="Jogo da Memória em construção"><span class="game-art" aria-hidden="true">★ ☆</span><strong>Memória</strong><span class="game-soon">Em breve</span></div>
       </div>
-      <button id="games-open" type="button" class="btn-chip game-library" hidden>🎮 Abrir biblioteca de jogos</button>
+      <button id="games-open" type="button" class="btn-chip game-library" hidden>Ver todos os jogos</button>
       <div id="games-content" hidden></div>
     </section>
     <footer class="experience-foot"><span aria-hidden="true">🔔</span> O aviso depende das permissões do aparelho.</footer>
@@ -985,6 +988,7 @@
 
     // --- TRANSIÇÕES DE ESTADO DO CLIENTE ---
     function applyStatus(status) {
+      document.querySelectorAll('[data-open-games]').forEach(tile=>{tile.disabled = status !== 'preparo';});
       document.querySelector('.client-progress')?.setAttribute('data-stage',status);
       pongAllowed = status === 'preparo';
       if (!pongAllowed) fecharJogos();
@@ -1029,8 +1033,10 @@
     let gamesExit = null;
     let gamesGeneration = 0;
     let pongAllowed = false;
+    let gameIntent = null;
     function fecharJogos() {
       gamesGeneration++;
+      gameIntent = null;
       const sair = gamesExit;
       gamesExit = null;
       try { sair?.(); } catch (erro) { console.warn('Falha ao encerrar jogo:', erro); }
@@ -1058,6 +1064,8 @@
     gamesOpen.addEventListener('click', async () => {
       if (!pongAllowed || !token || gamesExit || gamesOpen.disabled) return;
       const atual = ++gamesGeneration;
+      const requestedGame = gameIntent;
+      gameIntent = null;
       gamesOpen.disabled = true;
       gamesOpen.textContent = 'Carregando biblioteca...';
       try {
@@ -1066,6 +1074,7 @@
         gamesContent.hidden = false;
         const biblioteca = criarBibliotecaJogos({
           container: gamesContent,
+          jogoInicial: requestedGame,
           etiquetaPedido: 'Pedido #' + orderNumber + ' · Em preparo',
           onExit: () => {
             // Fechar a tela cheia deve voltar à comanda e permitir abrir novamente.
@@ -1103,17 +1112,17 @@
       } finally {
         if (atual === gamesGeneration) {
           gamesOpen.disabled = false;
-          gamesOpen.textContent = '🎮 Jogar enquanto aguarda';
+          gamesOpen.textContent = 'Ver todos os jogos';
         }
       }
     });
 
-    // Os cards abrem a biblioteca existente; a escolha do jogo ocorre no catálogo.
+    // A biblioteca permanece independente; ela só é importada após toque.
     document.querySelectorAll('[data-open-games]').forEach(tile => {
       tile.addEventListener('click', () => {
-        if(gamesOpen.hidden || gamesOpen.disabled)return;
+        if (!pongAllowed || !token || gamesExit || gamesOpen.disabled) return;
+        gameIntent = tile.dataset.openGames;
         gamesOpen.click();
-        gamesContent.scrollIntoView({block:'nearest',behavior:'smooth'});
       });
     });
 
