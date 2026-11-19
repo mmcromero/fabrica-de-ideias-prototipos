@@ -643,6 +643,9 @@
     #wallet-box a.wallet-google-badge:focus-visible {outline:3px solid #93c5fd;outline-offset:3px;border-radius:4px}
     @media(max-width:375px){.wallet-inline:has(#wallet-box:not([hidden])) #wallet-box{padding:8px 0}}
 
+
+    /* Protótipo: badge sempre visível, sem ação ou URL fictícia. */
+    #wallet-box .wallet-google-badge[aria-disabled="true"]{cursor:default!important;pointer-events:none}
 </style>
   <script src="./mock-api.js"></script>
 </head>
@@ -705,8 +708,8 @@
       <!-- Carteira do Google: recurso contextual da senha, sem prometer alertas garantidos -->
       <section class="wallet-inline" aria-labelledby="wallet-title">
         <div class="wallet-inline-label"><span aria-hidden="true">▣</span><div><h2 id="wallet-title">Carteira do Google</h2><p>Guarde a senha para consultar depois.</p></div></div>
-        <div id="wallet-box" hidden>
-          <a id="wallet-btn-link" class="wallet-google-badge" href="#" target="_blank" rel="noopener noreferrer" aria-label="Adicionar à Carteira do Google"><svg viewBox="0 0 372 50" width="372" height="50" aria-hidden="true" focusable="false" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div id="wallet-box">
+          <a id="wallet-btn-link" class="wallet-google-badge" role="img" aria-label="Prévia visual do botão Adicionar à Carteira do Google" aria-disabled="true" tabindex="-1"><svg viewBox="0 0 372 50" width="372" height="50" aria-hidden="true" focusable="false" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="a" x1="34.57" y1="30.79" x2="18.73" y2="48.91" gradientUnits="userSpaceOnUse">
       <stop stop-color="#4285F4"/>
@@ -722,7 +725,7 @@
   <rect x=".5" y=".5" width="371" height="49" rx="24.5" stroke="#747775"/>
 </svg></a>
         </div>
-        <p id="wallet-unavailable" role="status" class="wallet-pending">Integração indisponível nesta demonstração.</p>
+        <p id="wallet-unavailable" hidden role="status" class="wallet-pending">Integração disponível somente no sistema real.</p>
       </section>
 
       <section id="push-guide" hidden aria-live="polite" style="border:1px solid #64748b;border-radius:12px;padding:12px;margin-top:14px;text-align:left;background:#162238;">
@@ -1329,7 +1332,7 @@
         console.warn('Google Wallet indisponivel:', e);
       }
     }
-    void initGoogleWallet();
+    // Laboratório: exibe apenas a marca visual; não consulta nem abre um passe real.
 
     connectSSE();
 
