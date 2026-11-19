@@ -59,7 +59,7 @@
   .restaurant-logo-fallback { width:48px;height:48px;border-radius:10px;background:#23466c;color:white;display:grid;place-items:center;font-weight:750;flex:0 0 48px }
   #restaurant-identity:not([hidden]) {display:flex!important;align-items:center;gap:10px}
   #master-area #restaurants-list .line { align-items:center;flex-wrap:nowrap;min-width:0;gap:12px }
-  #master-area #restaurants-list .line > span { flex:1;min-width:0;overflow-wrap:anywhere }
+  #master-area #restaurants-list .line > span:not(.restaurant-logo-fallback) { flex:1;min-width:0;overflow-wrap:anywhere }
   #master-area #restaurants-list button { flex:0 0 auto }
   #master-area .admin-toolbar { gap:10px }
   #master-area .admin-toolbar h2 { flex:1 1 100%;margin:0 }
@@ -125,7 +125,7 @@
   #master-area .admin-panel > .card h2::before {content:"▤";color:#b3d2ff;margin-right:13px}
   #master-area #restaurants-list {gap:12px}
   #master-area #restaurants-list .line {display:flex;align-items:center;gap:12px;padding:14px 18px;min-height:86px;flex-wrap:wrap;border:1px solid #344e70;border-radius:14px;background:linear-gradient(135deg,#0b1628,#101b2f)}
-  #master-area #restaurants-list .line > span {font-weight:700;min-width:190px;flex:1 1 240px}
+  #master-area #restaurants-list .line > span:not(.restaurant-logo-fallback) {font-weight:700;min-width:190px;flex:1 1 240px}
   #master-area #restaurants-list .restaurant-logo,#master-area #restaurants-list .restaurant-logo-fallback {width:58px;height:58px;flex-basis:58px;border-radius:12px}
   #master-area #restaurants-list button {min-height:44px;padding:10px 14px;border-radius:10px;font-weight:650;font-size:.88rem;white-space:nowrap;box-shadow:0 4px 12px #0003}
   #master-area #restaurants-list button.secondary {background:linear-gradient(180deg,#344660,#29394e);border:1px solid #4a6080}
@@ -149,7 +149,7 @@
     #master-area .master-stat span {font-size:.75rem}
     #master-area .admin-panel > .card {padding:15px}
     #master-area #restaurants-list .line {gap:10px;padding:12px}
-    #master-area #restaurants-list .line > span {flex:1 1 calc(100% - 82px)}
+    #master-area #restaurants-list .line > span:not(.restaurant-logo-fallback) {flex:1 1 calc(100% - 82px)}
     #master-area #restaurants-list button {flex:1 1 auto;white-space:normal}
   }
   @media (max-width:430px) {
@@ -159,6 +159,85 @@
     #master-area .admin-toolbar {grid-template-columns:1fr 1fr}
     #master-area .admin-toolbar h2,#master-area .admin-toolbar .admin-description {grid-column:1/-1;grid-row:auto}
     #master-area .admin-toolbar button {grid-row:auto;grid-column:auto!important;width:100%}
+  }
+
+
+  /* UX — Correção de layout com base em capturas reais desktop/mobile. */
+  .admin-session-header {
+    display:grid;grid-template-columns:auto minmax(0,1fr) auto;
+    grid-template-rows:auto;align-items:center;column-gap:28px;row-gap:12px;
+    min-height:110px;padding:15px clamp(18px,3vw,52px);
+  }
+  .admin-session-top {display:contents}
+  .admin-session-top h1 {grid-column:1;grid-row:1;align-self:center}
+  .brand-logo {display:block;width:clamp(240px,22vw,320px);height:auto}
+  #identity {grid-column:2;grid-row:1;min-width:0;order:unset;margin:0;
+    padding:0 0 0 24px;border-left:1px solid #56718b;font-size:.97rem}
+  #logout {grid-column:3;grid-row:1;order:unset;justify-self:end}
+  #restaurant-identity:not([hidden]) {grid-column:1/-1;grid-row:2;margin:0!important;width:auto}
+  #master-area .admin-nav {min-height:68px}
+  #master-area .admin-toolbar {
+    display:grid;grid-template-columns:minmax(0,1fr) auto auto;
+    grid-template-rows:auto auto;gap:6px 12px;margin-bottom:26px;
+  }
+  #master-area .admin-toolbar h2 {grid-column:1;grid-row:1;min-width:0;
+    font-size:clamp(1.65rem,2.6vw,2.4rem);line-height:1.25;letter-spacing:-.025em;
+    white-space:normal;overflow-wrap:break-word}
+  #master-area .admin-toolbar .admin-description {
+    grid-column:1;grid-row:2;min-width:0;line-height:1.5;
+    overflow-wrap:break-word;max-width:480px;
+  }
+  #master-area .admin-toolbar button {min-width:0;grid-row:1/3}
+  #master-area #restaurants-list .restaurant-logo-fallback {
+    display:grid;place-items:center;flex:0 0 58px;min-width:58px;max-width:58px;
+    width:58px;height:58px;padding:0;font-size:1.1rem;
+  }
+  #master-area #restaurants-list .restaurant-logo {
+    display:block;flex:0 0 58px;min-width:58px;max-width:58px;
+    width:58px;height:58px;
+  }
+  #master-area #restaurants-list .line {flex-wrap:wrap}
+  #master-area #restaurants-list .line > span:not(.restaurant-logo-fallback) {
+    flex:1 1 200px;min-width:130px;
+  }
+  @media (max-width:900px) {
+    .admin-session-header {grid-template-columns:minmax(0,1fr) auto;
+      grid-template-rows:auto auto;min-height:0;padding:14px 18px;gap:8px 12px}
+    .admin-session-top h1 {grid-column:1;grid-row:1}
+    .brand-logo {width:min(280px,66vw)}
+    #logout {grid-column:2;grid-row:1;order:unset;align-self:center}
+    #identity {grid-column:1/-1;grid-row:2;padding:0;border-left:0;
+      font-size:.85rem;order:unset;margin:0}
+    #restaurant-identity:not([hidden]) {grid-column:1/-1;grid-row:3}
+    #master-area .admin-toolbar {grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto}
+    #master-area .admin-toolbar h2 {grid-column:1/-1;grid-row:auto}
+    #master-area .admin-toolbar .admin-description {grid-column:1/-1;grid-row:auto;max-width:none}
+    #master-area .admin-toolbar button {grid-column:auto!important;grid-row:auto;
+      width:100%;min-height:44px;padding:10px 12px;font-size:.86rem}
+  }
+  @media (max-width:600px) {
+    #master-area .admin-nav {gap:3px;min-height:60px;padding:8px 12px}
+    #master-area .admin-tab {padding:9px 10px;font-size:.78rem;min-height:42px}
+    #master-area .admin-tab::before {display:none}
+    #master-area .admin-panels {padding:22px 14px 55px}
+    #master-area .admin-toolbar {gap:8px}
+    #master-area .admin-toolbar h2 {font-size:1.75rem}
+    #master-area .master-stats {grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    #master-area .master-stat {min-height:106px;padding:14px 8px 14px 58px}
+    #master-area .master-stat span {font-size:.72rem}
+    #master-area .master-stat::before {left:10px;width:37px;height:37px}
+    #master-area #restaurants-list .line {display:grid;grid-template-columns:58px minmax(0,1fr);
+      gap:10px;align-items:center}
+    #master-area #restaurants-list .restaurant-logo,
+    #master-area #restaurants-list .restaurant-logo-fallback {grid-column:1;grid-row:1}
+    #master-area #restaurants-list .line > span:not(.restaurant-logo-fallback) {
+      grid-column:2;grid-row:1;min-width:0;width:auto;flex:none;overflow-wrap:anywhere;
+    }
+    #master-area #restaurants-list .line > button {min-width:0;white-space:normal}
+  }
+  @media (max-width:430px) {
+    #master-area .master-stats {grid-template-columns:repeat(2,minmax(0,1fr))}
+    #master-area #restaurants-list .line > button {grid-column:1/-1;width:100%}
   }
 
 </style>
@@ -782,7 +861,7 @@ const basePath = location.pathname.replace(/\/[^/]*$/, '');
       $('identity').textContent=user.nome+' · '+(user.papel==='master'?'Master Admin':'Gerente');
       const restaurantName=typeof user.restaurante_nome==='string'?user.restaurante_nome.trim():'';
       const restaurantIdentity=$('restaurant-identity');
-      if(user.restaurante_id && restaurantName){
+      if(user.papel!=='master' && user.restaurante_id && restaurantName){
         const details=document.createElement('div');const title=document.createElement('strong');title.textContent=restaurantName;
         const role=document.createElement('div');role.className='muted';role.style.fontSize='.85rem';role.textContent=(user.papel==='master'?'Master Admin':'Gerente')+(user.restaurante_slug?' · '+user.restaurante_slug:'');
         details.append(title,role);restaurantIdentity.replaceChildren(restaurantLogo(user.restaurante_logo_url,restaurantName),details);
