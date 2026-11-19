@@ -240,13 +240,98 @@
     #master-area #restaurants-list .line > button {grid-column:1/-1;width:100%}
   }
 
+
+  /* AVISAQUI — header e grid canônicos do protótipo, sem dados duplicados */
+  :root { --av-content-width:1360px;--av-gutter:clamp(16px,3vw,38px);--av-header-logo-width:240px; }
+  .admin-session-header {
+    display:block!important;width:100%;min-height:0;margin:0!important;
+    padding:0 var(--av-gutter)!important;border-bottom:1px solid #344964;
+    background:linear-gradient(105deg,#0a162a,#10213b 70%,#0b1528);
+  }
+  .av-global-header {
+    width:100%;max-width:var(--av-content-width);min-height:92px;margin:0 auto;
+    display:flex;justify-content:space-between;align-items:center;gap:24px;
+  }
+  .av-system-brand {margin:0!important;padding:0!important;line-height:0;flex:none}
+  .av-system-brand .brand-logo {
+    display:block;width:var(--av-header-logo-width)!important;
+    max-width:100%;height:auto;object-fit:contain;
+  }
+  .av-account-actions {display:flex;align-items:center;justify-content:flex-end;gap:18px;min-width:0}
+  .av-account-actions #identity {
+    display:block;flex:0 1 auto;order:unset!important;margin:0!important;padding:0!important;
+    border:0!important;grid-column:auto!important;grid-row:auto!important;
+    color:#d8e3f4;font-size:.94rem;text-align:right;line-height:1.4;
+    min-width:0;overflow-wrap:anywhere;
+  }
+  .av-account-actions #logout {
+    display:inline-flex;flex:none;order:unset!important;margin:0;
+    grid-column:auto!important;grid-row:auto!important;min-height:42px;
+    padding:9px 19px;border-radius:10px;
+  }
+  .av-context-wrap {width:min(100% - 2 * var(--av-gutter),var(--av-content-width));margin:0 auto}
+  .av-restaurant-context:not([hidden]) {
+    display:flex!important;align-items:center;gap:12px;max-width:100%;
+    min-height:72px;margin:18px 0 0!important;padding:12px 16px!important;
+    border-radius:13px;border:1px solid #39516e;
+    background:linear-gradient(120deg,#13243b,#101c2f);
+  }
+  .av-restaurant-context .restaurant-logo,
+  .av-restaurant-context .restaurant-logo-fallback {
+    display:grid;place-items:center;width:46px;height:46px;min-width:46px;flex:0 0 46px;
+    border-radius:10px;font-size:1.1rem;
+  }
+  .av-restaurant-context strong {display:block;font-size:1rem;line-height:1.35}
+  .av-restaurant-context .muted {margin-top:3px;font-size:.79rem;color:#a6b6ce}
+  #master-area .admin-nav {
+    width:100%;box-sizing:border-box;justify-content:flex-start;
+    padding-left:max(var(--av-gutter),calc((100% - var(--av-content-width))/2));
+    padding-right:max(var(--av-gutter),calc((100% - var(--av-content-width))/2));
+  }
+  #master-area .admin-panels {
+    width:100%;max-width:var(--av-content-width);padding:32px 0 72px!important;
+    margin:0 auto;min-width:0;
+  }
+  #master-area .admin-toolbar {margin-bottom:26px}
+  #master-area .admin-toolbar h2::before {margin-right:12px}
+  #manager-area {width:min(100% - 2 * var(--av-gutter),var(--av-content-width));margin:20px auto}
+  #password-area {max-width:var(--av-content-width);margin-left:auto;margin-right:auto}
+  @media (max-width:1450px) {
+    #master-area .admin-panels {width:calc(100% - 2 * var(--av-gutter))}
+  }
+  @media (max-width:760px) {
+    :root {--av-header-logo-width:205px}
+    .av-global-header {min-height:76px;gap:12px}
+    .av-account-actions {gap:10px}
+    .av-account-actions #identity {font-size:.8rem;max-width:148px}
+    .av-account-actions #logout {padding:8px 12px;min-height:40px}
+    #master-area .admin-panels {padding-top:24px!important}
+  }
+  @media (max-width:470px) {
+    :root {--av-header-logo-width:170px}
+    .av-global-header {min-height:72px}
+    .av-account-actions #identity {font-size:.72rem;max-width:104px}
+    .av-account-actions #logout {min-height:38px;padding:7px 10px;font-size:.8rem}
+    .av-restaurant-context:not([hidden]) {padding:11px 12px!important}
+  }
+
 </style>
   <script src="./mock-api.js"></script>
 </head>
 <body>
 <main>
-<header class="admin-session-header"><div class="admin-session-top"><h1><img class="brand-logo" src="./avisaqui-marca-transparente.svg" alt="Avisaqui"></h1><button class="secondary" id="logout">Sair</button></div>
-<span class="muted" id="identity">Carregando conta...</span><div id="restaurant-identity" class="card" hidden style="display:none;padding:10px 14px;margin:5px 0 0;font-weight:700" role="status" aria-live="polite"></div></header>
+<header class="admin-session-header">
+  <div class="av-global-header">
+    <h1 class="av-system-brand"><img class="brand-logo" src="./avisaqui-marca-transparente.svg" alt="Avisaqui"></h1>
+    <div class="av-account-actions">
+      <span class="muted" id="identity">Carregando conta...</span>
+      <button class="secondary" id="logout" type="button">Sair</button>
+    </div>
+  </div>
+</header>
+<div class="av-context-wrap">
+  <div id="restaurant-identity" class="card av-restaurant-context" hidden role="status" aria-live="polite"></div>
+</div>
 
 <section id="master-area" hidden>
   <nav class="admin-nav" aria-label="Áreas do Master Admin"><button type="button" class="admin-tab" data-admin-tab="restaurants" aria-current="page">Restaurantes</button><button type="button" class="admin-tab secondary" data-admin-tab="interests">Interessados no piloto</button><button type="button" class="admin-tab secondary" data-admin-tab="settings">Configurações</button></nav>
@@ -863,7 +948,7 @@ const basePath = location.pathname.replace(/\/[^/]*$/, '');
       const restaurantIdentity=$('restaurant-identity');
       if(user.papel!=='master' && user.restaurante_id && restaurantName){
         const details=document.createElement('div');const title=document.createElement('strong');title.textContent=restaurantName;
-        const role=document.createElement('div');role.className='muted';role.style.fontSize='.85rem';role.textContent=(user.papel==='master'?'Master Admin':'Gerente')+(user.restaurante_slug?' · '+user.restaurante_slug:'');
+        const role=document.createElement('div');role.className='muted';role.style.fontSize='.85rem';role.textContent=user.restaurante_slug||'Restaurante atual';
         details.append(title,role);restaurantIdentity.replaceChildren(restaurantLogo(user.restaurante_logo_url,restaurantName),details);
         restaurantIdentity.hidden=false;restaurantIdentity.style.display='block';
       }else if(user.papel==='gerente'){
