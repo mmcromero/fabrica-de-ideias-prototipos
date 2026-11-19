@@ -397,6 +397,90 @@
     }
 
 
+
+    /* AVISAQUI UX — vitrine do cliente: referência visual aprovada */
+    :root { --experience-blue:#2983ff;--experience-border:#2863a4; }
+    body {background:radial-gradient(ellipse 100% 35% at 50% 0%,#10346b 0%,transparent 70%),#050e20;min-height:100dvh;padding:20px 16px 36px;display:flex;flex-direction:column;align-items:center;gap:0}
+    .client-brand-top {width:min(100%,520px);display:flex;justify-content:center;margin:0 auto 17px;padding-top:3px}
+    .client-brand-top img {display:block;width:min(240px,65vw);height:auto;object-fit:contain}
+    #app-card.app-card {width:min(100%,520px);max-width:520px;border:none;border-radius:0;background:transparent;box-shadow:none;overflow:visible;display:flex;flex-direction:column;gap:16px}
+    #app-card .restaurant-header {background:linear-gradient(120deg,#10294c,#111b39);border:1px solid #315f9a;border-radius:20px;display:flex;align-items:center;padding:13px 16px;gap:10px;box-shadow:0 8px 24px #0002}
+    #app-card .restaurant-info {min-width:0}
+    #app-card .restaurant-info .rest-label {display:block;color:#94aecd;font-size:.68rem;letter-spacing:.09em;font-weight:750;margin-bottom:4px}
+    #app-card .restaurant-info h1 {font-size:1.08rem;font-weight:800;letter-spacing:-.01em}
+    #app-card .client-restaurant-context {border:none;background:transparent;padding:0;margin:0;display:flex;gap:12px}
+    #app-card .client-restaurant-context strong {font-size:1.12rem;color:#f5f9ff}
+    #app-card .client-restaurant-symbol,#app-card .client-restaurant-symbol img {width:48px;height:48px;min-width:48px;border-radius:12px}
+    #app-card .restaurant-header:has(.client-restaurant-context:not([hidden])) .restaurant-info {display:none}
+    #app-card .order-status-card {background:radial-gradient(ellipse at 0% 0%,#123d76 0%,transparent 63%),linear-gradient(145deg,#0c2043,#0a1430);border:1px solid #277bd2;border-radius:23px;padding:25px 18px 22px;box-shadow:0 0 25px #1266d519,inset 0 0 36px #1456ad18}
+    #app-card .order-number-tag {display:block;text-align:center;text-transform:none;letter-spacing:.01em;font-size:1.14rem;color:#dae8ff;font-weight:650;margin:0 0 6px}
+    #app-card .order-number {font-size:clamp(5.1rem,21vw,8.7rem);line-height:1.06;letter-spacing:-.08em;font-weight:900;color:#fff;text-shadow:0 12px 34px #050c20bb;margin:0 0 12px;overflow-wrap:anywhere}
+    #app-card .order-number::first-letter {color:inherit}
+    #app-card .status-badge {display:inline-flex;align-items:center;justify-content:center;gap:10px;border-radius:999px;padding:12px 27px;margin-bottom:12px;font-size:1.25rem;font-weight:800;box-shadow:0 4px 20px #f9731645}
+    #app-card .status-badge.preparo {background:linear-gradient(135deg,#fb9d20,#f26909);border:1px solid #ffb648;color:#fff}
+    #app-card .status-badge.pronto {background:linear-gradient(135deg,#10b981,#047857);border:1px solid #6ee7b7;color:#fff;box-shadow:0 4px 20px #10b98144}
+    #app-card .status-badge.entregue {background:#1e3551;color:#e2e8f0}
+    #app-card .status-message {font-size:.98rem;line-height:1.4;color:#c5d5ec;margin:0 0 16px}
+    #app-card .sub-message {display:none}
+    .client-progress {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;position:relative;margin:17px 0 3px}
+    .client-progress::before {content:"";position:absolute;height:4px;background:linear-gradient(90deg,#10b981 0%,#f59e0b 34%,#40516e 34%);left:11%;right:11%;top:22px;z-index:0}
+    .progress-step {display:flex;align-items:center;flex-direction:column;gap:7px;position:relative;z-index:1;font-size:.72rem;line-height:1.2;color:#91a8cc}
+    .progress-step .step-dot {width:44px;height:44px;display:grid;place-items:center;border-radius:50%;background:#1d2d4b;border:2px solid #53698a;color:#b8cbe6;font-size:1.35rem}
+    .progress-step.received .step-dot {background:#0d9b68;border-color:#6ee7b7;color:#fff}
+    .progress-step.preparing .step-dot {background:#f48409;border-color:#ffd08a;color:#fff}
+    .progress-step.preparing {color:white;font-weight:700}
+    .client-progress[data-stage="pronto"]::before {background:linear-gradient(90deg,#10b981 0%,#10b981 68%,#40516e 68%)}
+    .client-progress[data-stage="pronto"] .ready .step-dot {background:#0d9b68;border-color:#6ee7b7;color:#fff}
+    .client-progress[data-stage="entregue"]::before {background:#10b981}
+    .client-progress[data-stage="entregue"] .ready .step-dot,.client-progress[data-stage="entregue"] .delivered .step-dot {background:#0d9b68;border-color:#6ee7b7;color:#fff}
+    #app-card .sound-toggle-btn {min-height:43px;font-size:.8rem;padding:8px 12px;margin:17px auto 0;max-width:100%;border:1px solid #3d648f;border-radius:12px;background:#152943;color:#d6e6fc;box-shadow:none}
+    #app-card #btn-silence {margin-top:12px!important}
+    #games-area.experience-games,.experience-wallet {margin:0!important;max-width:none!important;width:100%;padding:20px 17px 19px;text-align:left;background:linear-gradient(135deg,#102b50,#0a1b37);border:1px solid #2b69ac;border-radius:22px;box-shadow:0 12px 27px #0002}
+    .experience-title {display:flex;align-items:center;gap:12px;margin-bottom:15px}
+    .experience-icon {flex:0 0 44px;width:44px;height:44px;display:grid;place-items:center;font-size:1.7rem;color:#5ab5ff}
+    .experience-title h2 {font-size:1.31rem;line-height:1.25;margin:0;color:#f8fafc;font-weight:800}
+    .experience-title p {font-size:.85rem;color:#afc5e5;line-height:1.4;margin:3px 0 0}
+    .game-tile-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+    .game-tile {min-width:0;min-height:136px;border-radius:17px;padding:14px 10px 12px;border:1px solid #6756d7;background:linear-gradient(145deg,#4d2fa9,#19194e);color:#fff;display:flex;align-items:flex-start;justify-content:space-between;flex-direction:column;text-align:left;font:inherit;position:relative;transition:transform .18s,filter .18s}
+    button.game-tile {cursor:pointer}
+    button.game-tile:hover {transform:translateY(-2px);filter:brightness(1.12)}
+    .game-tile strong {font-size:.87rem;line-height:1.2;font-weight:800;max-width:100%}
+    .game-tile .game-art {font-size:1.45rem;line-height:1.3;font-weight:800;white-space:nowrap;align-self:center;margin:6px auto}
+    .game-tile .game-play {position:absolute;right:9px;bottom:10px;border-radius:50%;background:#ffffff26;width:25px;height:25px;display:grid;place-items:center;font-size:.7rem}
+    .game-tictactoe {border-color:#278df3;background:linear-gradient(145deg,#085aa3,#10295e)}
+    .game-memory {border-color:#1ca46e;background:linear-gradient(145deg,#096d59,#084c47);opacity:.8}
+    .game-soon {font-size:.67rem;color:#c4f4d8}
+    #games-open.game-library {display:none}
+    #games-content:not([hidden]) {margin:17px 0 0}
+    .experience-wallet {border-color:#2665ad}
+    .wallet-icon {font-size:1.8rem;color:#93c5fd}
+    #wallet-box {margin:0!important}
+    #wallet-box a {display:block}
+    #wallet-box a button {width:100%;min-height:49px;border-radius:12px;background:linear-gradient(135deg,#279aff,#0664ed)!important;border:1px solid #65b9ff!important;color:white!important;font:inherit;font-size:.93rem;font-weight:780}
+    #wallet-box[hidden],#wallet-unavailable[hidden] {display:none!important}
+    .wallet-preview button {width:100%;min-height:49px;border-radius:12px;background:linear-gradient(135deg,#214f8a,#173a6f);border:1px solid #3e70a7;color:#b9cee8;font:inherit;font-size:.93rem;font-weight:750;opacity:1}
+    .wallet-preview p {color:#a8bddb;text-align:center;font-size:.76rem;line-height:1.4;margin:8px 0 0}
+    .experience-foot {display:flex;align-items:center;justify-content:center;gap:10px;text-align:center;font-size:.84rem;color:#a8c6e3;padding:0 8px 12px}
+    #order-details {border-radius:16px;border:1px solid #304c6c;background:#101d34}
+    #diagnosticos {margin:0!important;border:1px solid #223b59!important;border-radius:12px;background:#0d1b2d;padding:10px 13px!important}
+    #diagnosticos summary {font-size:.8rem;color:#94a9c5}
+    @media(max-width:420px) {
+      body {padding:13px 11px 25px}
+      .client-brand-top {margin-bottom:12px}
+      .client-brand-top img {width:min(205px,60vw)}
+      #app-card.app-card {gap:12px}
+      #app-card .order-status-card {padding:19px 13px 17px}
+      #app-card .order-number {font-size:clamp(4.7rem,23vw,6.5rem)}
+      #app-card .status-badge {font-size:1.08rem;padding:10px 18px}
+      .progress-step .step-dot {width:36px;height:36px;font-size:1rem}
+      .client-progress::before {top:18px}
+      .progress-step {font-size:.66rem}
+      #games-area.experience-games,.experience-wallet {padding:16px 12px}
+      .game-tile {min-height:116px;padding:9px 7px}
+      .game-tile strong {font-size:.77rem}
+      .game-tile .game-art {font-size:1.1rem}
+    }
+
 </style>
   <script src="./mock-api.js"></script>
 </head>
@@ -419,18 +503,18 @@
   <div id="live-announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
 
   <!-- Cartão do Pager do Cliente -->
+  <div class="client-brand-top"><img src="./avisaqui-marca-transparente.svg" alt="Avisaqui"></div>
   <main id="app-card" class="app-card">
     <header class="restaurant-header">
-      <img class="brand-logo-client" src="./avisaqui-marca-transparente.svg" alt="Avisaqui">
       <div class="restaurant-info">
-        <h1>Seu pedido</h1>
-        <p>Acompanhamento do seu pedido</p>
+        <span class="rest-label">ESTABELECIMENTO</span>
+        <h1>Seu restaurante</h1>
       </div>
       <div id="client-restaurant-context" class="client-restaurant-context" role="status" aria-live="polite" hidden><span id="client-restaurant-symbol" class="client-restaurant-symbol" aria-hidden="true"></span><strong id="client-restaurant-name"></strong></div>
     </header>
 
     <section class="order-status-card">
-      <span class="order-number-tag">Sua Senha de Retirada</span>
+      <span class="order-number-tag">Senha</span>
       <div class="order-number" id="order-num">—</div>
 
       <div id="status-badge" class="status-badge preparo">
@@ -439,12 +523,18 @@
       </div>
 
       <p id="status-message" class="status-message">
-        Sua comida está sendo preparada com todo cuidado pelo nosso chef!
+        Seu pedido está sendo preparado.
       </p>
 
       <p id="sub-message" class="sub-message">
-        Você receberá um aviso quando o pedido estiver pronto.
+        Avisaremos quando estiver pronto.
       </p>
+      <div class="client-progress" aria-label="Etapas do pedido">
+        <div class="progress-step received"><span class="step-dot">✓</span><span>Recebido</span></div>
+        <div class="progress-step preparing"><span class="step-dot">♨</span><span>Em preparo</span></div>
+        <div class="progress-step ready"><span class="step-dot">♧</span><span>Pronto</span></div>
+        <div class="progress-step delivered"><span class="step-dot">✓</span><span>Retirado</span></div>
+      </div>
 
       <!-- Botão de Toggle: Ativa e Desativa o som e vibração a qualquer momento -->
       <button id="btn-sound-test" class="sound-toggle-btn" aria-label="Ativar ou desativar alerta sonoro e vibração">
@@ -462,6 +552,20 @@
         🔇 Silenciar Alarme Agora
       </button>
 
+    </section>
+
+    <section id="games-area" class="experience-games" aria-labelledby="games-title">
+      <div class="experience-title"><span class="experience-icon" aria-hidden="true">🎮</span><div><h2 id="games-title">Enquanto espera</h2><p>Divirta-se com jogos rápidos.</p></div></div>
+      <div class="game-tile-grid">
+        <button type="button" class="game-tile game-pong" data-open-games="pong" aria-label="Abrir biblioteca de jogos: Pong"><span class="game-art" aria-hidden="true">◖ ● ◗</span><strong>Pong</strong><span class="game-play" aria-hidden="true">▶</span></button>
+        <button type="button" class="game-tile game-tictactoe" data-open-games="jogo-da-velha" aria-label="Abrir biblioteca de jogos: Jogo da Velha"><span class="game-art" aria-hidden="true">✕ ◯<br>◯ ✕</span><strong>Jogo da Velha</strong><span class="game-play" aria-hidden="true">▶</span></button>
+        <div class="game-tile game-memory" aria-label="Jogo da Memória em construção"><span class="game-art" aria-hidden="true">★ ☆</span><strong>Memória</strong><span class="game-soon">Em breve</span></div>
+      </div>
+      <button id="games-open" type="button" class="btn-chip game-library" hidden>🎮 Abrir biblioteca de jogos</button>
+      <div id="games-content" hidden></div>
+    </section>
+    <section class="experience-wallet" aria-labelledby="wallet-title">
+      <div class="experience-title"><span class="experience-icon wallet-icon" aria-hidden="true">▤</span><div><h2 id="wallet-title">Carteira digital</h2><p>Seu pedido também no Google Wallet.</p></div></div>
       <!-- Botao Google Wallet (Android) -->
       <div id="wallet-box" hidden style="margin-top: 14px;">
         <a id="wallet-btn-link" href="#" target="_blank" rel="noopener noreferrer" style="text-decoration:none; display:block;">
@@ -473,8 +577,12 @@
           </button>
         </a>
       </div>
+      <div id="wallet-unavailable" class="wallet-preview" role="status">
+        <button class="wallet-disabled" type="button" disabled>Adicionar ao Google Wallet</button>
+        <p>Disponível quando a integração estiver configurada.</p>
+      </div>
     </section>
-
+    <footer class="experience-foot"><span aria-hidden="true">🔔</span> Avisaremos quando estiver pronto.</footer>
     <!-- Produtos opcionais: exibidos apenas quando presentes no QR. -->
     <section class="order-details" id="order-details" aria-labelledby="order-details-title" hidden>
       <h2 id="order-details-title">Itens do pedido</h2>
@@ -494,10 +602,7 @@
         <p style="font-size:.8rem;">A vibração depende do aparelho e das configurações. Um retorno positivo da API não comprova vibração física. O teste de tela acesa não funciona com bloqueio manual.</p>
       </details>
     </footer>
-    <section id="games-area" style="margin:20px auto;max-width:620px;text-align:center">
-      <button id="games-open" type="button" class="btn-chip" hidden>🎮 Jogar enquanto aguarda</button>
-      <div id="games-content" hidden></div>
-    </section>
+
   </main>
 
   <script>
@@ -507,7 +612,7 @@
     const token = urlParams.get('token') || urlParams.get('sessao') || '';
     // Identidade visual obtida do SSE autenticado pelo token do pedido,
     // sem confiar em um nome arbitrário fornecido na URL.
-    document.getElementById('order-num').textContent = '#' + orderNumber;
+    document.getElementById('order-num').textContent = orderNumber;
     function showRestaurantIdentity(name,logoUrl) {
       if(typeof name !== 'string' || !name.trim())return;
       const restaurantName=name.trim();
@@ -786,6 +891,7 @@
 
     // --- TRANSIÇÕES DE ESTADO DO CLIENTE ---
     function applyStatus(status) {
+      document.querySelector('.client-progress')?.setAttribute('data-stage',status);
       pongAllowed = status === 'preparo';
       if (!pongAllowed) fecharJogos();
       else gamesOpen.hidden = !!gamesExit || gamesOpen.disabled;
@@ -797,8 +903,8 @@
         statusBadge.className = 'status-badge preparo';
         statusIcon.textContent = '⏳';
         statusText.textContent = 'Em Preparo';
-        statusMessage.textContent = 'Sua comida está sendo preparada com todo cuidado pelo nosso chef!';
-        subMessage.textContent = 'Você receberá um aviso quando o pedido estiver pronto.';
+        statusMessage.textContent = 'Seu pedido está sendo preparado.';
+        subMessage.textContent = 'Avisaremos quando estiver pronto.';
         liveAnnouncer.textContent = 'Pedido ' + orderNumber + ' em preparo.';
       } 
       else if (status === 'pronto') {
@@ -906,6 +1012,15 @@
           gamesOpen.textContent = '🎮 Jogar enquanto aguarda';
         }
       }
+    });
+
+    // Os cards abrem a biblioteca existente; a escolha do jogo ocorre no catálogo.
+    document.querySelectorAll('[data-open-games]').forEach(tile => {
+      tile.addEventListener('click', () => {
+        if(gamesOpen.hidden || gamesOpen.disabled)return;
+        gamesOpen.click();
+        gamesContent.scrollIntoView({block:'nearest',behavior:'smooth'});
+      });
     });
 
     // --- RECEPTOR DE EVENTOS EM TEMPO REAL VIA SSE (NATIVO & ULTRALEVE) ---
@@ -1035,6 +1150,7 @@
             if (walletBox && walletLink) {
               walletLink.href = data.url;
               walletBox.hidden = false;
+              document.getElementById('wallet-unavailable').hidden = true;
             }
           }
         }
