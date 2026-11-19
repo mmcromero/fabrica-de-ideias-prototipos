@@ -381,7 +381,23 @@
       font-family: monospace;
       font-size: 1.05rem;
     }
-  </style>
+      /* Identidade Avisaqui: o cliente usa o mesmo padrão de marca, sem controles administrativos */
+    :root { --av-header-logo-width:240px; --av-gutter:16px; }
+    .restaurant-header {display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:18px 20px;background:linear-gradient(120deg,#0b162a,#14243e);border-bottom:1px solid #39516e}
+    .restaurant-header .brand-logo-client {display:block;width:var(--av-header-logo-width);max-width:100%;height:auto;object-fit:contain;align-self:flex-start}
+    .restaurant-header .restaurant-info {width:100%;min-width:0}
+    .restaurant-header .restaurant-info h1 {font-size:1.15rem;line-height:1.3;margin:0}
+    .restaurant-header .restaurant-info p {color:#9eafc9;margin:4px 0 0}
+    .restaurant-header .client-restaurant-context {width:100%;margin:0;padding:11px 12px;background:linear-gradient(120deg,#13243b,#101c2f);border:1px solid #39516e;border-radius:12px}
+    .order-status-card {padding:24px 20px}
+    @media (max-width:600px) {
+      :root {--av-header-logo-width:170px}
+      .restaurant-header {padding:15px 16px;gap:10px}
+      .order-status-card {padding:20px 16px}
+    }
+
+
+</style>
   <script src="./mock-api.js"></script>
 </head>
 <body>
