@@ -589,6 +589,50 @@
 
     #games-open.game-library:not([hidden]) {display:block!important;width:100%;margin:10px 0 0;border:1px solid #375d8a;border-radius:10px;background:#1b3658;color:#ecf6ff;font-size:.8rem;font-weight:750;min-height:38px;padding:8px}
     .game-tile:disabled {opacity:.55;cursor:default;transform:none;filter:none}
+
+    /* UX A11Y-001 — Alto contraste real para a vitrine compacta.
+       As cores fixas da vitrine antes ocultavam o efeito do botão. */
+    body.high-contrast {background:#000!important;color:#fff!important}
+    body.high-contrast #app-card.app-card {background:transparent!important}
+    body.high-contrast #app-card .restaurant-header,
+    body.high-contrast #app-card .order-status-card,
+    body.high-contrast #games-area.experience-games,
+    body.high-contrast #order-details,
+    body.high-contrast #diagnosticos {background:#000!important;border:2px solid #fff!important;box-shadow:none!important;color:#fff!important}
+    body.high-contrast #app-card .client-restaurant-context,
+    body.high-contrast .wallet-inline,
+    body.high-contrast #app-card .sound-toggle-btn,
+    body.high-contrast #wallet-box a.wallet-action-link,
+    body.high-contrast #games-open.game-library:not([hidden]),
+    body.high-contrast .wallet-inline-label > span {background:#000!important;border-color:#fff!important;color:#fff!important;box-shadow:none!important}
+    body.high-contrast #app-card .restaurant-info .rest-label,
+    body.high-contrast #app-card .restaurant-info h1,
+    body.high-contrast #app-card .client-restaurant-context strong,
+    body.high-contrast #app-card .order-number-tag,
+    body.high-contrast #app-card .order-number,
+    body.high-contrast #app-card .status-message,
+    body.high-contrast #app-card .sub-message,
+    body.high-contrast .experience-title h2,
+    body.high-contrast .experience-title p,
+    body.high-contrast .wallet-inline-label h2,
+    body.high-contrast .wallet-inline-label p,
+    body.high-contrast .wallet-pending,
+    body.high-contrast #wallet-status,
+    body.high-contrast .experience-foot,
+    body.high-contrast #diagnosticos summary,
+    body.high-contrast .progress-step {color:#fff!important;text-shadow:none!important}
+    body.high-contrast .progress-step .step-dot {background:#000!important;border:2px solid #fff!important;color:#fff!important}
+    body.high-contrast .client-progress::before {background:#fff!important}
+    body.high-contrast #app-card .status-badge {background:#000!important;border:2px solid #fff!important;color:#fff!important;box-shadow:none!important}
+    body.high-contrast #app-card .status-badge.pronto {border-color:#86efac!important}
+    body.high-contrast #app-card .status-badge.preparo {border-color:#fde047!important}
+    body.high-contrast .game-tile {background:#000!important;border:2px solid #fff!important;box-shadow:none!important;color:#fff!important}
+    body.high-contrast .game-tile .game-soon {color:#fff!important}
+    body.high-contrast #app-card #push-guide {background:#000!important;border:2px solid #fff!important;color:#fff!important}
+    body.high-contrast .client-topbar .a11y-bar .btn-chip {background:#000!important;color:#fff!important;border:2px solid #fff!important}
+    body.high-contrast .client-topbar #toggle-contrast {background:#fff!important;color:#000!important;border-color:#fff!important;font-weight:800}
+    body.high-contrast button:focus-visible,body.high-contrast a:focus-visible {outline:3px solid #fde047!important;outline-offset:3px}
+
 </style>
   <script src="./mock-api.js"></script>
 </head>
