@@ -39,6 +39,16 @@
       "ordem": 40,
       "icone": "bell",
       "caminho": "projetos/pager-virtual/"
+    },
+    {
+      "id": "orquestrador-projetos",
+      "nome": "Orquestrador de Projetos",
+      "descricao": "Estúdio de identidade visual: compare propostas de marcas, vote e consulte o placar demonstrativo.",
+      "status": "prototipo",
+      "publicado": true,
+      "ordem": 70,
+      "icone": "palette",
+      "caminho": "projetos/orquestrador-projetos/"
     }
   ]
 }

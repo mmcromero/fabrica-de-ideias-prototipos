@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'"><title>Fábrica de Ideias — Estúdio de Branding &amp; Votação de Marcas</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #f97316;
+      --accent: #38bdf8;
+      --success: #10b981;
+      --heart: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      padding: 32px 16px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .badge-top {
+      display: inline-block;
+      background: rgba(249, 115, 22, 0.15);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #f97316, #fbbf24);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 650px;
+      margin: 0 auto 24px;
+      line-height: 1.5;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .btn-toggle {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-toggle:hover, .btn-toggle.active {
+      background: var(--primary);
+      border-color: #ea580c;
+      color: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+
+    .preview-box {
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.3s ease;
+      min-height: 240px;
+      background: #0b1120;
+    }
+
+    body.view-transparent .preview-box {
+      background-color: #1e293b;
+      background-image: 
+        linear-gradient(45deg, #0f172a 25%, transparent 25%), 
+        linear-gradient(-45deg, #0f172a 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #0f172a 75%), 
+        linear-gradient(-45deg, transparent 75%, #0f172a 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+
+    body.view-light .preview-box {
+      background: #f1f5f9;
+    }
+
+    .card-desc {
+      padding: 20px 24px;
+      background: rgba(0, 0, 0, 0.2);
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    .card-footer {
+      padding: 16px 24px;
+      background: #131d2e;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .vote-btn {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--heart);
+      color: #fca5a5;
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .vote-btn:hover {
+      background: var(--heart);
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .vote-count {
+      font-weight: 800;
+    }
+
+    .summary-panel {
+      max-width: 900px;
+      width: 100%;
+      margin-top: 40px;
+      background: #1e293b;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .btn-share {
+      background: var(--success);
+      color: #0b1120;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+  @media(min-width:740px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}}@media(max-width:420px){.card-header,.card-desc,.card-footer{padding:12px}.preview-box{min-height:170px;padding:20px 10px}.preview-box svg{max-width:100%;height:auto}.btn-toggle{min-height:44px}.card-footer{gap:8px;flex-wrap:wrap}}body.view-light .preview-box svg text{fill:#142033}.vote-btn,.btn-share,.btn-toggle{min-height:44px}button:focus-visible,a:focus-visible{outline:3px solid #38bdf8;outline-offset:3px}.demo-info{color:#cbd5e1;line-height:1.5;margin:12px 0}.back{color:#38bdf8;display:inline-block;padding:12px}</style>
+</head>
+<body>
+
+  <header>
+    <div class="badge-top">Fábrica de Ideias • Estúdio de Identidade</div>
+    <p><a class="back" href="../../">← Portfólio</a></p><p class="demo-info">Orquestrador de Projetos · Estúdio de Branding · Demonstração da interface original</p><h1 id="projetoTitulo">Votação de Marcas &amp; Identidade Visual</h1>
+    <p class="subtitle">
+      Teste o contraste das propostas visuais em fundo escuro e claro. Compare as propostas e vote na sua favorita. Esta demonstração usa dados fictícios e votos locais.
+    </p>
+
+    <div class="toolbar">
+      <button class="btn-toggle active" onclick="setView('default', this)">Fundo Escuro Nativo</button>
+      <button class="btn-toggle" onclick="setView('transparent', this)">Modo Transparência</button>
+      <button class="btn-toggle" onclick="setView('light', this)">Simular Fundo Claro</button>
+    </div>
+  </header>
+
+  <main class="grid" id="gridOpcoes">
+
+    <!-- OPÇÃO 1 -->
+    <article class="card" id="card-1">
+      <div class="card-header">
+        <div class="card-title">
+          <span>Opção 1: DryWave — Minimalista Tecnológico</span>
+          <span class="badge-tag">Tech &amp; Clean</span>
+        </div>
+      </div>
+      <div class="preview-box">
+        <svg viewBox="0 0 300 100" width="260" height="90" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="32" fill="#0284c7" opacity="0.2"/>
+          <path d="M 35 55 Q 50 35 65 55" stroke="#38bdf8" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <circle cx="50" cy="30" r="5" fill="#38bdf8"/>
+          <text x="95" y="58" fill="#f8fafc" font-size="28" font-weight="800">DryWave</text>
+        </svg>
+      </div>
+      <div class="card-desc">
+        <strong>Conceito:</strong> Combina linhas acústicas de dissipação de umidade com tipografia geométrica moderna. Transmite tecnologia, leveza e confiança.
+      </div>
+      <div class="card-footer">
+        <span>Votos locais:</span>
+        <button class="vote-btn" onclick="votar(1)">❤️ Votar (<span class="vote-count" id="votos-1">0</span>)</button>
+      </div>
+    </article>
+
+    <!-- OPÇÃO 2 -->
+    <article class="card" id="card-2">
+      <div class="card-header">
+        <div class="card-title">
+          <span>Opção 2: ToalhaPronta — Amigável &amp; Casa</span>
+          <span class="badge-tag">Doméstico &amp; Prático</span>
+        </div>
+      </div>
+      <div class="preview-box">
+        <svg viewBox="0 0 320 100" width="280" height="90" xmlns="http://www.w3.org/2000/svg">
+          <rect x="25" y="20" width="50" height="60" rx="12" fill="#f97316" opacity="0.2"/>
+          <circle cx="50" cy="45" r="14" fill="#fb923c"/>
+          <path d="M 42 45 L 48 51 L 58 39" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <text x="90" y="58" fill="#f8fafc" font-size="26" font-weight="800">ToalhaPronta</text>
+        </svg>
+      </div>
+      <div class="card-desc">
+        <strong>Conceito:</strong> Foco em clareza imediata e sensação de dever cumprido com o ícone de checagem.
+      </div>
+      <div class="card-footer">
+        <span>Votos locais:</span>
+        <button class="vote-btn" onclick="votar(2)">❤️ Votar (<span class="vote-count" id="votos-2">0</span>)</button>
+      </div>
+    </article>
+
+  </main>
+
+  <div class="summary-panel">
+    <h3>Placar da votação</h3>
+    <p style="color: var(--muted); font-size: 0.9rem; margin-top: 6px;">
+      Os votos ficam neste navegador. Esta demonstração não sincroniza participantes nem publica resultados.
+    </p>
+    <button class="btn-share" onclick="compartilharPlacar()">📋 Copiar Placar de Votos</button>
+  </div>
+
+  <script>
+    function setView(view, btn) {
+      document.body.className = '';
+      if (view === 'transparent') document.body.classList.add('view-transparent');
+      if (view === 'light') document.body.classList.add('view-light');
+      
+      document.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function carregarVotos() {
+      for (let i = 1; i <= 2; i++) {
+        const v = localStorage.getItem('portfolio_orquestrador_demo_voto_' + i) || '0';
+        const el = document.getElementById('votos-' + i);
+        if (el) el.innerText = v;
+      }
+    }
+
+    function votar(opcao) {
+      let atual = parseInt(localStorage.getItem('portfolio_orquestrador_demo_voto_' + opcao) || '0');
+      atual++;
+      localStorage.setItem('portfolio_orquestrador_demo_voto_' + opcao, atual);
+      document.getElementById('votos-' + opcao).innerText = atual;
+    }
+
+    function compartilharPlacar() {
+      const v1 = localStorage.getItem('portfolio_orquestrador_demo_voto_1') || '0';
+      const v2 = localStorage.getItem('portfolio_orquestrador_demo_voto_2') || '0';
+      const texto = `🏆 *Placar da Fábrica de Ideias:*\n\n1️⃣ Opção 1 (DryWave): ${v1} votos\n2️⃣ Opção 2 (ToalhaPronta): ${v2} votos\n\nQual você prefere?`;
+      if (!navigator.clipboard) { alert(texto); return; } navigator.clipboard.writeText(texto).then(() => {
+        alert('Placar copiado para a área de transferência! Nenhuma mensagem foi enviada.');
+      }).catch(() => alert(texto));
+    }
+
+    window.onload = carregarVotos;
+  </script>
+</body>
+</html>
