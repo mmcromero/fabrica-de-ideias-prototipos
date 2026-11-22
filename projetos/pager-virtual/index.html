@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#090e17">
-  <title>KDS Cozinha & Balcão — Pager Virtual</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; frame-src 'self'; form-action 'none'; base-uri 'none'; worker-src 'none'"><title>Pedidos em atendimento — Avisaqui</title>
   <style>
     :root {
       --bg: #090e17;
@@ -39,9 +39,10 @@
     /* BARRA SUPERIOR DO KDS */
     .kds-header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+      flex-wrap: nowrap;
       gap: 16px;
       padding-bottom: 16px;
       border-bottom: 1px solid var(--card-border);
@@ -52,7 +53,10 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      width: 100%;
     }
+    .brand-title > div { width: 100%; min-width: 0; }
+    .kds-brand-bar { width: 100%; }
 
     .brand-title h1 {
       font-size: 1.3rem;
@@ -95,15 +99,16 @@
       border-color: rgba(16, 185, 129, 0.4);
     }
 
-    /* BOTÃO DISCRETO DE SIMULAÇÃO DE NOVO PEDIDO */
+    /* BOTÃO PRINCIPAL DE CADASTRO MANUAL */
     .btn-sim-order {
-      background: #1e293b;
-      color: #93c5fd;
-      border: 1px dashed #3b82f6;
-      padding: 8px 16px;
+      background: var(--primary);
+      color: #ffffff;
+      border: 1px solid #60a5fa;
+      padding: 16px 20px;
       border-radius: 8px;
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 1rem;
+      min-height: 54px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -309,7 +314,11 @@
       width: 100%;
       text-align: center;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+      max-height: calc(100dvh - 32px);
+      overflow-y: auto;
     }
+    .modal-heading { display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left }
+    .modal-x { flex:none;width:44px;height:44px;min-height:44px;border:0;border-radius:10px;background:#334155;color:#fff;font-size:1.5rem;cursor:pointer }
 
     .modal-qr {
       background: #fff;
@@ -342,101 +351,132 @@
       border: 2px dashed var(--card-border);
       border-radius: 16px;
     }
+    @media print {
+      @page { size: auto; margin: 5mm; }
+      body > :not(#qr-modal) { display: none !important; }
+      #qr-modal { position: static !important; display: block !important; background: #fff !important; padding: 0 !important; color: #000; }
+      #qr-modal .modal-box { border: none; box-shadow: none; background: white; color: black; width: 100%; max-width: 100%; padding: 8mm; }
+      #qr-modal p, #qr-modal h2 { color: black !important; }
+      #qr-modal .modal-qr { border: none; width: 220px; }
+      #btn-close-modal, #btn-print-qr, #qr-x { display: none !important; }
+      #modal-link-label { color: #000 !important; }
+    }
+  
+    /* Identidade Avisaqui — padrão de cabeçalho operacional */
+    :root { --av-header-logo-width:240px; --av-grid-gap:16px; }
+    .kds-brand-bar { min-height:76px;gap:16px; }
+    .kds-brand-bar img { width:var(--av-header-logo-width);flex-shrink:1; }
+    .kds-brand-bar button { flex-shrink:0; }
+    @media(max-width:600px) { :root { --av-header-logo-width:170px; } .kds-brand-bar { min-height:60px; } }
 
-    /* Proposta de abertura manual — conteúdo adicional recolhido por padrão */
-    .manual-dialog { border:0;padding:0;background:transparent;color:var(--text);width:min(100% - 24px,430px);max-height:calc(100dvh - 24px);margin:auto;overflow:visible }
-    .manual-dialog::backdrop { background:rgba(0,0,0,.78) }
-    .manual-panel { background:#1e293b;border:2px solid var(--card-border);border-radius:20px;padding:20px;box-shadow:0 14px 48px rgba(0,0,0,.48);max-height:calc(100dvh - 24px);overflow-y:auto }
-    .manual-heading { display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px }
-    .manual-heading h2 { font-size:1.25rem }
-    .manual-close { border:0;border-radius:9px;background:#334155;color:#fff;font-size:1.6rem;width:44px;height:44px;cursor:pointer }
-    .manual-label { display:block;font-size:.9rem;font-weight:700;margin:0 0 8px }
-    .manual-input { width:100%;border:1px solid #64748b;border-radius:11px;padding:12px;background:#0f172a;color:#fff;font-size:1rem;min-height:48px }
-    .manual-number { font-size:1.7rem;text-align:center;min-height:62px }
-    .manual-extra { margin-top:15px;border:1px solid #475569;border-radius:12px;background:#172235;overflow:hidden }
-    .manual-extra summary { cursor:pointer;list-style:none;padding:15px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:700;min-height:52px }
-    .manual-extra summary::-webkit-details-marker { display:none }
-    .manual-extra summary::after { content:'⌄';font-size:1.25rem;line-height:1;transition:transform .15s }
-    .manual-extra[open] summary::after { transform:rotate(180deg) }
-    .manual-extra[open] summary { border-bottom:1px solid #475569 }
-    .manual-extra-content { display:grid;gap:12px;padding:15px }
-    .manual-optional { font-size:.76rem;font-weight:500;color:var(--text-muted) }
-    .manual-actions { display:grid;gap:10px;margin-top:18px }
-    .manual-primary { background:var(--primary);color:#fff;border:0;border-radius:11px;min-height:48px;font-size:1rem;font-weight:700;cursor:pointer }
-    .manual-feedback { min-height:20px;margin-top:10px;font-size:.86rem;color:#fca5a5 }
-    .manual-dialog button:focus-visible,.manual-dialog summary:focus-visible,.manual-input:focus-visible { outline:3px solid #93c5fd;outline-offset:3px }
-    @media(max-width:430px) { .manual-panel { padding:16px } .manual-heading h2 { font-size:1.1rem } }
-  </style>
+
+/* Identidade visual compartilhada — áreas operacionais */
+:root {--av-header-logo-width:240px;--av-content-max:1360px;--av-gutter:clamp(16px,3vw,38px)}
+body {padding:0 0 40px;background:radial-gradient(ellipse 70% 30% at 74% -8%,#1b3159 0%,transparent 75%),#090e17}
+.kds-header {display:block;margin:0 0 24px;padding:0;border:0;background:transparent}
+.av-topbar {background:linear-gradient(105deg,#0a162a,#10213b 70%,#0b1528);border-bottom:1px solid #344964}
+.av-topbar-inner {width:min(calc(100% - 2 * var(--av-gutter)),var(--av-content-max));min-height:92px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.av-header-logo {width:var(--av-header-logo-width);max-width:100%;height:auto;object-fit:contain;flex-shrink:1}
+.av-session {display:flex;align-items:center;justify-content:flex-end;gap:18px;min-width:0}
+#kds-identity {color:#d8e3f4;font-size:.94rem;text-align:right;line-height:1.4;overflow-wrap:anywhere}
+.av-session #btn-logout {width:auto;min-width:60px;min-height:42px;margin:0;padding:9px 19px;background:linear-gradient(140deg,#263b59,#1b2a40);border:1px solid #425979;border-radius:10px;color:#fff}
+.av-content {width:min(calc(100% - 2 * var(--av-gutter)),var(--av-content-max));margin:auto;padding:24px 0 0}
+.av-restaurant-context {display:flex;align-items:center;gap:12px!important;min-height:66px;padding:11px 16px;margin:0 0 22px!important;background:linear-gradient(120deg,#13243b,#101c2f)!important;border:1px solid #39516e;border-radius:13px;color:#fff}
+.av-restaurant-context > img,.av-restaurant-context > span {width:46px!important;height:46px!important;flex:0 0 46px;object-fit:contain;border-radius:10px}
+.av-restaurant-context strong {font-size:1rem}
+.av-page-title {margin:0 0 20px}
+.av-page-title h1 {margin:0 0 5px;font-size:clamp(1.7rem,2.6vw,2.4rem);line-height:1.18;letter-spacing:-.03em;font-weight:800}
+.av-page-title p {margin:0;color:#9eafc9;font-size:.93rem}
+.kds-controls {gap:10px;padding:0 0 18px;border-bottom:1px solid #30435f}
+.kds-controls .btn-sim-order {min-height:44px;padding:10px 15px;border-radius:10px;font-size:.9rem;background:linear-gradient(180deg,#3989fb,#0965ed)}
+.kds-controls .metric-tag {min-height:40px;padding:8px 12px}
+.kds-controls a {border-radius:10px}
+.orders-grid {width:min(calc(100% - 2 * var(--av-gutter)),var(--av-content-max));margin:0 auto;grid-template-columns:repeat(auto-fill,minmax(280px,310px));gap:16px;align-items:start}
+.order-card {border-width:1px;border-color:#39516e;background:linear-gradient(145deg,#111f35,#101b30)}
+@media(max-width:700px) {
+:root {--av-header-logo-width:170px}
+.av-topbar-inner {min-height:76px;gap:12px}
+.av-session {gap:9px}
+#kds-identity {font-size:.78rem;max-width:130px}
+.av-session #btn-logout {min-height:40px;padding:8px 12px}
+.av-content {padding-top:16px}
+.kds-controls .btn-sim-order {flex:1 1 145px;justify-content:center}
+.orders-grid {grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))}
+}
+@media(max-width:420px) {
+#kds-identity {max-width:96px;font-size:.72rem}
+.av-page-title h1 {font-size:1.6rem}
+.orders-grid {grid-template-columns:minmax(0,1fr)}
+}
+@media print {body {background:#fff}}
+
+</style>
 </head>
-<body>
+<body><p style="text-align:center;color:#cbd5e1;padding:8px;font-size:13px;line-height:1.5"><a href="../../" style="color:#93c5fd">← Portfólio</a> · Avisaqui · Referência 0.1.20-rc.12 · DEMONSTRAÇÃO · Dados fictícios</p>
 
-  <!-- CABEÇALHO DO KDS -->
+  <!-- AVISAQUI: cabeçalho padronizado com o Master Admin -->
   <header class="kds-header">
-    <div class="brand-title">
-      <div style="font-size: 2rem;">🍳</div>
-      <div>
-        <h1>Burger House Grill · KDS</h1>
-        <span>Painel de Atendimento da Cozinha & Balcão</span>
+    <div class="av-topbar"><div class="av-topbar-inner">
+      <img class="av-header-logo" src="./avisaqui-marca-transparente.svg" alt="Avisaqui">
+      <div class="av-session"><span id="kds-identity" aria-live="polite"></span><button id="btn-logout" class="btn-close-modal" type="button">Sair</button></div>
+    </div></div>
+    <div class="av-content">
+      <div id="restaurant-context" class="av-restaurant-context" role="status" aria-live="polite" style="display:none"></div>
+      <div class="av-page-title"><h1>Pedidos em atendimento</h1><p>Cozinha e balcão</p></div>
+      <div class="kds-controls">
+        <button id="btn-tab-active" class="metric-tag active-orders" style="cursor:pointer;border:2px solid #3b82f6;background:#1e293b;color:#f8fafc" title="Ver pedidos em preparo e prontos"><span id="active-count">0</span> Pedidos Ativos</button>
+        <button id="btn-tab-finished" class="metric-tag finished" style="cursor:pointer;border:2px solid transparent;background:#1e293b;color:#94a3b8" title="Ver histórico de pedidos entregues hoje"><span id="finished-count">0</span> Finalizados hoje</button>
+        <button id="btn-sequence-settings" class="btn-sim-order" title="Configurar numeração">⚙️ Numeração</button>
+        <button id="btn-add-manual-order" class="btn-sim-order" title="Cadastrar pedido informando a senha">➕ Inserir pedido manual</button>
+        <a id="printing-integration-link" href="./impressao.html" style="display:none;color:#cbd5e1;text-decoration:none;min-height:44px;align-items:center;padding:10px 16px;border:1px solid #475569;border-radius:10px;font-weight:700">🖨️ Integração de impressão</a>
+        <a id="admin-link" href="./admin.html" style="display:none;color:#cbd5e1;text-decoration:none;min-height:44px;align-items:center;padding:10px 16px;border:1px solid #475569;border-radius:10px;font-weight:700">← Administração</a>
       </div>
-    </div>
-
-    <div class="kds-controls">
-      <div class="metric-tag active-orders">
-        <span id="active-count">3</span> Pedidos Ativos
-      </div>
-      <div class="metric-tag finished">
-        <span id="finished-count">0</span> Finalizados
-      </div>
-
-      <!-- Mesmo botão da abertura anterior: agora apresenta o formulário antes de criar pedido. -->
-      <button id="btn-add-sim-order" class="btn-sim-order" type="button" title="Abrir cadastro de pedido manual">
-        ➕ Inserir pedido manual
-      </button>
     </div>
   </header>
-
   <!-- GRID DE CARTÕES DE PEDIDOS -->
   <main id="orders-grid" class="orders-grid"></main>
 
-
-  <!-- Demonstração local da abertura manual, sem backend ou dados reais -->
-  <dialog id="manual-order-dialog" class="manual-dialog" aria-labelledby="manual-order-title">
-    <div class="manual-panel">
-      <div class="manual-heading">
-        <h2 id="manual-order-title">Inserir pedido manual</h2>
-        <button type="button" class="manual-close" id="manual-order-x" aria-label="Fechar">×</button>
-      </div>
-      <form id="manual-order-form">
-        <label class="manual-label" for="manual-order-number">Número do pedido</label>
-        <input class="manual-input manual-number" id="manual-order-number" type="number" min="1" step="1" inputmode="numeric" placeholder="Ex.: 44" required>
-        <details id="manual-client-details" class="manual-extra">
-          <summary>Dados do cliente <span class="manual-optional">Opcional</span></summary>
-          <div class="manual-extra-content">
-            <div>
-              <label class="manual-label" for="manual-order-name">Nome <span class="manual-optional">(opcional)</span></label>
-              <input class="manual-input" id="manual-order-name" type="text" maxlength="80" autocomplete="off" placeholder="Nome do cliente">
-            </div>
-            <div>
-              <label class="manual-label" for="manual-order-phone">WhatsApp <span class="manual-optional">(opcional)</span></label>
-              <input class="manual-input" id="manual-order-phone" type="tel" inputmode="tel" autocomplete="off" placeholder="DDD + número">
-            </div>
-          </div>
-        </details>
-        <p id="manual-order-error" class="manual-feedback" role="alert" aria-live="polite"></p>
-        <div class="manual-actions">
-          <button id="manual-order-submit" class="manual-primary" type="submit">✓ Criar pedido</button>
-          <button id="manual-order-cancel" class="btn-close-modal" type="button" style="margin:0">Cancelar</button>
-        </div>
-      </form>
-    </div>
-  </dialog>
-
-  <!-- MODAL DE QR CODE AMPLIADO (DISPLAY DO CAIXA) -->
-  <div id="qr-modal" class="modal-backdrop">
+  <!-- MODAL DE CADASTRO MANUAL — TOUCH FRIENDLY -->
+  <div id="manual-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="manual-title">
     <div class="modal-box">
-      <h2 id="modal-title" style="font-size: 1.4rem;">Display do Caixa</h2>
+      <div class="modal-heading"><h2 id="manual-title">Inserir pedido manual</h2><button type="button" class="modal-x" id="manual-x" aria-label="Fechar pedido manual">×</button></div>
+      <p style="color:var(--text-muted); margin:10px 0 16px">Digite somente o número da senha ou do pedido.</p>
+      <form id="manual-form">
+        <label for="manual-number" style="display:block; text-align:left; margin-bottom:8px; font-weight:700">Número do pedido</label>
+        <input id="manual-number" type="number" inputmode="numeric" min="1" step="1" required autocomplete="off" placeholder="Ex.: 44" style="width:100%;font-size:1.8rem;padding:16px;border-radius:12px;border:2px solid #64748b;background:#0f172a;color:#fff;text-align:center;min-height:64px">
+        <label for="manual-name" style="display:block;text-align:left;margin-top:12px">Nome (opcional)</label>
+        <input id="manual-name" maxlength="80" autocomplete="off" placeholder="Nome do cliente" style="width:100%;padding:12px;margin-top:4px">
+        <label for="manual-phone" style="display:block;text-align:left;margin-top:12px">WhatsApp (opcional)</label>
+        <input id="manual-phone" type="tel" inputmode="tel" autocomplete="off" placeholder="DDD + número" style="width:100%;padding:12px;margin-top:4px">
+        <p id="manual-mode-note" style="margin-top:12px;font-size:.85rem"></p>
+        <p id="manual-error" role="alert" style="color:#fca5a5;min-height:24px;margin:12px 0"></p>
+        <button id="manual-submit" type="submit" class="btn-sim-order" style="width:100%;justify-content:center">✓ Criar pedido</button>
+      </form>
+      <button type="button" id="manual-cancel" class="btn-close-modal">Cancelar</button>
+    </div>
+  </div>
+
+  <div id="sequence-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Configuração da numeração">
+    <div class="modal-box">
+      <div class="modal-heading"><h2>Numeração de pedidos</h2><button type="button" class="modal-x" id="sequence-x" aria-label="Fechar numeração">×</button></div>
+      <p style="margin:12px 0">Altere somente quando não houver pedidos ativos.</p>
+      <label for="sequence-mode">Modo</label>
+      <select id="sequence-mode" style="width:100%;padding:12px;margin:8px 0">
+        <option value="manual">Manual</option><option value="automatico">Automático</option>
+      </select>
+      <label for="sequence-start">Próximo número</label>
+      <input id="sequence-start" type="number" min="1" step="1" style="width:100%;padding:12px;margin:8px 0">
+      <p id="sequence-error" role="alert" style="color:#fca5a5"></p>
+      <button type="button" id="sequence-save" class="btn-sim-order">Salvar configuração</button>
+      <button type="button" id="sequence-cancel" class="btn-close-modal">Cancelar</button>
+    </div>
+  </div>
+  <!-- MODAL DE QR CODE AMPLIADO (DISPLAY DO CAIXA) -->
+  <div id="qr-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-box">
+      <div class="modal-heading"><h2 id="modal-title" style="font-size: 1.4rem;">Display do Caixa</h2><button type="button" class="modal-x" id="qr-x" aria-label="Fechar QR Code">×</button></div>
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
-        Aponte a câmera do celular para abrir o Pager do Cliente
+        Para sincronização da POC, abra no mesmo navegador. Aponte a câmera do celular para abrir o Pager do Cliente
       </p>
 
       <div class="modal-qr">
@@ -444,70 +484,203 @@
       </div>
 
       <p id="modal-link-label" style="font-size: 0.72rem; color: #94a3b8; font-family: monospace; word-break: break-all;"></p>
-      <button id="btn-close-modal" class="btn-close-modal">Fechar Display</button>
+      <button id="btn-print-qr" class="btn-sim-order" style="width:100%;justify-content:center">🖨️ Imprimir QR Code</button>
+      <button id="btn-close-modal" class="btn-close-modal">Fechar</button>
     </div>
   </div>
 
   <script src="./qrcode.min.js"></script>
-  <script src="./mqtt.min.js"></script>
-  <script>
-    // --- BANCO DE DADOS EM LOOP (15 PEDIDOS REALISTAS) ---
-    const orderPool = [
-      { id: '41', cliente: 'Mesa 04', items: '1x Smash Burger Duplo, 1x Batata Rústica, 1x Coca Zero' },
-      { id: '42', cliente: 'Balcão', items: '1x Classic Bacon Burger, 1x Suco de Laranja 500ml' },
-      { id: '43', cliente: 'Retirada', items: '2x Cheeseburger Artesanal, 2x Fritas Crocantes' },
-      { id: '44', cliente: 'Mesa 12', items: '1x Cheddar Melt Especial, 1x Onion Rings, 1x Milkshake' },
-      { id: '45', cliente: 'Balcão', items: '1x Salada Caesar com Frango, 1x Água Mineral c/ Gás' },
-      { id: '46', cliente: 'Retirada', items: '1x Costela BBQ Burger, 1x Batata Canoa com Cheddar' },
-      { id: '47', cliente: 'Mesa 02', items: '1x Veggie Burger Grão-de-Bico, 1x Suco Verde Detox' },
-      { id: '48', cliente: 'Balcão', items: '2x Hot Dog Especial da Casa, 1x Guaraná Lata' },
-      { id: '49', cliente: 'Mesa 08', items: '1x Picanha Burger 200g, 1x Mandioca Frita' },
-      { id: '50', cliente: 'Retirada', items: '1x Monster 3 Carnes, 1x Batata Suprema, 1x Milkshake' },
-      { id: '51', cliente: 'Balcão', items: '1x Wrap de Frango Crispy, 1x Suco Abacaxi c/ Hortelã' },
-      { id: '52', cliente: 'Mesa 05', items: '1x Gorgonzola Burger, 1x Batata c/ Alecrim, 1x Refri' },
-      { id: '53', cliente: 'Retirada', items: '3x Mini Smash Kids, 3x Batatinhas Smile, 3x Sucos' },
-      { id: '54', cliente: 'Balcão', items: '1x Trufado Burger, 1x Cerveja Artesanal IPA 500ml' },
-      { id: '55', cliente: 'Mesa 09', items: '1x Combo Casal: 2 Burgers, 1 Batata Mega, 2 Bebidas' }
-    ];
-
-    let poolIndex = 3;
+  <script src="./demo-runtime.js"></script><script>
+    // --- INTEGRAÇÃO COM API REAL DO PAGER VIRTUAL & SSE ---
+    let activeOrders = [];
     let finishedCount = 0;
-    let orderCounter = 43; // Contador auto-incremental para senhas únicas
+    let publicBaseUrl = '';
+    const appBasePath=location.pathname.replace(/\/(?:index|kds)\.html$/,'').replace(/\/$/,'');
+    const apiPath = (suffix) => appBasePath + suffix;
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[char]);
+    }
+    async function configurarAtalhoImpressao() {
+      try {
+        const response = await demoFetch(apiPath('/api/auth/me'));
+        if (!response.ok) return;
+        const user = await response.json();
+        const idArea=document.getElementById('kds-identity');
+        if(idArea)idArea.textContent=(user.nome||user.login||'Usuário')+' · '+(user.papel==='master'?'Master Admin':user.papel==='gerente'?'Gerente':'Operador');
+        if ((user.papel === 'gerente' || user.papel === 'master') && user.restaurante_id) {
+          document.getElementById('printing-integration-link').style.display = 'inline-flex';
+        }
+        const name=typeof user.restaurante_nome==='string'?user.restaurante_nome.trim():'';
+        const context=document.getElementById('restaurant-context');
+        if(user.restaurante_id && name){
+          context.replaceChildren();
+          const logo=document.createElement('span');logo.textContent=name.slice(0,1).toUpperCase();logo.style.cssText='display:grid;place-items:center;width:44px;height:44px;background:#34587d;border-radius:8px;flex-shrink:0';
+          if(typeof user.restaurante_logo_url==='string'&&/^https:\/\//i.test(user.restaurante_logo_url)){
+            const img=document.createElement('img');img.src=user.restaurante_logo_url;img.alt='Logo de '+name;img.referrerPolicy='no-referrer';img.style.cssText='width:44px;height:44px;object-fit:contain;border-radius:8px;background:white';img.addEventListener('error',()=>img.replaceWith(logo),{once:true});context.append(img);
+          }else context.append(logo);
+          const details=document.createElement('div');const title=document.createElement('strong');title.textContent=name;
+          const meta=document.createElement('small');meta.style.cssText='display:block;color:#cbd5e1;font-weight:500';meta.textContent=(user.papel==='master'?'Master Admin':user.papel==='gerente'?'Gerente':'Operador')+(user.restaurante_slug?' · '+user.restaurante_slug:'');
+          details.append(title,meta);context.append(details);context.style.alignItems='center';context.style.gap='10px';
+          context.style.display='flex';
+        }else if(user.papel==='gerente'){
+          context.textContent='Restaurante não identificado. Contate a administração.';
+          context.style.display='block';
+        }
+      } catch {}
+    }
+    configurarAtalhoImpressao();
 
-    // Sessão do KDS para isolamento
-    const baseSession = localStorage.getItem('kds_session') || 'KDS-' + Math.random().toString(36).substring(2, 7).toUpperCase();
-    localStorage.setItem('kds_session', baseSession);
-
-    // Lista ativa de pedidos na tela (FIFO: mais antigos primeiro)
-    const now = Date.now();
-    let activeOrders = [
-      { id: '41', items: orderPool[0].items, status: 'preparo', createdAt: now - (6 * 60 * 1000) },
-      { id: '42', items: orderPool[1].items, status: 'preparo', createdAt: now - (4 * 60 * 1000) },
-      { id: '43', items: orderPool[2].items, status: 'preparo', createdAt: now - (1 * 60 * 1000) }
-    ];
-
-    // Conexão MQTT em tempo real
-    const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt', {
-      clientId: 'kds_' + Math.random().toString(16).substr(2, 8),
-      clean: true,
-      keepalive: 60
-    });
-
-    const localChannel = new BroadcastChannel('pager_global');
-
-    function broadcastOrder(orderId, status) {
-      const topic = 'fabrica-de-ideias/pager/' + baseSession + '_' + orderId;
-      const payload = JSON.stringify({ status: status, order: orderId, timestamp: Date.now() });
-
-      if (client.connected) {
-        client.publish(topic, payload, { retain: true, qos: 1 });
+    async function carregarConfiguracao() {
+      try {
+        const resposta = await demoFetch(apiPath('/api/config/publica'));
+        if (resposta.ok) {
+          const config = await resposta.json();
+          publicBaseUrl = String(config.public_url || '').replace(/\/$/, '');
+        }
+      } catch (erro) {
+        console.warn('URL pública indisponível; usando endereço do KDS', erro);
       }
-      localChannel.postMessage({ topic, payload });
     }
 
-    function getClientUrl(orderId) {
-      const baseUrl = window.location.href.split('?')[0].replace('index.html', '');
-      return baseUrl + 'cliente.html?sessao=' + baseSession + '_' + orderId + '&pedido=' + orderId;
+    // Busca pedidos ativos diretamente do backend SQLite
+    async function carregarPedidos() {
+      try {
+        const res = await demoFetch(apiPath('/api/pedidos'));
+        if (res.ok) {
+          const dados = await res.json();
+          activeOrders = dados.map(p => ({
+            id: String(p.numero),
+            dbId: p.id,
+            token: p.token,
+            items: Array.isArray(p.itens) && p.itens.length > 0 ? p.itens.join(', ') : 'Acompanhamento por senha',
+            clienteNome: p.cliente_nome || '', clienteTelefone: p.cliente_telefone || '', restauranteNome: p.restaurante_nome || '',
+            status: p.status,
+            createdAt: p.created_at
+          }));
+          renderOrders();
+        }
+      } catch (e) {
+        console.warn('Erro ao carregar pedidos da API:', e);
+      }
+    }
+
+    // Receptor SSE da Cozinha (sincronização em tempo real)
+    function conectarSseKds() {
+      const sse = new DemoEvents(apiPath('/api/kds/stream'));
+      sse.addEventListener('novo_pedido', (e) => {
+        try {
+          const p = JSON.parse(e.data);
+          const existe = activeOrders.some(o => o.dbId === p.id);
+          if (!existe) {
+            activeOrders.push({
+              id: String(p.numero),
+              dbId: p.id,
+              token: p.token,
+              items: Array.isArray(p.itens) && p.itens.length > 0 ? p.itens.join(', ') : 'Acompanhamento por senha',
+              clienteNome: p.cliente_nome || '', clienteTelefone: p.cliente_telefone || '', restauranteNome: p.restaurante_nome || '',
+              status: p.status,
+              createdAt: p.created_at
+            });
+            renderOrders();
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      });
+
+      sse.addEventListener('status_alterado', (e) => {
+        try {
+          const p = JSON.parse(e.data);
+          const order = activeOrders.find(o => o.dbId === p.id);
+          if (order) {
+            order.status = p.status;
+            if (p.status === 'entregue') {
+              activeOrders = activeOrders.filter(o => o.dbId !== p.id);
+              finishedCount++;
+              carregarResumo();
+            }
+            if (currentTab === 'active') {
+              renderOrders();
+            } else {
+              renderFinishedOrders();
+            }
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      });
+    }
+
+    let currentTab = 'active';
+    let finishedOrders = [];
+
+    async function carregarResumo() {
+      try {
+        const res = await demoFetch(apiPath('/api/pedidos/historico?periodo=hoje&limite=50'));
+        if (res.ok) {
+          const dados = await res.json();
+          finishedCount = dados.total_hoje || 0;
+          finishedOrders = dados.pedidos || [];
+          const el = document.getElementById('finished-count');
+          if (el) el.textContent = finishedCount;
+          if (currentTab === 'finished') {
+            renderFinishedOrders();
+          }
+        }
+      } catch (e) {
+        console.warn('Erro ao carregar resumo de finalizados:', e);
+      }
+    }
+
+    function renderFinishedOrders() {
+      grid.innerHTML = '';
+      document.getElementById('active-count').textContent = activeOrders.length;
+      document.getElementById('finished-count').textContent = finishedCount;
+
+      if (finishedOrders.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div style="font-size: 2.5rem; margin-bottom: 8px;">📦</div>
+            <h3>Nenhum pedido finalizado hoje ainda.</h3>
+            <p style="font-size: 0.85rem; margin-top: 6px;">
+              Os pedidos entregues aparecerão aqui em ordem cronológica reversa.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      finishedOrders.forEach(order => {
+        const card = document.createElement('div');
+        card.id = 'finished-card-' + order.id;
+        card.className = 'order-card';
+        card.style.opacity = '0.9';
+        card.style.borderColor = '#10b981';
+
+        const entregueHora = order.entregue_at ? new Date(order.entregue_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'Hoje';
+
+        card.innerHTML = `
+          <div>
+            <div class="card-top">
+              <div>
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Senha</div>
+                <div class="card-id">#${order.numero}</div>
+              </div>
+              <div class="card-meta">Entregue às ${entregueHora}</div>
+            </div>
+            <div class="status-badge pronto" style="background:#064e3b;color:#6ee7b7">✓ Entregue & Finalizado</div>
+            <div class="order-summary">${escapeHtml(Array.isArray(order.itens) ? order.itens.join(', ') : 'Pedido concluído')}</div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function getClientUrl(order) {
+      const baseUrl = publicBaseUrl || (window.location.origin + appBasePath);
+      return `${baseUrl}/cliente.html?token=${encodeURIComponent(order.token)}&pedido=${encodeURIComponent(order.id)}`;
     }
 
     function getElapsedText(createdAt) {
@@ -530,7 +703,7 @@
             <div style="font-size: 2.5rem; margin-bottom: 8px;">🍽️</div>
             <h3>Cozinha em dia! Nenhum pedido pendente.</h3>
             <p style="font-size: 0.85rem; margin-top: 6px;">
-              Clique em <strong>"➕ Simular Novo Pedido (PDV)"</strong> acima para adicionar mais pedidos.
+              Use <strong>"Inserir pedido manual"</strong> para cadastrar a primeira senha.
             </p>
           </div>
         `;
@@ -559,7 +732,7 @@
             </div>
 
             <div class="status-badge ${order.status}">${statusLabel}</div>
-            <div class="order-summary">${order.items}</div>
+            <div class="order-summary">${order.clienteNome ? escapeHtml(order.clienteNome) + ' · ' : ''}${escapeHtml(order.items)}</div>
 
             <!-- Miniatura do QR Code que abre o display expandido -->
             <div class="qr-strip" onclick="openQrModal('${order.id}')" title="Toque para ampliar o QR Code deste pedido">
@@ -585,14 +758,9 @@
               </button>
             `}
           </div>
+          ${order.clienteTelefone ? `<button type="button" class="btn-action-kds btn-finish-kds" style="margin-top:8px;width:100%" onclick="shareOrderWhatsApp('${order.dbId}')">📱 Enviar pelo WhatsApp</button>` : ''}
         `;
 
-        if (order.clienteNome) {
-          const nameLine = document.createElement('div');
-          nameLine.className = 'order-client-name';
-          nameLine.textContent = order.clienteNome;
-          card.querySelector('.order-summary')?.prepend(nameLine);
-        }
         grid.appendChild(card);
 
         // Renderiza o QR Code em miniatura
@@ -600,7 +768,7 @@
           const container = document.getElementById('thumb-qr-' + order.id);
           if (container && !container.hasChildNodes()) {
             new QRCode(container, {
-              text: getClientUrl(order.id),
+              text: getClientUrl(order),
               width: 48,
               height: 48,
               colorDark: '#0f172a',
@@ -612,85 +780,169 @@
       });
     }
 
-    // AÇÃO: Chamar pedido (muda status e toca no celular do cliente)
-    window.callOrder = function(orderId) {
+    // O WhatsApp apenas abre a conversa: o envio depende do funcionário.
+    window.shareOrderWhatsApp = function(dbId) {
+      const order = activeOrders.find(o => o.dbId === dbId);
+      if (!order || !order.clienteTelefone) return;
+      const pronto = order.status === 'pronto';
+      const estabelecimento = order.restauranteNome ? order.restauranteNome + ': ' : '';
+      const msg = pronto
+        ? `${estabelecimento}Seu pedido #${order.id} está pronto para retirada. Acompanhe: ${getClientUrl(order)}`
+        : `${estabelecimento}Acompanhe seu pedido #${order.id}: ${getClientUrl(order)}`;
+      const phone = String(order.clienteTelefone).replace(/\D/g, '');
+      const international = phone.length <= 11 ? '55' + phone : phone;
+      window.open('https://wa.me/' + international + '?text=' + encodeURIComponent(msg), '_blank', 'noopener,noreferrer');
+    };
+
+    // Chamar e finalizar somente após confirmação do servidor.
+    window.callOrder = async function(orderId) {
       const order = activeOrders.find(o => o.id === orderId);
-      if (order) {
+      if (!order || !order.dbId) return;
+      try {
+        const resposta = await demoFetch(apiPath(`/api/pedidos/${order.dbId}/status`), {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'pronto' })
+        });
+        if (!resposta.ok) throw new Error('Falha ao chamar pedido');
         order.status = 'pronto';
-        broadcastOrder(orderId, 'pronto');
         renderOrders();
+      } catch (erro) {
+        alert('Não foi possível avisar o cliente. Verifique a conexão e tente novamente.');
       }
     };
 
-    // AÇÃO: Finalizar pedido (some da tela do KDS com animação suave)
-    window.finishOrder = function(orderId) {
-      const cardEl = document.getElementById('card-' + orderId);
-      if (cardEl) {
-        cardEl.classList.add('fade-out');
+    window.finishOrder = async function(orderId) {
+      const order = activeOrders.find(o => o.id === orderId);
+      if (!order || !order.dbId) return;
+      try {
+        const resposta = await demoFetch(apiPath(`/api/pedidos/${order.dbId}/status`), {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'entregue' })
+        });
+        if (!resposta.ok) throw new Error('Falha ao finalizar pedido');
+        // A remoção é idempotente: o SSE pode ter chegado antes da resposta HTTP.
+        if (activeOrders.some(o => o.dbId === order.dbId)) {
+          activeOrders = activeOrders.filter(o => o.dbId !== order.dbId);
+          finishedCount++;
+          carregarResumo();
+          if (currentTab === 'active') {
+            renderOrders();
+          } else {
+            renderFinishedOrders();
+          }
+        }
+      } catch (erro) {
+        alert('Não foi possível finalizar. O pedido foi mantido no painel.');
       }
-
-      broadcastOrder(orderId, 'entregue');
-      finishedCount++;
-
-      setTimeout(() => {
-        activeOrders = activeOrders.filter(o => o.id !== orderId);
-        renderOrders();
-      }, 300);
     };
 
-    // Pedido manual: prévia local sem API; campos opcionais continuam recolhidos por padrão.
-    const manualDialog = document.getElementById('manual-order-dialog');
-    const manualForm = document.getElementById('manual-order-form');
-    const manualNumber = document.getElementById('manual-order-number');
-    const manualDetails = document.getElementById('manual-client-details');
-    const manualError = document.getElementById('manual-order-error');
-    const manualOpen = document.getElementById('btn-add-sim-order');
-    let manualInitialNumber = '';
-    function closeManualDialog() {
-      const changed = manualNumber.value !== manualInitialNumber ||
-        Boolean(document.getElementById('manual-order-name').value.trim()) ||
-        Boolean(document.getElementById('manual-order-phone').value.trim());
-      if (changed && !window.confirm('Descartar dados deste pedido?')) return;
-      manualDialog.close();
-      manualOpen.focus();
+    // CADASTRO MANUAL: sempre espera confirmação da API; nunca inventa token local.
+    const manualModal = document.getElementById('manual-modal');
+    const manualInput = document.getElementById('manual-number');
+    let sequenceConfig = { modo: 'manual', proximo_numero: 1 };
+    async function loadSequence() {
+      const res = await demoFetch(apiPath('/api/pedidos/sequencia'));
+      if (res.ok) sequenceConfig = await res.json();
+      manualInput.required = sequenceConfig.modo !== 'automatico';
+      manualInput.disabled = sequenceConfig.modo === 'automatico';
+      document.getElementById('manual-mode-note').textContent =
+        sequenceConfig.modo === 'automatico' ? 'Próxima senha automática: ' + sequenceConfig.proximo_numero : 'Digite a senha do pedido.';
     }
-    manualOpen.addEventListener('click', () => {
-      manualForm.reset();
-      manualDetails.open = false;
-      manualError.textContent = '';
-      manualNumber.value = String(orderCounter + 1);
-      manualInitialNumber = manualNumber.value;
-      manualDialog.showModal();
-      manualNumber.focus();
+    document.getElementById('btn-sequence-settings').addEventListener('click', async () => {
+      await loadSequence();
+      document.getElementById('sequence-mode').value = sequenceConfig.modo;
+      document.getElementById('sequence-start').value = sequenceConfig.proximo_numero;
+      document.getElementById('sequence-error').textContent = '';
+      snapshotSequence=sequenceOriginal();
+      document.getElementById('sequence-modal').classList.add('open');
+      document.getElementById('sequence-mode').focus();
     });
-    document.getElementById('manual-order-x').addEventListener('click', closeManualDialog);
-    document.getElementById('manual-order-cancel').addEventListener('click', closeManualDialog);
-    manualDialog.addEventListener('cancel', event => {
-      event.preventDefault();
-      closeManualDialog();
+    const sequenceModal=document.getElementById('sequence-modal');
+    const sequenceOriginal=()=>({modo:sequenceConfig.modo,numero:String(sequenceConfig.proximo_numero)});
+    let snapshotSequence=sequenceOriginal();
+    const closeSequence=()=>{
+      if(document.getElementById('sequence-save').disabled)return;
+      const changed=document.getElementById('sequence-mode').value!==snapshotSequence.modo||document.getElementById('sequence-start').value!==snapshotSequence.numero;
+      if(changed&&!confirm('Descartar alterações da numeração?'))return;
+      sequenceModal.classList.remove('open');document.getElementById('btn-sequence-settings').focus();
+    };
+    document.getElementById('sequence-cancel').addEventListener('click',closeSequence);
+    document.getElementById('sequence-x').addEventListener('click',closeSequence);
+    document.getElementById('sequence-save').addEventListener('click', async () => {
+      const error = document.getElementById('sequence-error');
+      const save=document.getElementById('sequence-save');
+      if(save.disabled)return;
+      save.disabled=true;save.textContent='Salvando…';error.textContent='';
+      try {
+        const res = await demoFetch(apiPath('/api/pedidos/sequencia'), {
+          method: 'PUT', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ modo: document.getElementById('sequence-mode').value,
+            proximo_numero: Number(document.getElementById('sequence-start').value) })
+        });
+        const data = await res.json();
+        if (!res.ok) throw Error(data.error || 'Falha ao salvar');
+        sequenceConfig = data;
+        document.getElementById('sequence-modal').classList.remove('open');
+        document.getElementById('btn-sequence-settings').focus();
+      } catch (e) { error.textContent = e.message; }
+      finally {save.disabled=false;save.textContent='Salvar configuração';}
     });
-    manualForm.addEventListener('submit', event => {
+    document.getElementById('btn-add-manual-order').addEventListener('click', async () => {
+      await loadSequence();
+      document.getElementById('manual-error').textContent = '';
+      manualInput.value = '';
+      document.getElementById('manual-name').value = '';
+      document.getElementById('manual-phone').value = '';
+      manualModal.classList.add('open');
+      manualInput.focus();
+    });
+    const closeManual=()=>{
+      if(document.getElementById('manual-submit').disabled)return;
+      const changed=[manualInput,document.getElementById('manual-name'),document.getElementById('manual-phone')].some(field=>field.value.trim());
+      if(changed&&!confirm('Descartar dados do pedido manual?'))return;
+      manualModal.classList.remove('open');document.getElementById('btn-add-manual-order').focus();
+    };
+    document.getElementById('manual-cancel').addEventListener('click',closeManual);
+    document.getElementById('manual-x').addEventListener('click',closeManual);
+    document.getElementById('manual-form').addEventListener('submit', async (event) => {
       event.preventDefault();
-      if (!manualForm.reportValidity()) return;
-      const number = Number(manualNumber.value);
-      if (!Number.isSafeInteger(number) || number < 1) {
-        manualError.textContent = 'Informe um número de pedido válido.';
+      const numero = Number(manualInput.value);
+      const errorEl = document.getElementById('manual-error');
+      if (sequenceConfig.modo !== 'automatico' && (!Number.isSafeInteger(numero) || numero <= 0)) {
+        errorEl.textContent = 'Digite um número de pedido válido.';
         return;
       }
-      if (activeOrders.some(order => order.id === String(number))) {
-        manualError.textContent = 'Este número já está em uso na lista de pedidos ativos.';
-        return;
+      const submit = document.getElementById('manual-submit');
+      submit.disabled = true;
+      submit.textContent = 'Criando pedido...';
+      try {
+        const resposta = await demoFetch(apiPath('/api/pedidos'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ numero: sequenceConfig.modo === 'automatico' ? null : numero, itens: [],
+            cliente_nome: document.getElementById('manual-name').value,
+            cliente_telefone: document.getElementById('manual-phone').value })
+        });
+        const pedido = await resposta.json();
+        if (!resposta.ok) throw new Error(pedido.error || 'Não foi possível criar pedido.');
+        manualModal.classList.remove('open');
+        if (!activeOrders.some(o => o.dbId === pedido.id)) {
+          activeOrders.push({
+            id: String(pedido.numero), dbId: pedido.id, token: pedido.token,
+            items: 'Acompanhamento por senha', status: pedido.status, createdAt: pedido.created_at,
+            clienteNome: pedido.cliente_nome || '', clienteTelefone: pedido.cliente_telefone || '', restauranteNome: pedido.restaurante_nome || ''
+          });
+          renderOrders();
+        }
+        openQrModal(String(pedido.numero));
+      } catch (erro) {
+        errorEl.textContent = erro.message || 'Falha de comunicação. Tente novamente.';
+      } finally {
+        submit.disabled = false;
+        submit.textContent = '✓ Criar pedido';
       }
-      const nome = document.getElementById('manual-order-name').value.trim();
-      const telefone = document.getElementById('manual-order-phone').value.trim();
-      const newOrder = { id:String(number), items:'Pedido manual', clienteNome:nome,
-        clienteTelefone:telefone, status:'preparo', createdAt:Date.now() };
-      activeOrders.push(newOrder);
-      orderCounter = Math.max(orderCounter, number);
-      renderOrders();
-      document.getElementById('card-' + number)?.classList.add('fade-in');
-      manualDialog.close();
-      manualOpen.focus();
     });
 
     // Atualiza os minutos decorridos a cada 30 segundos
@@ -698,14 +950,17 @@
 
     // Modal de QR Code ampliado
     window.openQrModal = function(orderId) {
+      const order = activeOrders.find(o => o.id === orderId);
+      if (!order) return;
+
       const modal = document.getElementById('qr-modal');
       const title = document.getElementById('modal-title');
       const qrContainer = document.getElementById('modal-qrcode');
       const linkLabel = document.getElementById('modal-link-label');
 
-      title.textContent = 'Display do Caixa · Pedido #' + orderId;
+      title.textContent = 'Display do Caixa · Pedido #' + order.id;
       qrContainer.innerHTML = '';
-      const url = getClientUrl(orderId);
+      const url = getClientUrl(order);
       linkLabel.textContent = url;
 
       new QRCode(qrContainer, {
@@ -717,15 +972,83 @@
         correctLevel: QRCode.CorrectLevel.M
       });
 
+      qrFocusReturn=document.activeElement?.closest('#manual-modal')?document.getElementById('btn-add-manual-order'):document.activeElement;
       modal.classList.add('open');
+      document.getElementById('qr-x').focus();
     };
 
-    document.getElementById('btn-close-modal').addEventListener('click', () => {
-      document.getElementById('qr-modal').classList.remove('open');
+    let qrFocusReturn=null;
+    const closeQr=()=>{document.getElementById('qr-modal').classList.remove('open');qrFocusReturn?.focus();};
+    document.getElementById('btn-close-modal').addEventListener('click',closeQr);
+    document.getElementById('qr-x').addEventListener('click',closeQr);
+    document.addEventListener('keydown',event=>{
+      const active=['qr-modal','manual-modal','sequence-modal'].map(id=>document.getElementById(id)).find(el=>el.classList.contains('open'));
+      if(!active)return;
+      if(event.key==='Escape'){event.preventDefault();if(active.id==='qr-modal')closeQr();else if(active.id==='manual-modal')closeManual();else closeSequence();return;}
+      if(event.key!=='Tab')return;
+      const buttons=Array.from(active.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),a[href]'));
+      if(!buttons.length)return;
+      const first=buttons[0],last=buttons[buttons.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
     });
 
-    // Inicialização
-    renderOrders();
+    document.getElementById('btn-print-qr').addEventListener('click', () => window.print());
+    // A entrada pelo KDS requer sessão; o servidor também protege as APIs.
+    demoFetch(apiPath('/api/auth/me'), { credentials: 'same-origin' })
+      .then(r => r.ok ? r.json() : Promise.reject(new Error('Sessão expirada')))
+      .then(user => {
+        if (user.papel === 'gerente' || user.papel === 'master') {
+          const link = document.getElementById('admin-link');
+          link.style.display = 'inline-flex';
+          if (user.papel === 'master') {
+            link.textContent = '← Voltar à administração';
+            link.addEventListener('click', async event => {
+              event.preventDefault();
+              try {
+                const result = await demoFetch(apiPath('/api/admin/contexto/sair'), {
+                  method: 'POST', credentials: 'same-origin'
+                });
+                if (!result.ok) throw new Error('Falha ao sair do restaurante');
+                location.assign(appBasePath + '/admin.html');
+              } catch (error) {
+                alert('Não foi possível voltar ao painel. Tente novamente.');
+              }
+            });
+          }
+        }
+      })
+      .catch(() => window.location.replace(appBasePath + '/landing/'));
+    document.getElementById('btn-logout').addEventListener('click', async () => {
+      try { await demoFetch(apiPath('/api/auth/logout'), { method: 'POST', credentials: 'same-origin' }); }
+      finally { window.location.replace(appBasePath + '/landing/'); }
+    });
+
+    document.getElementById('btn-tab-active')?.addEventListener('click', () => {
+      currentTab = 'active';
+      document.getElementById('btn-tab-active').style.borderColor = '#3b82f6';
+      document.getElementById('btn-tab-active').style.color = '#f8fafc';
+      document.getElementById('btn-tab-finished').style.borderColor = 'transparent';
+      document.getElementById('btn-tab-finished').style.color = '#94a3b8';
+      renderOrders();
+    });
+
+    document.getElementById('btn-tab-finished')?.addEventListener('click', () => {
+      currentTab = 'finished';
+      document.getElementById('btn-tab-finished').style.borderColor = '#10b981';
+      document.getElementById('btn-tab-finished').style.color = '#f8fafc';
+      document.getElementById('btn-tab-active').style.borderColor = 'transparent';
+      document.getElementById('btn-tab-active').style.color = '#94a3b8';
+      carregarResumo();
+      renderFinishedOrders();
+    });
+
+    // Carrega a URL configurada antes de permitir o primeiro QR.
+    carregarConfiguracao().finally(() => {
+      carregarPedidos();
+      carregarResumo();
+      conectarSseKds();
+    });
   </script>
 </body>
 </html>
