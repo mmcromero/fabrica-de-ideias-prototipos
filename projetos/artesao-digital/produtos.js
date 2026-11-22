@@ -224,7 +224,7 @@ const originOf=p=>p.origin||'own';
     ${bulk?`<div class="pl-bulk-desktop">${bulkTools()}</div>`:''}
     <div class="pl-table"><div class="pl-table-head">${bulk?'<span>Selecionar</span>':''}<span>Foto</span><span>Produto e preços</span><span>Categoria</span><span>Origem</span><span>Estoque</span><span>No catálogo</span><span>Ações</span></div>
       <div>${visible.length?visible.map(row).join(''):'<div class="pl-empty">Nenhum produto encontrado.</div>'}</div></div>
-    ${pager}${sheet}</section>`};
+    ${pager}${sheet}${adOfflinePanel()}</section>`};
 }
   function detailsView(){
     const p=products.find(x=>x.id===chosenId);if(!p)return listView();
@@ -369,7 +369,7 @@ const originOf=p=>p.origin||'own';
   function syncModuleNav(){
     const publicScreens=['landing','signup','login','invite','admin-login','admin-home'];
     moduleNav.hidden=publicScreens.includes(screen);
-    const current=['global-products','ap-detail','ap-editor'].includes(screen)?'module-products':screen==='global-settings'?null:'pdv';
+    const current=['global-products','ap-detail','ap-editor','ad-offline'].includes(screen)?'module-products':screen==='global-settings'?null:'pdv';
     moduleNav.querySelectorAll('button').forEach(button=>{
       if(button.dataset.productAction===current)button.setAttribute('aria-current','page');
       else button.removeAttribute('aria-current');
@@ -383,7 +383,7 @@ const originOf=p=>p.origin||'own';
     syncPrototypeFooter();
     syncHeaderActionState();
     if(screen==='entry')$('bottom-nav').hidden=true;
-    if(screen==='ap-detail'||screen==='ap-editor'){
+    if(screen==='ap-detail'||screen==='ap-editor'||screen==='ad-offline'){
       $('bottom-nav').hidden=true;$('event-bar').hidden=true;$('demo-status').hidden=true;
     }
   };

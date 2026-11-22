@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Artesão Digital</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; form-action 'none'; base-uri 'none'"><title>Artesão Digital</title>
 <style>
 :root {
  color-scheme: light; --green:#126638; --deep:#113823; --ink:#162b20; --muted:#50645a;
@@ -657,13 +657,13 @@ function render(){
  const session=screen==='settings'?settingsSession():active();
  const operational=active()&&['catalog','cart','payment','review','complete'].includes(screen);
  $('event-bar').classList.toggle('compact',data.compactHeader);
- $('event-bar').innerHTML=session&&!['entry','landing','login','signup','invite','admin-login','admin-home','global-products','global-settings','pdv-settings','all-events'].includes(screen)?`<div class="session-line">Evento ${esc(eventName(session))} · ${dateText(session.date)}</div>
+ $('event-bar').innerHTML=session&&!['ad-offline','entry','landing','login','signup','invite','admin-login','admin-home','global-products','global-settings','pdv-settings','all-events'].includes(screen)?`<div class="session-line">Evento ${esc(eventName(session))} · ${dateText(session.date)}</div>
   ${operational?`<div class="visitors">${btn((active().visitors??0)+' visitantes','visitors',{style:'ghost',aria:'Corrigir total de visitantes'})}${btn('+1','visitor-add',{style:'primary',aria:'Somar um visitante'})}</div>`:''}`:'';
  const queued=data.sales.filter(s=>s.sync==='pending').length;
  $('demo-status').innerHTML=data.offline||queued?`<div class="row"><span>${data.offline?'Offline · simulação':queued+' venda(s) aguardando sincronização'}</span>
   ${data.offline?btn('Reconectar','toggle-offline',{style:'ghost'}):btn('Sincronizar','sync-sales',{style:'ghost'})}</div>`:'';
  $('back').disabled=false; $('back').setAttribute('aria-label','Abrir menu principal'); $('back').innerHTML=icon('menu');
- const outsidePdv=['landing','signup','login','invite','admin-login','admin-home','global-products','global-settings'].includes(screen);
+ const outsidePdv=['ad-offline','landing','signup','login','invite','admin-login','admin-home','global-products','global-settings'].includes(screen);
  document.querySelector('.top').hidden=['landing','signup','login','invite','admin-login','admin-home'].includes(screen);
  $('bottom-nav').hidden=outsidePdv;
  $('event-bar').hidden=outsidePdv;
@@ -1162,7 +1162,16 @@ function reportView(){
   row('Dinheiro contado',money(r.counted))+row('Diferença de caixa',money(r.difference),'total'))+
   btn('Imprimir relatório','print-report'),foot:btn('Voltar ao PDV','entry',{style:'primary full'})};
 }
-const views={landing:landingView,login:loginView,signup:signupView,invite:inviteView,'admin-login':adminLoginView,'admin-home':adminHomeView,'global-products':globalProductsView,'global-settings':globalSettingsView,'pdv-settings':pdvSettingsView,entry:entryView,'all-events':allEventsView,'new-session':newSessionView,stock:stockView,catalog:catalogView,cart:cartView,payment:paymentView,
+const adDemoKey='artesao-portfolio-offline-v1';
+function adRead(){try{return JSON.parse(localStorage.getItem(adDemoKey))||{copies:{},invites:{}}}catch{return {copies:{},invites:{}}}}
+let adDemo=adRead(),adAccount='demo-a',adUnlocked=false;
+function adSave(){try{localStorage.setItem(adDemoKey,JSON.stringify(adDemo))}catch{}}
+function adPrepare(model,account,items,now){model.copies[account]={preparedAt:now,products:items.filter(p=>!p.archived).map(p=>({name:p.name,sku:p.sku,prices:{...p.prices},category:p.category,hasPhoto:!!p.hasPhoto,id:p.id}))};return model.copies[account]}
+function adInvite(model,id){return model.invites[id]||(model.invites[id]='DEMO-'+id.toUpperCase()+'-2026')}
+function adOfflinePanel(){const copy=adUnlocked&&adDemo.copies[adAccount];return '<details class="card stack"><summary>Produtos sem internet</summary><p class="muted">Demonstração local. Sair bloqueia a consulta sem apagar a cópia; entrar com a mesma conta permite recuperá-la.</p><p>'+(copy?'Última preparação: '+esc(new Date(copy.preparedAt).toLocaleString('pt-BR')):'Nenhuma preparação confirmada para esta conta e negócio.')+'</p>'+btn('Preparar para uso offline','ad-prepare',{style:'primary full'})+(copy?btn('Consultar cópia preparada','ad-consult',{style:'full'}):'')+'</details>'}
+function adOfflineView(){const copy=adUnlocked&&adDemo.copies[adAccount];return {body:moduleHeading('box','Produtos sem internet','Consulta demonstrativa, somente leitura.')+(!copy?card('<p>Entre com a mesma conta para acessar a cópia preparada.</p>'):card('<p>Última preparação: '+esc(new Date(copy.preparedAt).toLocaleString('pt-BR'))+'</p>'+copy.products.map(p=>'<article class="product-line">'+photo(p)+'<div><h3>'+esc(p.name)+'</h3><small>'+esc(p.sku)+'</small></div><strong>'+money(p.prices.retail)+'</strong></article>').join('')))+btn('Voltar aos produtos','global-products',{style:'full'})};}
+
+const views={'ad-offline':adOfflineView,landing:landingView,login:loginView,signup:signupView,invite:inviteView,'admin-login':adminLoginView,'admin-home':adminHomeView,'global-products':globalProductsView,'global-settings':globalSettingsView,'pdv-settings':pdvSettingsView,entry:entryView,'all-events':allEventsView,'new-session':newSessionView,stock:stockView,catalog:catalogView,cart:cartView,payment:paymentView,
  review:reviewView,complete:completeView,settings:settingsView,closing:closingView,report:reportView,'sale-detail':saleDetailView};
 
 // Navegação e ações. Nenhuma chamada de rede.
@@ -1284,11 +1293,11 @@ function publicEntryView(mode){
  const cardEnd='</section>';
  const legal='<nav class="public-footer-nav" aria-label="Informações do Artesão Digital">'+
   '<button type="button" data-prototype-footer="help">Ajuda</button>'+
-  '<a target="_blank" rel="noopener noreferrer" href="https://artesaodigital.com.br/artesaos-piloto/legal">Termos de Uso</a>'+
-  '<a target="_blank" rel="noopener noreferrer" href="https://artesaodigital.com.br/artesaos-piloto/legal#privacy">Política de Privacidade</a>'+
-  '<a target="_blank" rel="noopener noreferrer" href="https://artesaodigital.com.br/artesaos-piloto/legal#cookies">Política de Cookies</a>'+
+  '<span>Termos de Uso (somente no produto real)</span>'+
+  '<span>Política de Privacidade (somente no produto real)</span>'+
+  '<span>Política de Cookies (somente no produto real)</span>'+
   btn('Acesso administrativo','auth-admin',{style:'public-footer-link'})+'</nav>'+
-  '<small class="ap-footer-version">Artesão Digital · protótipo navegável</small>';
+  '<small class="ap-footer-version">Artesão Digital · referência 0.2.0-dev.28 · demonstração</small>';
  let content='';
  if(mode==='signup'){
   content=`<h1 tabindex="-1">Quero participar do piloto</h1>
@@ -1308,7 +1317,7 @@ function publicEntryView(mode){
      <span class="signup-note__icon" aria-hidden="true">✓</span>
      <h2 id="signup-note-privacy-title">Como usamos seus dados</h2>
     </div>
-    <p class="public-privacy" id="signup-privacy-copy">Seus dados serão usados somente pela administração do Artesão Digital para organizar contatos sobre futuros convites, por até 90 dias. O envio não cria uma conta nem garante convite. Nenhuma mensagem é enviada automaticamente.</p>
+    <p class="public-privacy" id="signup-privacy-copy">Use informações fictícias. A simulação não envia seus dados, não cria conta real nem garante convite.</p>
    </aside>
    <label class="public-consent"><input name="consent" type="checkbox" aria-describedby="signup-privacy-copy" required><span>Quero receber contato sobre convites e li a finalidade acima.</span></label>
    <button type="submit" class="primary full">Solicitar participação</button>
@@ -1317,8 +1326,8 @@ function publicEntryView(mode){
   ${btn('Já sou cadastrado','auth-login',{style:'public-switch'})}`;
  }else if(mode==='login'){
   content=`<h1 tabindex="-1">Bem-vindo de volta!</h1>
-  <p class="public-intro">Entre na sua conta para continuar no Artesão Digital.</p>
-  ${googleSignIn('Entrar com Google')}
+  <p class="public-intro">Entre com uma conta fictícia para testar o Artesão Digital. Nenhuma autenticação real.</p>
+  <label>Conta de demonstração<select id="ad-demo-account"><option value="demo-a">Conta Exemplo A</option><option value="demo-b">Conta Exemplo B</option></select></label>${googleSignIn('Entrar com Google (simulado)')}
   ${btn('Tenho um convite','auth-invite',{style:'public-secondary full'})}
   ${btn('Quero participar do piloto','auth-signup',{style:'public-switch'})}
   <p class="public-help">Seus dados são separados das demais contas. Projeto piloto gratuito, em construção e com acesso por convite.</p>`;
@@ -1345,14 +1354,14 @@ function publicEntryView(mode){
 function landingView(){
  return {body:'<section class="landing-placeholder" aria-label="Página inicial do Artesão Digital"><h1 class="landing-visually-hidden">Artesão Digital</h1>'+
   btn('Quero me cadastrar','auth-signup',{style:'primary full'})+
-  btn('Já tenho login','auth-login',{style:'public-secondary full'})+
+  btn('Já tenho login','auth-login',{style:'public-secondary full'})+'<p class="muted">Demonstração com dados fictícios. <a href="../../">Voltar ao portfólio</a></p>'+
  '</section>'};
 }
 function signupView(){return publicEntryView('signup');}
 function loginView(){return publicEntryView('login');}
 function inviteView(){return publicEntryView('invite');}
 function adminLoginView(){return publicEntryView('admin-login');}
-function adminHomeView(){return {body:`<div class="public-entry"><div class="public-brand"><img src="${officialPublicLogo}" alt="Artesão Digital"></div><section class="public-card"><h1 tabindex="-1">Administração</h1><p class="public-intro">Área administrativa do Artesão Digital.</p><div class="admin-overview"><h2>Interessados no piloto</h2><p>Inscrições e convites</p><h2>Usuários cadastrados</h2><p>Contas do aplicativo</p><h2>Chamados de suporte</h2><p>Atendimento aos usuários</p></div>${btn('Sair','admin-logout',{style:'public-secondary full'})}</section></div>`};}
+function adminHomeView(){return {body:`<div class="public-entry"><div class="public-brand"><img src="${officialPublicLogo}" alt="Artesão Digital"></div><section class="public-card"><h1 tabindex="-1">Administração</h1><p class="public-intro">Área administrativa do Artesão Digital.</p><div class="admin-overview"><h2>Interessados no piloto</h2><p>Inscrições e convites fictícios. Nenhuma mensagem será enviada.</p>${['i1','i2'].map((id,i)=>'<section class="card"><strong>Pessoa Exemplo '+(i+1)+'</strong>'+btn(adDemo.invites[id]?'Exibir convite':'Enviar convite','ad-invite',{id,style:'full'})+'</section>').join('')}<h2>Usuários cadastrados</h2>${btn('Ver usuários cadastrados','ad-users',{style:'full'})}<h2>Chamados de suporte</h2><p>Atendimento aos usuários</p></div>${btn('Sair','admin-logout',{style:'public-secondary full'})}</section></div>`};}
 function globalProductsView(){
  return {body:title('Produtos e fabricação','Módulo principal do primeiro lançamento','box')+
   card('<h2>Produtos e fabricação</h2><p class="muted">Cadastre produtos e organize as informações de fabricação e preços.</p>')+
@@ -1412,20 +1421,25 @@ document.addEventListener('click',event=>{
  const {action,id=''}=trigger.dataset,index=Number(id);
  switch(action){
   case 'entry': case 'catalog': case 'cart': case 'all-events': case 'global-products': case 'global-settings': case 'pdv-settings': go(action);break;
-  case 'nav-catalog':navCatalog();break;
+  case 'ad-prepare': {if(!adUnlocked){feedback('Entre com uma conta demonstrativa.');break;}const copy=adPrepare(adDemo,adAccount,products,Date.now());adSave();render();feedback('Preparação simulada concluída: '+copy.products.length+' produto(s).');break;}
+ case 'ad-consult':if(adUnlocked&&adDemo.copies[adAccount])go('ad-offline');else feedback('Entre novamente com a mesma conta.');break;
+ case 'ad-invite':{const code=adInvite(adDemo,id);adSave();render();modal('Convite demonstrativo','<p>Nenhum envio real efetuado.</p><p><strong>'+esc(code)+'</strong></p>');break;}
+ case 'ad-users':modal('Usuários cadastrados','<p>Conta Exemplo A · ativa</p><p>Conta Exemplo B · ativa</p>');break;
+ case 'nav-catalog':navCatalog();break;
   case 'nav-cart':navCart();break;
   case 'nav-more':pdvMoreMenu();break;
   case 'event-settings':showSettings();break;
   case 'auth-login':go('login');break;
   case 'auth-admin':go('admin-login');break;
-  case 'admin-logout':localStorage.setItem('pdv-v3-mock-logged-out','yes');go('login');break;
+  case 'admin-logout':adUnlocked=false;localStorage.setItem('pdv-v3-mock-logged-out','yes');go('login');break;
   case 'auth-signup':go('signup');break;
   case 'auth-invite':go('invite');break;
   case 'auth-google':
+   adAccount=document.getElementById('ad-demo-account')?.value||'demo-a';adUnlocked=true;
    if(screen==='invite'&&!$('invite-code').value.trim()){$('invite-status').textContent='Informe o código do convite.';$('invite-code').focus();break;}
    localStorage.setItem('pdv-v3-mock-logged-out','no');go('entry');break;
   case 'notifications':{const pending=data.sales.filter(s=>s.sync==='pending').length;modal('Alertas',`<p>${pending?pending+' venda(s) aguardando sincronização.':'Nenhuma notificação pendente no protótipo.'}</p>`);break;}
-  case 'exit-pdv':localStorage.setItem('pdv-v3-mock-logged-out','yes');go('login');break;
+  case 'exit-pdv':adUnlocked=false;localStorage.setItem('pdv-v3-mock-logged-out','yes');go('login');break;
   case 'menu':globalMenu();break;
   case 'module-more':pdvMoreMenu();break;
   case 'close': dialog.close();break;
@@ -1600,7 +1614,7 @@ document.addEventListener('submit',event=>{
  }
  if(event.target.id==='interest-form'){
   if(!event.target.reportValidity())return;
-  $('interest-status').textContent='Solicitação preenchida. A participação depende de análise e convite.';
+  $('interest-status').textContent='Solicitação simulada. Nenhum dado foi enviado.';
   return;
  }
  if(event.target.id==='visitors-form'){

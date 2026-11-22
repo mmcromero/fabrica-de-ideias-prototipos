@@ -4,7 +4,7 @@
     {
       "id": "pode-vir",
       "nome": "Pode Vir",
-      "descricao": "Agendamento e gestão de serviços. Página comercial e login demonstrativo.",
+      "descricao": "Agendamento e gestão de serviços com áreas de gestão, profissional e cliente.",
       "status": "prototipo",
       "publicado": true,
       "ordem": 10,
@@ -14,7 +14,7 @@
     {
       "id": "artesao-digital",
       "nome": "Artesão Digital",
-      "descricao": "Entrada, inscrição no piloto e fluxos navegáveis de produtos e PDV.",
+      "descricao": "Gestão de produtos, fabricação, PDV, convites e consulta offline simulada.",
       "status": "prototipo",
       "publicado": true,
       "ordem": 20,
@@ -33,7 +33,7 @@
     {
       "id": "pager-virtual",
       "nome": "Avisaqui",
-      "descricao": "Acompanhamento de pedidos de restaurante por QR Code e aviso de retirada. Protótipo visual do produto.",
+      "descricao": "Acompanhamento de pedidos, KDS, cliente, gestão e impressão com dados fictícios.",
       "status": "prototipo",
       "publicado": true,
       "ordem": 40,
