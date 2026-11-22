@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="warmSun" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24"/>
+      <stop offset="100%" stop-color="#F97316"/>
+    </linearGradient>
+    <linearGradient id="readyGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+
+  <rect id="background" width="100%" height="100%" rx="24" fill="#0B1120"/>
+
+  <!-- SÍMBOLO: Tigela/Sorriso Acolhedor + Arcos de Alerta Harmônico -->
+  <g transform="translate(65, 40)">
+    <!-- O Sorriso / Prato Acolhedor (Hospitalidade Gastronômica) -->
+    <path d="M 35 110 C 45 155, 125 155, 135 110 C 140 100, 130 96, 122 102 C 105 116, 65 116, 48 102 C 40 96, 30 100, 35 110 Z" fill="url(#warmSun)"/>
+
+    <!-- Ponto de Aroma / Coração Gastronômico -->
+    <circle cx="85" cy="85" r="9" fill="#FBBF24"/>
+
+    <!-- Arcos Concêntricos Superiores: Notificação Harmônica e Sem Fio -->
+    <path d="M 58 65 A 32 32 0 0 1 112 65" fill="none" stroke="#F97316" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 42 45 A 52 52 0 0 1 128 45" fill="none" stroke="#FBBF24" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 26 25 A 72 72 0 0 1 144 25" fill="none" stroke="url(#readyGreen)" stroke-width="5.5" stroke-linecap="round"/>
+
+    <!-- Brilho / Estrela de Prato Pronto -->
+    <path d="M 85 8 L 88 18 L 98 21 L 88 24 L 85 34 L 82 24 L 72 21 L 82 18 Z" fill="#34D399"/>
+  </g>
+
+  <!-- TIPOGRAFIA: Bipou! + Tagline -->
+  <g transform="translate(260, 115)">
+    <text font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="74" letter-spacing="-2px" fill="#FFFFFF">
+      Bipou<tspan fill="#34D399">!</tspan>
+    </text>
+
+    <text y="42" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="19" letter-spacing="0.5px" fill="#94A3B8">
+      A ESPERA QUE DÁ GOSTO <tspan fill="#F97316">·</tspan> SEU PRATO NO PONTO
+    </text>
+
+    <!-- Badges -->
+    <rect x="0" y="58" width="180" height="24" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="12" y="74" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="11.5" fill="#38BDF8">
+      🚶 LIBERDADE NO SHOPPING
+    </text>
+
+    <rect x="190" y="58" width="170" height="24" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="202" y="74" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="11.5" fill="#34D399">
+      🔊 ALERTA SONORO &amp; HÁPTICO
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" width="100%" height="100%">
+  <defs>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FB923C"/>
+      <stop offset="100%" stop-color="#EA580C"/>
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Fundo Sólido (Remova ou troque fill="none" para fundo transparente) -->
+  <rect id="background" width="100%" height="100%" rx="24" fill="#0B1120"/>
+
+  <!-- SÍMBOLO: Cloche Gastronômica + Ondas Acústicas do Bip -->
+  <g transform="translate(60, 30)">
+    <!-- Base sutil / Prato -->
+    <path d="M 30 145 C 50 152, 130 152, 150 145 C 155 143, 155 153, 148 156 C 120 165, 60 165, 32 156 C 25 153, 25 143, 30 145 Z" fill="#94A3B8"/>
+
+    <!-- Cloche Principal em Âmbar Brasa -->
+    <path d="M 32 135 C 34 85, 62 60, 90 60 C 118 60, 146 85, 148 135 Z" fill="url(#amberGrad)"/>
+
+    <!-- Puxador da Tampa / Centro de Emissão -->
+    <circle cx="90" cy="50" r="11" fill="#FBBF24"/>
+
+    <!-- Ondas Sonoras Expansivas (O "Bip" Sem Fio) -->
+    <!-- Arco de Onda 1 -->
+    <path d="M 68 34 A 28 28 0 0 1 112 34" fill="none" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+    
+    <!-- Arco de Onda 2 (Alcance do Shopping) -->
+    <path d="M 52 20 A 48 48 0 0 1 128 20" fill="none" stroke="url(#emeraldGrad)" stroke-width="5" stroke-linecap="round" filter="url(#glow)"/>
+
+    <!-- Ponto de Notificação / Sinal Ativo -->
+    <circle cx="90" cy="10" r="5" fill="#34D399" filter="url(#glow)"/>
+  </g>
+
+  <!-- TIPOGRAFIA: Bipou! + Tagline -->
+  <g transform="translate(260, 115)">
+    <!-- Nome Comercial -->
+    <text font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="76" letter-spacing="-2px" fill="#FFFFFF">
+      Bipou<tspan fill="#F97316">!</tspan>
+    </text>
+
+    <!-- Tagline Comercial -->
+    <text y="42" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="19" letter-spacing="0.5px" fill="#94A3B8">
+      PAGER DIGITAL <tspan fill="#34D399">·</tspan> O AVISO NO SEU CELULAR
+    </text>
+
+    <!-- Sub-badge de Acessibilidade / Sem App -->
+    <rect x="0" y="58" width="168" height="24" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="12" y="74" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="11.5" fill="#38BDF8">
+      ✓ SEM BAIXAR APP
+    </text>
+
+    <rect x="178" y="58" width="160" height="24" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+    <text x="190" y="74" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-weight="700" font-size="11.5" fill="#34D399">
+      ✓ WCAG ACESSÍVEL
+    </text>
+  </g>
+</svg>

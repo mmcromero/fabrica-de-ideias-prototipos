@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; form-action 'none'; base-uri 'none'"><title>Fábrica de Ideias — Estúdio de Branding &amp; Votação de Marcas</title>
+  <meta name="theme-color" content="#0b1120">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'"><title>Galeria de Logos — Bipou e Avisaqui</title>
   <style>
     :root {
       --bg: #0b1120;
@@ -12,56 +13,85 @@
       --text: #f8fafc;
       --muted: #94a3b8;
       --primary: #f97316;
-      --accent: #38bdf8;
+      --primary-hover: #ea580c;
       --success: #10b981;
-      --heart: #ef4444;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 
     body {
       background: var(--bg);
       color: var(--text);
-      padding: 32px 16px 80px;
+      min-height: 100vh;
+      padding: 24px 16px 60px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    header {
-      max-width: 900px;
+    .nav-bar {
       width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 16px;
+    }
+
+    .nav-bar a {
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+
+    .nav-bar a:hover {
+      color: #7dd3fc;
+    }
+
+    .badge-subfolder {
+      background: rgba(249, 115, 22, 0.15);
+      border: 1px solid #f97316;
+      color: #fb923c;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    header {
+      width: 100%;
+      max-width: 900px;
       text-align: center;
       margin-bottom: 28px;
     }
 
-    .badge-top {
-      display: inline-block;
-      background: rgba(249, 115, 22, 0.15);
-      color: var(--primary);
-      border: 1px solid var(--primary);
-      padding: 4px 12px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 12px;
-    }
-
     h1 {
-      font-size: 2rem;
-      font-weight: 800;
+      font-size: 2.1rem;
+      font-weight: 900;
       margin-bottom: 8px;
       background: linear-gradient(135deg, #f97316, #fbbf24);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
     }
 
     p.subtitle {
       color: var(--muted);
-      font-size: 0.95rem;
-      max-width: 650px;
-      margin: 0 auto 24px;
+      font-size: 1rem;
+      max-width: 720px;
+      margin: 0 auto 20px;
       line-height: 1.5;
     }
 
@@ -70,7 +100,7 @@
       justify-content: center;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
 
     .btn-toggle {
@@ -82,6 +112,9 @@
       font-weight: 600;
       font-size: 0.85rem;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       transition: all 0.2s;
     }
 
@@ -91,12 +124,12 @@
       color: #fff;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 32px;
-      max-width: 900px;
+    .main-container {
       width: 100%;
+      max-width: 900px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
     }
 
     .card {
@@ -114,12 +147,13 @@
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.2);
     }
 
     .card-title {
       font-size: 1.2rem;
-      font-weight: 700;
+      font-weight: 800;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -131,21 +165,39 @@
       text-transform: uppercase;
       padding: 4px 10px;
       border-radius: 999px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid #10b981;
+    }
+
+    .badge-tag.orange {
+      background: rgba(249, 115, 22, 0.15);
+      color: #fb923c;
+      border-color: #f97316;
+    }
+
+    .badge-tag.blue {
       background: rgba(56, 189, 248, 0.15);
-      color: var(--accent);
-      border: 1px solid var(--accent);
+      color: #38bdf8;
+      border-color: #38bdf8;
     }
 
     .preview-box {
-      padding: 40px 20px;
+      padding: 36px 20px;
       display: flex;
       justify-content: center;
       align-items: center;
-      transition: background 0.3s ease;
       min-height: 240px;
-      background: #0b1120;
+      transition: background 0.25s ease;
     }
 
+    .preview-box object {
+      max-width: 100%;
+      height: auto;
+      max-height: 200px;
+    }
+
+    /* Modos de visualização dinâmicos */
     body.view-transparent .preview-box {
       background-color: #1e293b;
       background-image: 
@@ -161,186 +213,126 @@
       background: #f1f5f9;
     }
 
-    .card-desc {
+    .card-body {
       padding: 20px 24px;
-      background: rgba(0, 0, 0, 0.2);
       border-top: 1px solid var(--border);
       font-size: 0.9rem;
       line-height: 1.6;
       color: #cbd5e1;
+      background: rgba(0, 0, 0, 0.15);
     }
 
-    .card-footer {
-      padding: 16px 24px;
-      background: #131d2e;
-      border-top: 1px solid var(--border);
+    .card-actions {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
     }
 
-    .vote-btn {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid var(--heart);
-      color: #fca5a5;
-      padding: 8px 18px;
-      border-radius: 999px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
+    .btn-file {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #38bdf8;
+      text-decoration: none;
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
       transition: all 0.2s;
     }
 
-    .vote-btn:hover {
-      background: var(--heart);
-      color: #fff;
-      transform: scale(1.05);
+    .btn-file:hover {
+      background: rgba(56, 189, 248, 0.2);
     }
 
-    .vote-count {
-      font-weight: 800;
-    }
-
-    .summary-panel {
-      max-width: 900px;
-      width: 100%;
-      margin-top: 40px;
-      background: #1e293b;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 24px;
+    footer {
+      margin-top: 48px;
       text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      width: 100%;
+      max-width: 900px;
     }
 
-    .btn-share {
-      background: var(--success);
-      color: #0b1120;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-      margin-top: 12px;
-    }
-  @media(min-width:740px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}}@media(max-width:420px){.card-header,.card-desc,.card-footer{padding:12px}.preview-box{min-height:170px;padding:20px 10px}.preview-box svg{max-width:100%;height:auto}.btn-toggle{min-height:44px}.card-footer{gap:8px;flex-wrap:wrap}}body.view-light .preview-box svg text{fill:#142033}.vote-btn,.btn-share,.btn-toggle{min-height:44px}button:focus-visible,a:focus-visible{outline:3px solid #38bdf8;outline-offset:3px}.demo-info{color:#cbd5e1;line-height:1.5;margin:12px 0}.back{color:#38bdf8;display:inline-block;padding:12px}</style>
+    /* Votação: ação principal integrada, com animação e estados acessíveis. */
+    .card .vote-select { display:flex; justify-content:center; padding:18px 24px 22px; background:linear-gradient(180deg,#1e293b 0%,#17243a 100%); border-top:1px solid #334155; }
+    .card .vote-select .vote-pick { position:relative; isolation:isolate; overflow:hidden; display:flex; justify-content:center; align-items:center; gap:12px; width:100%; min-height:60px; padding:15px 24px; border:1px solid #fdba74; border-radius:16px; background:linear-gradient(115deg,#ea580c 0%,#f97316 55%,#fb923c 100%); color:#fff; box-shadow:0 6px 0 #9a3412,0 14px 28px rgba(249,115,22,.23); font-size:1.05rem; font-weight:850; letter-spacing:.01em; line-height:1.3; text-align:center; cursor:pointer; transition:transform .2s ease,box-shadow .2s ease,filter .2s ease; }
+    .card .vote-select .vote-pick::before { content:"★"; display:inline-flex; justify-content:center; align-items:center; width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,.18); font-size:1.25rem; flex:none; }
+    .card .vote-select .vote-pick::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(105deg,transparent 25%,rgba(255,255,255,.23) 48%,transparent 72%); transform:translateX(-120%); animation:voteShine 4.5s ease-in-out infinite; pointer-events:none; }
+    .card .vote-select .vote-pick:hover:not(:disabled) { transform:translateY(-3px); box-shadow:0 9px 0 #9a3412,0 20px 32px rgba(249,115,22,.32); filter:brightness(1.08); }
+    .card .vote-select .vote-pick:active:not(:disabled) { transform:translateY(3px); box-shadow:0 2px 0 #9a3412,0 6px 15px rgba(249,115,22,.2); }
+    .card .vote-select .vote-pick:focus-visible { outline:3px solid #7dd3fc; outline-offset:4px; }
+    .card .vote-select .vote-pick[aria-pressed="true"] { background:linear-gradient(115deg,#047857,#059669); border-color:#6ee7b7; box-shadow:0 6px 0 #064e3b,0 14px 28px rgba(16,185,129,.2); }
+    .card .vote-select .vote-pick[aria-pressed="true"]::before { content:"✓"; }
+    .card .vote-select .vote-pick:disabled { background:#344256; border-color:#526176; color:#e2e8f0; box-shadow:none; opacity:.8; cursor:not-allowed; transform:none; }
+    .card .vote-select .vote-pick:disabled::after { animation:none; }
+    @keyframes voteShine { 0%,62%,100% { transform:translateX(-120%); } 78% { transform:translateX(120%); } }
+    @media(max-width:480px) { .card .vote-select { padding:16px; } .card .vote-select .vote-pick { min-height:58px; font-size:1rem; padding:13px 16px; } }
+    @media(prefers-reduced-motion:reduce) { .card .vote-select .vote-pick,.card .vote-select .vote-pick::after { animation:none; transition:none; } }
+  </style>
+<link rel="stylesheet" href="./galeria-votos.css?v=3">
 </head>
 <body>
 
+  <nav class="nav-bar">
+    <div class="nav-links">
+      <a href="../../">← Portfólio</a>
+      
+    </div>
+    <span class="badge-subfolder">Ativos de Marca · SVG</span>
+  </nav>
+
   <header>
-    <div class="badge-top">Fábrica de Ideias • Estúdio de Identidade</div>
-    <p><a class="back" href="../../">← Portfólio</a></p><p class="demo-info">Orquestrador de Projetos · Estúdio de Branding · Demonstração da interface original</p><h1 id="projetoTitulo">Votação de Marcas &amp; Identidade Visual</h1>
+    <h1>Estúdio de Branding — Orquestrador</h1>
     <p class="subtitle">
-      Teste o contraste das propostas visuais em fundo escuro e claro. Compare as propostas e vote na sua favorita. Esta demonstração usa dados fictícios e votos locais.
+      Demonstração da galeria original com as propostas de marca do Avisaqui. Votos e participantes fictícios; nenhum acesso ao serviço de votação real. Compare as opções em fundos escuro, claro e quadriculado.
     </p>
 
     <div class="toolbar">
-      <button class="btn-toggle active" onclick="setView('default', this)">Fundo Escuro Nativo</button>
-      <button class="btn-toggle" onclick="setView('transparent', this)">Modo Transparência</button>
-      <button class="btn-toggle" onclick="setView('light', this)">Simular Fundo Claro</button>
+      <button class="btn-toggle active" onclick="setView('default', this)">🌙 Fundo Escuro Nativo</button>
+      <button class="btn-toggle" onclick="setView('transparent', this)">🏁 Modo Transparência (Checkerboard)</button>
+      <button class="btn-toggle" onclick="setView('light', this)">☀️ Simular Luz Diurna (Fundo Claro)</button>
     </div>
   </header>
 
-  <main class="grid" id="gridOpcoes">
-
-    <!-- OPÇÃO 1 -->
-    <article class="card" id="card-1">
-      <div class="card-header">
-        <div class="card-title">
-          <span>Opção 1: DryWave — Minimalista Tecnológico</span>
-          <span class="badge-tag">Tech &amp; Clean</span>
-        </div>
-      </div>
-      <div class="preview-box">
-        <svg viewBox="0 0 300 100" width="260" height="90" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="32" fill="#0284c7" opacity="0.2"/>
-          <path d="M 35 55 Q 50 35 65 55" stroke="#38bdf8" stroke-width="6" fill="none" stroke-linecap="round"/>
-          <circle cx="50" cy="30" r="5" fill="#38bdf8"/>
-          <text x="95" y="58" fill="#f8fafc" font-size="28" font-weight="800">DryWave</text>
-        </svg>
-      </div>
-      <div class="card-desc">
-        <strong>Conceito:</strong> Combina linhas acústicas de dissipação de umidade com tipografia geométrica moderna. Transmite tecnologia, leveza e confiança.
-      </div>
-      <div class="card-footer">
-        <span>Votos locais:</span>
-        <button class="vote-btn" onclick="votar(1)">❤️ Votar (<span class="vote-count" id="votos-1">0</span>)</button>
-      </div>
-    </article>
-
-    <!-- OPÇÃO 2 -->
-    <article class="card" id="card-2">
-      <div class="card-header">
-        <div class="card-title">
-          <span>Opção 2: ToalhaPronta — Amigável &amp; Casa</span>
-          <span class="badge-tag">Doméstico &amp; Prático</span>
-        </div>
-      </div>
-      <div class="preview-box">
-        <svg viewBox="0 0 320 100" width="280" height="90" xmlns="http://www.w3.org/2000/svg">
-          <rect x="25" y="20" width="50" height="60" rx="12" fill="#f97316" opacity="0.2"/>
-          <circle cx="50" cy="45" r="14" fill="#fb923c"/>
-          <path d="M 42 45 L 48 51 L 58 39" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
-          <text x="90" y="58" fill="#f8fafc" font-size="26" font-weight="800">ToalhaPronta</text>
-        </svg>
-      </div>
-      <div class="card-desc">
-        <strong>Conceito:</strong> Foco em clareza imediata e sensação de dever cumprido com o ícone de checagem.
-      </div>
-      <div class="card-footer">
-        <span>Votos locais:</span>
-        <button class="vote-btn" onclick="votar(2)">❤️ Votar (<span class="vote-count" id="votos-2">0</span>)</button>
-      </div>
-    </article>
-
+  <section class="vote-guide" aria-labelledby="vote-title"><h2 id="vote-title">Escolha seus 3 logos favoritos</h2><div class="vote-weights"><div class="vote-weight"><strong>1º</strong><span>3 pontos</span><span>Favorito</span></div><div class="vote-weight"><strong>2º</strong><span>2 pontos</span><span>Segundo</span></div><div class="vote-weight"><strong>3º</strong><span>1 ponto</span><span>Terceiro</span></div></div><p>Escolha três logos em ordem de preferência. Depois, clique em Enviar votos.</p></section>
+  <main class="main-container" data-vote-gallery data-config="./galeria.json">
+    <article class="card" data-logo-id="bipou-cloche-acustica" data-logo-label="Bipou — Cloche acústica"><div class="card-header"><div class="card-title"><span>Opção 1: Bipou — Cloche acústica</span><span class="badge-tag ">Original preservado</span></div></div><div class="preview-box"><object type="image/svg+xml" data="./opcao-1-bipou-cloche-ondas.svg" style="width:100%;max-width:720px;" aria-label="Bipou — Cloche acústica"></object></div><div class="card-body"><strong>Conceito:</strong> Conceito original preservado; também disponível em versão transparente.<div class="card-actions"><a class="btn-file" href="./opcao-1-bipou-cloche-ondas.svg" target="_blank" rel="noopener">Abrir SVG</a><a class="btn-file" href="./opcao-1-bipou-cloche-ondas-transparente.svg" target="_blank" rel="noopener">Versão transparente</a></div></div><div class="vote-select"><button type="button" class="vote-pick" aria-pressed="false" disabled>Escolher como favorito</button></div></article>
+    <article class="card" data-logo-id="bipou-monograma-b" data-logo-label="Bipou — Monograma B"><div class="card-header"><div class="card-title"><span>Opção 2: Bipou — Monograma B</span><span class="badge-tag ">Original preservado</span></div></div><div class="preview-box"><object type="image/svg+xml" data="./opcao-2-bipou-monograma-b.svg" style="width:100%;max-width:720px;" aria-label="Bipou — Monograma B"></object></div><div class="card-body"><strong>Conceito:</strong> Conceito original preservado.<div class="card-actions"><a class="btn-file" href="./opcao-2-bipou-monograma-b.svg" target="_blank" rel="noopener">Abrir SVG</a></div></div><div class="vote-select"><button type="button" class="vote-pick" aria-pressed="false" disabled>Escolher como favorito</button></div></article>
+    <article class="card" data-logo-id="bipou-sorriso-hospitalidade" data-logo-label="Bipou — Sorriso e hospitalidade"><div class="card-header"><div class="card-title"><span>Opção 3: Bipou — Sorriso e hospitalidade</span><span class="badge-tag ">Original preservado</span></div></div><div class="preview-box"><object type="image/svg+xml" data="./opcao-3-bipou-sorriso-hospitalidade.svg" style="width:100%;max-width:720px;" aria-label="Bipou — Sorriso e hospitalidade"></object></div><div class="card-body"><strong>Conceito:</strong> Conceito original preservado.<div class="card-actions"><a class="btn-file" href="./opcao-3-bipou-sorriso-hospitalidade.svg" target="_blank" rel="noopener">Abrir SVG</a></div></div><div class="vote-select"><button type="button" class="vote-pick" aria-pressed="false" disabled>Escolher como favorito</button></div></article>
+    <article class="card" data-logo-id="avisaqui-sino-amigavel" data-logo-label="Avisaqui — Sino amigável"><div class="card-header"><div class="card-title"><span>Opção 4: Avisaqui — Sino amigável</span><span class="badge-tag ">Original preservado</span></div></div><div class="preview-box"><object type="image/svg+xml" data="./opcao-5-avisaqui-acolhedor.svg" style="width:100%;max-width:720px;" aria-label="Avisaqui — Sino amigável"></object></div><div class="card-body"><strong>Conceito:</strong> Conceito original preservado.<div class="card-actions"><a class="btn-file" href="./opcao-5-avisaqui-acolhedor.svg" target="_blank" rel="noopener">Abrir SVG</a></div></div><div class="vote-select"><button type="button" class="vote-pick" aria-pressed="false" disabled>Escolher como favorito</button></div></article>
+    <article class="card" data-logo-id="bipou-pulso-circular" data-logo-label="Bipou — Pulso circular"><div class="card-header"><div class="card-title"><span>Opção 5: Bipou — Pulso circular</span><span class="badge-tag orange">Nova variação</span></div></div><div class="preview-box"><object type="image/svg+xml" data="./bipou-pulso-circular.svg" style="width:100%;max-width:720px;" aria-label="Bipou — Pulso circular"></object></div><div class="card-body"><strong>Conceito:</strong> O aviso representado por anéis de sinal e um ponto central.<div class="card-actions"><a class="btn-file" href="./bipou-pulso-circular.svg" target="_blank" rel="noopener">Abrir SVG</a></div></div><div class="vote-select"><button type="button" class="vote-pick" aria-pressed="false" disabled>Escolher como favorito</button></div></article>
+    <article class="card" data-logo-id="bipou-balao-sonoro" data-logo-label="Bipou — Balão sonoro"><div class="card-header"><div class="card-title"><span>Opção 6: Bipou — Balão sonoro</span><span class="badge-tag orange">Nova variação</span></div></div><div class="preview-box"><object type="image/svg+xml" data="./bipou-balao-sonoro.svg" style="width:100%;max-width:720px;" aria-label="Bipou — Balão sonoro"></object></div><div class="card-body"><strong>Conceito:</strong> Uma conversa visual que combina mensagem e alerta.<div class="card-actions"><a class="btn-file" href="./bipou-balao-sonoro.svg" target="_blank" rel="noopener">Abrir SVG</a></div></div><div class="vote-select"><button type="button" class="vote-pick" aria-pressed="false" disabled>Escolher como favorito</button></div></article>
+    <article class="card" data-logo-id="bipou-cloche-minimalista" data-logo-label="Bipou — Cloche minimalista"><div class="card-header"><div class="card-title"><span>Opção 7: Bipou — Cloche minimalista</span><span class="badge-tag orange">Nova variação</span></div></div><div class="preview-box"><object type="image/svg+xml" data="./bipou-cloche-minimal.svg" style="width:100%;max-width:720px;" aria-label="Bipou — Cloche minimalista"></object></div><div class="card-body"><strong>Conceito:</strong> Versão geométrica da cloche, com um sinal discreto.<div class="card-actions"><a class="btn-file" href="./bipou-cloche-minimal.svg" target="_blank" rel="noopener">Abrir SVG</a></div></div><div class="vote-select"><button type="button" class="vote-pick" aria-pressed="false" disabled>Escolher como favorito</button></div></article>
+    <article class="card" data-logo-id="avisaqui-sino-linear" data-logo-label="Avisaqui — Sino linear"><div class="card-header"><div class="card-title"><span>Opção 8: Avisaqui — Sino linear</span><span class="badge-tag orange">Nova variação</span></div></div><div class="preview-box"><object type="image/svg+xml" data="./avisaqui-sino-linear.svg" style="width:100%;max-width:720px;" aria-label="Avisaqui — Sino linear"></object></div><div class="card-body"><strong>Conceito:</strong> Sino de contorno simples, adequado para ícones pequenos.<div class="card-actions"><a class="btn-file" href="./avisaqui-sino-linear.svg" target="_blank" rel="noopener">Abrir SVG</a></div></div><div class="vote-select"><button type="button" class="vote-pick" aria-pressed="false" disabled>Escolher como favorito</button></div></article>
+    <article class="card" data-logo-id="avisaqui-pin-aviso" data-logo-label="Avisaqui — Pin de aviso"><div class="card-header"><div class="card-title"><span>Opção 9: Avisaqui — Pin de aviso</span><span class="badge-tag orange">Nova variação</span></div></div><div class="preview-box"><object type="image/svg+xml" data="./avisaqui-pin-aviso.svg" style="width:100%;max-width:720px;" aria-label="Avisaqui — Pin de aviso"></object></div><div class="card-body"><strong>Conceito:</strong> Um marcador de localização integrado a uma notificação.<div class="card-actions"><a class="btn-file" href="./avisaqui-pin-aviso.svg" target="_blank" rel="noopener">Abrir SVG</a></div></div><div class="vote-select"><button type="button" class="vote-pick" aria-pressed="false" disabled>Escolher como favorito</button></div></article>
+    <article class="card" data-logo-id="avisaqui-check-notificacao" data-logo-label="Avisaqui — Check e notificação"><div class="card-header"><div class="card-title"><span>Opção 10: Avisaqui — Check e notificação</span><span class="badge-tag orange">Nova variação</span></div></div><div class="preview-box"><object type="image/svg+xml" data="./avisaqui-check-notificacao.svg" style="width:100%;max-width:720px;" aria-label="Avisaqui — Check e notificação"></object></div><div class="card-body"><strong>Conceito:</strong> Confirmação visual de que o pedido está pronto.<div class="card-actions"><a class="btn-file" href="./avisaqui-check-notificacao.svg" target="_blank" rel="noopener">Abrir SVG</a></div></div><div class="vote-select"><button type="button" class="vote-pick" aria-pressed="false" disabled>Escolher como favorito</button></div></article>
   </main>
+  <section class="vote-controls" aria-label="Enviar votação"><h2>Seus favoritos</h2><p id="vote-selection">0 de 3 favoritos selecionados.</p><button type="button" class="vote-submit" id="vote-submit" disabled>Enviar votos</button><button type="button" class="vote-pick" id="vote-clear">Limpar seleção</button><p class="vote-status" id="vote-status" role="status" aria-live="polite">Carregando votação…</p></section>
+  <details class="vote-results" id="vote-results"><summary>Ver classificação dos logos</summary><p>Ranking simulado com três participantes fictícios e a sua escolha. No produto original, os votos são consolidados pelo servidor.</p><div id="vote-ranking">Aguardando dados.</div></details>
 
-  <div class="summary-panel">
-    <h3>Placar da votação</h3>
-    <p style="color: var(--muted); font-size: 0.9rem; margin-top: 6px;">
-      Os votos ficam neste navegador. Esta demonstração não sincroniza participantes nem publica resultados.
-    </p>
-    <button class="btn-share" onclick="compartilharPlacar()">📋 Copiar Placar de Votos</button>
-  </div>
+  <footer>
+    Orquestrador de Projetos · Estúdio de Identidade · POC sem integração real
+  </footer>
 
   <script>
-    function setView(view, btn) {
-      document.body.className = '';
-      if (view === 'transparent') document.body.classList.add('view-transparent');
-      if (view === 'light') document.body.classList.add('view-light');
-      
+    function setView(mode, btn) {
+      document.body.classList.remove('view-transparent', 'view-light');
       document.querySelectorAll('.btn-toggle').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-    }
 
-    function carregarVotos() {
-      for (let i = 1; i <= 2; i++) {
-        const v = localStorage.getItem('portfolio_orquestrador_demo_voto_' + i) || '0';
-        const el = document.getElementById('votos-' + i);
-        if (el) el.innerText = v;
+      if (mode === 'transparent') {
+        document.body.classList.add('view-transparent');
+      } else if (mode === 'light') {
+        document.body.classList.add('view-light');
       }
     }
-
-    function votar(opcao) {
-      let atual = parseInt(localStorage.getItem('portfolio_orquestrador_demo_voto_' + opcao) || '0');
-      atual++;
-      localStorage.setItem('portfolio_orquestrador_demo_voto_' + opcao, atual);
-      document.getElementById('votos-' + opcao).innerText = atual;
-    }
-
-    function compartilharPlacar() {
-      const v1 = localStorage.getItem('portfolio_orquestrador_demo_voto_1') || '0';
-      const v2 = localStorage.getItem('portfolio_orquestrador_demo_voto_2') || '0';
-      const texto = `🏆 *Placar da Fábrica de Ideias:*\n\n1️⃣ Opção 1 (DryWave): ${v1} votos\n2️⃣ Opção 2 (ToalhaPronta): ${v2} votos\n\nQual você prefere?`;
-      if (!navigator.clipboard) { alert(texto); return; } navigator.clipboard.writeText(texto).then(() => {
-        alert('Placar copiado para a área de transferência! Nenhuma mensagem foi enviada.');
-      }).catch(() => alert(texto));
-    }
-
-    window.onload = carregarVotos;
   </script>
+  <script src="./galeria-votos.js?v=4-demo" defer></script>
 </body>
 </html>

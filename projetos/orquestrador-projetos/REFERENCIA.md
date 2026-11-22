@@ -1,5 +1,3 @@
-# Estúdio de Branding — referência
+# Estúdio de Branding — referência atualizada
 
-Adaptação da interface original de galeria de logos do Orquestrador de Projetos Base, blob Git `2627da265988d048f77c0f989db7fbe1c67266cd`. Mantém SVGs, contraste e placar local. Não representa votação multiusuário autenticada nem painel de orquestração. Dados de demonstração, sem requisições externas. Alterações: indicação de demo, link de retorno, namespace de armazenamento, layout responsivo e contraste no modo claro.
-
-Validação visual em navegador ainda pendente.
+Interface reutilizável GALERIA-VOTO-001 do Avisaqui (PR #28 integrado; JS blob `4a62fc41a3269d563163296dee504eced7994163`). A integração de produção Cloudflare Workers + D1 foi configurada após essa implementação. Esta POC usa exclusivamente participantes fictícios, cálculo 3–2–1 e substituição da escolha no modelo local; não acessa o serviço real, não provisiona infraestrutura, não comprova operação multi-dispositivo. As escolhas podem permanecer neste navegador. Teste isolado: ranking inicial 18 pontos; após voto 24; após substituição 24; duplicatas rejeitadas. Validação visual pendente.

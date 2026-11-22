@@ -43,7 +43,7 @@
     {
       "id": "orquestrador-projetos",
       "nome": "Orquestrador de Projetos",
-      "descricao": "Estúdio de identidade visual: compare propostas de marcas, vote e consulte o placar demonstrativo.",
+      "descricao": "Estúdio de identidade visual: compare logos, selecione três favoritos e consulte o ranking de votação simulado.",
       "status": "prototipo",
       "publicado": true,
       "ordem": 70,
