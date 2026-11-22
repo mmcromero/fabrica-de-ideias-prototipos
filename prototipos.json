@@ -25,7 +25,7 @@
       "nome": "relowmoto7",
       "descricao": "Canal de gameplay, humor, histórias, curiosidades e Roblox.",
       "status": "prototipo",
-      "publicado": true,
+      "publicado": false,
       "ordem": 30,
       "icone": "gamepad-2",
       "caminho": "projetos/canal-do-henrique/"
@@ -59,6 +59,16 @@
       "ordem": 50,
       "icone": "messages-square",
       "caminho": "projetos/central-whatsapp/"
+    },
+    {
+      "id": "central-instagram",
+      "nome": "Central Instagram e Editorial",
+      "descricao": "Atendimento de mensagens, múltiplas contas, biblioteca, criação, revisão, calendário e publicação simulada.",
+      "status": "prototipo",
+      "publicado": true,
+      "ordem": 60,
+      "icone": "camera",
+      "caminho": "projetos/central-instagram/"
     }
   ]
 }

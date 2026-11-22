@@ -1,0 +1,3 @@
+# Central Instagram e Editorial
+
+Referência: interface editorial pública 0.1.36 (HTML 46b11d4d423223055178265f2e2d35b0e0584ba3, JS 88a441fdf5666d6791c4e3617e4755603073b17c). HTML/CSS originais e lógica editorial adaptada. Mensagens, contas e configuração são reconstruções parciais que seguem rótulos e estrutura documentados. Dados, upload em memória, aprovação, agendamento, publicação, exclusão e métricas são fictícios. Sem Meta, OAuth, credenciais ou rede. Oito testes isolados do modelo: draft, approve, schedule, activate, account isolation, cancel, publish, delete. Testes de navegador pendentes.

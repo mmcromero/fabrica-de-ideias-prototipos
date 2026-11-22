@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111c29">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'none'; form-action 'none'; base-uri 'none'">
+  <title>Central Editorial · Umdoislab</title>
+  <link rel="stylesheet" href="./editorial.css">
+  <link rel="stylesheet" href="./interface-ui.css"><script src="./interface-ui.js" defer></script><script src="./editorial.js" defer></script>
+</head>
+<body data-ui-loading="initial" data-ui-page="editorial">
+  <a href="#principal" class="skip">Pular para conteúdo</a>
+  <div class="shell">
+    <aside class="sidebar ui-sidebar"><div class="ui-sidebar-heading"><a class="brand" href="../../"><span class="brand-icon">U<span class="dot">.</span></span><span><strong>CENTRAL INSTAGRAM</strong><small>Conteúdo e atendimento</small></span></a><button class="ui-menu-toggle" type="button" aria-expanded="false" aria-controls="ui-navigation">Menu</button></div><div class="ui-account-context"><small>CONTA FICTÍCIA</small><strong id="demo-account-name">Ateliê Exemplo</strong><span id="demo-account-user">@atelier_demo</span></div><div id="ui-navigation" class="ui-nav-groups"><section class="ui-nav-group"><h2>Editorial</h2><nav class="nav"><button type="button" class="nav-link" data-view="overview"><span class="ui-nav-icon">◫</span>Visão geral</button><button type="button" class="nav-link" data-view="calendar"><span class="ui-nav-icon">▦</span>Calendário</button><button type="button" class="nav-link" data-view="editor"><span class="ui-nav-icon">✎</span>Criar publicação</button><button type="button" class="nav-link" data-view="library"><span class="ui-nav-icon">▧</span>Biblioteca</button><button type="button" class="nav-link" data-view="approval"><span class="ui-nav-icon">✓</span>Revisão e envios</button><button type="button" class="nav-link" data-view="history"><span class="ui-nav-icon">◷</span>Histórico</button></nav></section><section class="ui-nav-group"><h2>Mensagens</h2><nav class="nav"><button type="button" class="nav-link" data-view="messages"><span class="ui-nav-icon">◉</span>Caixa de entrada</button></nav></section><section class="ui-nav-group"><h2>Contas</h2><nav class="nav"><button type="button" class="nav-link" data-view="accounts"><span class="ui-nav-icon">◎</span>Contas conectadas</button></nav></section><section class="ui-nav-group"><h2>Conexão Meta</h2><nav class="nav"><button type="button" class="nav-link" data-view="settings"><span class="ui-nav-icon">⚙</span>Configurações Meta</button></nav></section></div></aside>
+    <main id="principal" class="main" aria-busy="true">
+      <header class="topbar"><div class="crumb">Central Instagram <span> / </span><strong id="current-section">Visão geral</strong></div><a href="../../">Portfólio · DEMONSTRAÇÃO 0.1.36</a></header>
+      <div class="ui-context-actions"><button id="refresh-content" class="btn quiet" type="button">Atualizar</button><button id="resume-editor" class="btn quiet" type="button" hidden>Continuar composição</button><button id="new-post" class="btn primary">+ Nova publicação</button></div>
+      <div id="initial-skeleton" class="ui-initial-skeleton" role="status">Carregando dados fictícios…</div>
+      <section class="content" id="view-overview" data-panel="overview">
+        <div class="heading"><div><span class="eyebrow">SEU ESTÚDIO DE CONTEÚDO</span><h1>Visão geral</h1><p>Acompanhe sua agenda e continue suas publicações.</p></div></div>
+        <div class="metrics">
+          <article class="metric"><span>Publicações registradas</span><strong id="count-all">0</strong><small>Conteúdo e histórico desta conta</small></article>
+          <article class="metric"><span>Aguardando aprovação</span><strong id="count-draft">0</strong><small>Precisam de revisão</small></article>
+          <article class="metric"><span>Prontas para agendar</span><strong id="count-approved">0</strong><small>Conteúdo aprovado</small></article>
+          <article class="metric"><span>Agendadas</span><strong id="count-scheduled">0</strong><small>No calendário</small></article>
+        </div>
+        <div class="two-col">
+          <section class="panel"><div class="panel-title"><div><h2>Próximas publicações</h2><p>Seu planejamento editorial</p></div><button class="text-button" data-goto="calendar">Ver calendário →</button></div><div id="upcoming-list" class="stack"></div></section>
+          <section class="panel"><div class="panel-title"><div><h2>Comece a criar</h2><p>Escolha um formato para seu conteúdo</p></div></div>
+            <div class="format-grid">
+              <button data-new-format="feed"><span class="format-icon">▣</span><strong>Publicação no feed</strong><small>Uma foto ou carrossel automático</small></button>
+              <button data-new-format="story"><span class="format-icon">◉</span><strong>Story</strong><small>Conteúdo vertical</small></button>
+              <button data-new-format="reel"><span class="format-icon">▷</span><strong>Reel</strong><small>Vídeo curto</small></button>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section class="content hidden" id="view-history" data-panel="history">
+        <div class="heading"><span class="eyebrow">SEU ACERVO</span><h1>Histórico do Instagram</h1><p>Publicações anteriores e envios da Central, organizados pela data original.</p></div>
+        <section class="panel history-import"><h2>Trazer publicações desta conta</h2>
+          <p>Simula a consulta de publicações com dados fictícios, sem acessar a Meta. Stories antigos e o arquivo privado não são recuperados. As contagens refletem a consulta atual.</p>
+          <label><input id="history-download" type="checkbox" checked> Baixar também as mídias para a biblioteca (até 25 MiB por arquivo e dentro da cota disponível).</label>
+          <div class="history-import-actions"><button class="btn primary" id="history-start" type="button">Sincronizar histórico</button><button class="btn quiet" id="history-cancel" type="button" hidden>Cancelar sincronização</button></div>
+          <div id="history-progress" role="status" aria-live="polite"></div>
+        </section>
+        <div id="history-summary" class="history-summary"></div>
+        <div class="history-filters"><label>Comparar por <select id="history-sort"><option value="date">Mais recentes</option><option value="likes">Curtidas</option><option value="comments">Comentários</option><option value="shares">Compartilhamentos</option><option value="interactions">Interações conhecidas</option></select></label><label>Formato <select id="history-format"><option value="all">Todos</option><option value="feed">Feed</option><option value="carousel">Carrossel</option><option value="reel">Reel</option><option value="story">Story</option></select></label></div>
+        <p class="muted">Interações conhecidas somam as contagens disponíveis de curtidas, comentários, compartilhamentos e salvamentos; não representam uma taxa de engajamento. Dados ausentes não são zero.</p>
+        <div id="history-list" class="stack"></div>
+      </section>
+
+      <section class="content hidden" id="view-library" data-panel="library">
+        <div class="heading horizontal"><div><span class="eyebrow">SEUS ARQUIVOS</span><h1>Biblioteca de mídias</h1><p>Organize imagens e vídeos utilizados nas publicações.</p></div><button class="btn primary" id="upload-trigger">+ Adicionar arquivos</button></div>
+        <input type="file" id="media-input" accept="image/jpeg,image/png,video/mp4" multiple hidden>
+        <div id="library-feedback" class="feedback library-feedback" role="status" aria-live="polite"></div>
+        <div id="media-grid" class="media-grid"></div>
+      </section>
+
+      <section class="content hidden" id="view-editor" data-panel="editor">
+        <div class="heading horizontal"><div><span class="eyebrow">ESTÚDIO CRIATIVO</span><h1 id="editor-heading">Nova publicação</h1><p>Monte o conteúdo e confira a prévia antes de aprovar.</p></div><button id="clear-editor" class="btn quiet" aria-label="Nova composição"><span class="ui-desktop-label">Nova composição</span><span class="ui-mobile-label" aria-hidden="true">Nova</span></button></div>
+        <div data-ui-tabs="editor-preview" data-tabs-mobile data-tabs-default="content" class="ui-editor-tabs">
+        <div class="ui-local-tabs" aria-label="Composição da publicação"><button type="button" id="editor-tab-content" data-ui-tab="content">Conteúdo</button><button type="button" id="editor-tab-preview" data-ui-tab="preview">Prévia</button></div>
+        <div class="editor-layout">
+          <form id="post-form" class="panel form-panel" data-ui-pane="content">
+            <div class="field"><label for="post-format">Formato</label><select id="post-format"><option value="feed">Publicação no feed (1 ou mais imagens)</option><option value="story">Story</option><option value="reel">Reel</option></select></div>
+            <div class="field" id="general-caption-field"><label for="post-caption">Legenda geral <span id="caption-count">0/2200</span></label><textarea id="post-caption" maxlength="2200" rows="7" placeholder="Escreva sua legenda, descrição ou chamada..."></textarea></div>
+            <fieldset id="carousel-caption-options" class="caption-options hidden"><legend>Legendas do carrossel</legend>
+              <label><input type="radio" name="caption-mode" value="general" checked> Uma legenda para todas as imagens</label>
+              <label><input type="radio" name="caption-mode" value="per_slide"> Legenda individual por imagem</label>
+              <p class="caption-api-note">A API do Instagram publica uma legenda geral por carrossel. Legendas individuais ficam como anotações locais; escolha a legenda geral para liberar a publicação.</p>
+            </fieldset>
+            <div id="slide-caption-fields" class="slide-caption-fields hidden" aria-live="polite"></div>
+            <div class="field"><div class="field-head"><label>Mídias selecionadas</label><button class="text-button" id="open-library-picker" type="button">Selecionar na biblioteca</button></div><div id="selected-media" class="selected-media">Nenhuma mídia selecionada.</div><small id="selection-hint">Selecione uma imagem.</small></div>
+            <div id="form-feedback" class="feedback" role="status" aria-live="polite"></div>
+            <div class="form-actions"><button class="btn quiet" type="button" id="save-draft">Salvar rascunho</button><button class="btn primary" type="submit">Salvar e revisar</button></div>
+          </form>
+          <div class="preview-area" id="editor-preview-pane" data-ui-pane="preview"><div class="panel-title"><div><h2>Prévia do conteúdo</h2><p>Representação visual para revisão</p></div></div>
+            <div class="phone"><div class="phone-top"><span class="avatar">U.</span><strong data-preview-account>atelier_demo</strong><span>•••</span></div><div class="phone-media" id="phone-media"><span>Selecione uma mídia para visualizar</span></div><div class="phone-bottom"><div>♡　◇　↗</div><p id="preview-caption">Sua legenda aparece aqui.</p></div></div>
+          </div>
+        </div></div>
+      </section>
+
+      <section class="content hidden" id="view-approval" data-panel="approval">
+        <div class="heading"><span class="eyebrow">REVISÃO HUMANA</span><h1>Revisão e envios</h1><p>Confira cada conteúdo antes de liberar o agendamento.</p></div>
+        <div id="approval-list" class="stack"></div>
+      </section>
+
+      <section class="content hidden" id="view-calendar" data-panel="calendar">
+        <div class="heading horizontal"><div><span class="eyebrow">PLANEJAMENTO</span><h1>Calendário editorial</h1><p>Visualize as publicações planejadas para o mês.</p></div><div class="calendar-nav"><button id="prev-month" class="btn quiet" aria-label="Mês anterior">‹</button><label class="calendar-month-picker">Mês <input id="calendar-month" type="month"></label><strong id="month-label"></strong><button id="next-month" class="btn quiet" aria-label="Próximo mês">›</button></div></div>
+        <section class="panel"><div class="calendar-weekdays"><span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span></div><div class="calendar-grid" id="calendar-grid"></div></section>
+        <section class="panel calendar-upcoming"><div class="panel-title"><h2>Publicações agendadas</h2></div><div id="calendar-list" class="stack"></div></section>
+      </section>
+    <section class="content hidden" id="view-messages" data-panel="messages"><div class="heading"><span class="eyebrow">CENTRAL DE ATENDIMENTO</span><h1>Mensagens</h1><p>Mensagens fictícias desta conta.</p></div><section class="panel"><div class="panel-title"><h2>Mensagens recebidas</h2><button class="btn quiet" id="demo-refresh-inbox">Atualizar mensagens</button></div><p>Nenhuma resposta é enviada ao Instagram.</p><div class="stack" id="demo-inbox"></div></section></section><section class="content hidden" id="view-accounts" data-panel="accounts"><div class="heading"><h1>Contas conectadas</h1><p>Alterne entre contas de demonstração.</p></div><div class="stack" id="demo-accounts"></div><details class="panel"><summary>Adicionar conta fictícia</summary><label class="field">Nome de exemplo<input id="demo-name" maxlength="40"></label><button id="demo-add-account" class="btn primary">Adicionar conta</button></details></section><section class="content hidden" id="view-settings" data-panel="settings"><div class="heading"><h1>Configurações Meta</h1><p>Conexão e diagnósticos simulados.</p></div><div data-ui-tabs="demo-settings"><div class="ui-local-tabs"><button id="demo-tab-connection" data-ui-tab="connection">Conexão</button><button id="demo-tab-diagnostics" data-ui-tab="diagnostics">Diagnósticos</button><button id="demo-tab-tools" data-ui-tab="tools">Ferramentas</button></div><section class="panel" id="demo-connection" data-ui-pane="connection"><h2>Conexão Meta</h2><p>Conta fictícia conectada. Nenhuma credencial é solicitada.</p><button class="btn primary" data-demo-action="Conexão Meta">Conectar Instagram pela Meta</button></section><section class="panel" id="demo-diagnostics" data-ui-pane="diagnostics"><h2>Diagnósticos</h2><p>Autorização: simulada · Webhook: não conectado</p><button class="btn" data-demo-action="Verificação de acesso">Verificar acesso Meta</button></section><section class="panel" id="demo-tools" data-ui-pane="tools"><h2>Ferramentas</h2><p>Integrações reais desativadas.</p><button class="btn" data-demo-action="Verificação de publicação">Verificar publicação</button></section></div></section></main>
+  </div>
+  <dialog id="media-dialog" class="dialog"><div class="dialog-head"><h2>Selecionar mídias</h2><button class="icon-button" id="close-media-dialog" aria-label="Fechar">×</button></div><div id="picker-grid" class="media-grid"></div><div class="dialog-actions"><button class="btn primary" id="apply-media-selection">Usar mídias selecionadas</button></div></dialog>
+  <dialog id="preview-dialog" class="dialog preview-dialog" aria-labelledby="preview-dialog-title">
+    <div class="dialog-head"><h2 id="preview-dialog-title">Visualizar publicação</h2><button class="icon-button" id="close-preview-dialog" aria-label="Fechar visualização" type="button">×</button></div>
+    <div class="preview-modal-body"><div class="phone large-phone">
+      <div class="phone-top"><span class="avatar">U.</span><strong data-preview-account>atelier_demo</strong><span>•••</span></div>
+      <div class="phone-media" id="modal-phone-media"><span>Selecione uma publicação</span></div>
+      <div class="phone-bottom"><div>♡　◇　↗</div><p id="modal-preview-caption"></p></div>
+    </div></div>
+    <p id="modal-preview-description" class="preview-modal-description"></p>
+    <details id="modal-media-details" hidden><summary>Descrição de acessibilidade retornada pela Meta</summary><p id="modal-media-alt"></p><small>Este campo é o texto alternativo da mídia; não confirma a legenda visível individual do aplicativo Instagram.</small></details>
+  </dialog>
+  <dialog id="schedule-dialog" class="dialog small-dialog" aria-labelledby="schedule-dialog-title">
+    <div class="dialog-head"><h2 id="schedule-dialog-title">Agendar publicação</h2><button class="icon-button" id="close-schedule-dialog" aria-label="Fechar" type="button">×</button></div>
+    <div id="schedule-post-preview" class="schedule-post-preview" aria-label="Publicação selecionada para agendamento"></div>
+    <p class="muted">Escolha a data e o horário de São Paulo.</p>
+    <form id="schedule-form">
+      <label for="schedule-at">Data e horário</label>
+      <input id="schedule-at" type="datetime-local" required aria-describedby="schedule-feedback">
+      <div id="schedule-feedback" class="feedback schedule-feedback" role="status" aria-live="polite"></div>
+      <div class="dialog-actions"><button class="btn primary" type="submit">Confirmar agenda</button></div>
+    </form>
+  </dialog>
+  <dialog id="publish-dialog" class="dialog small-dialog" aria-labelledby="publish-dialog-title">
+    <div class="dialog-head"><h2 id="publish-dialog-title">Confirmar publicação</h2><button class="icon-button" id="close-publish-dialog" aria-label="Fechar confirmação" type="button">×</button></div>
+    <div id="publish-post-preview" class="schedule-post-preview"></div>
+    <p id="publish-account"></p><p id="publish-explanation"></p>
+    <div id="publish-feedback" class="feedback" role="status" aria-live="polite"></div>
+    <div class="dialog-actions"><button class="btn primary" id="confirm-publish" type="button">Confirmar publicação</button></div>
+  </dialog>
+  <dialog id="delete-dialog" class="dialog small-dialog" aria-labelledby="delete-title">
+    <div class="dialog-head"><h2 id="delete-title">Excluir publicação</h2><button class="icon-button" id="close-delete-dialog" aria-label="Fechar exclusão" type="button">×</button></div>
+    <p id="delete-description"></p>
+    <fieldset id="delete-scope"><legend>Onde excluir?</legend>
+      <label><input type="radio" name="delete-scope" id="delete-local" value="local" checked> Somente da Central Editorial</label>
+      <label id="delete-remote-option"><input type="radio" name="delete-scope" id="delete-remote" value="remote"> Da Central Editorial e do Instagram</label>
+    </fieldset>
+    <p id="delete-consequence"></p>
+    <label id="delete-remote-confirm-option" hidden><input id="delete-remote-confirm" type="checkbox"> Confirmo a exclusão desta publicação no Instagram da conta indicada acima.</label>
+    <label id="delete-retry-option" hidden><input id="delete-retry" type="checkbox"> Conferi o Instagram e autorizo uma nova tentativa após o resultado incerto anterior.</label>
+    <label id="delete-media-option"><input id="delete-unused-media" type="checkbox" checked> Excluir também as mídias que não são usadas em outras publicações.</label>
+    <div id="delete-feedback" class="feedback" role="status" aria-live="polite"></div>
+    <p id="delete-settings-help" hidden><a href="#settings">Abrir Conexão Meta para renovar a autorização</a></p>
+    <div class="dialog-actions"><button class="btn quiet" id="cancel-delete" type="button">Cancelar</button><button class="btn danger" id="confirm-delete" type="button">Excluir somente da Central</button></div>
+  </dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
