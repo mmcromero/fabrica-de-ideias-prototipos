@@ -49,6 +49,16 @@
       "ordem": 70,
       "icone": "palette",
       "caminho": "projetos/orquestrador-projetos/"
+    },
+    {
+      "id": "central-whatsapp",
+      "nome": "Central de Atendimento WhatsApp",
+      "descricao": "Caixa de atendimentos, busca, filtros, respostas e regras de automação em ambiente simulado.",
+      "status": "prototipo",
+      "publicado": true,
+      "ordem": 50,
+      "icone": "messages-square",
+      "caminho": "projetos/central-whatsapp/"
     }
   ]
 }
