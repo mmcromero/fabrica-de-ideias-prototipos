@@ -21,16 +21,6 @@
       "caminho": "projetos/artesao-digital/"
     },
     {
-      "id": "canal-do-henrique",
-      "nome": "relowmoto7",
-      "descricao": "Canal de gameplay, humor, histórias, curiosidades e Roblox.",
-      "status": "prototipo",
-      "publicado": false,
-      "ordem": 30,
-      "icone": "gamepad-2",
-      "caminho": "projetos/canal-do-henrique/"
-    },
-    {
       "id": "pager-virtual",
       "nome": "Avisaqui",
       "descricao": "Acompanhamento de pedidos, KDS, cliente, gestão e impressão com dados fictícios.",
