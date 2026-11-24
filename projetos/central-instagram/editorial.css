@@ -233,3 +233,8 @@
  .ui-inbox-page .inbox-page-header #demo-refresh-inbox{min-height:44px}
  .content>.heading{margin-bottom:16px}
 }
+
+/* Align the dashboard action row to the same inner content column as every page. */
+.ui-context-actions{width:calc(100% - 80px);max-width:1370px;margin:12px auto 0;padding:0 0 2px}
+.content>.heading{max-width:none}
+@media(max-width:760px){.ui-context-actions{width:calc(100% - 28px);max-width:none;margin:10px auto 0;padding:0}}
