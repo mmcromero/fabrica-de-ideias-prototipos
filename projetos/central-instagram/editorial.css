@@ -206,3 +206,13 @@
  .inbox-bubble{max-width:90%}
 }
 @media(max-width:380px){.ui-inbox-page .inbox-page-header{align-items:center}.inbox-page-title h1{font-size:22px}.inbox-detail-head{align-items:flex-start;flex-wrap:wrap}.inbox-detail-actions{width:100%;justify-content:flex-start}}
+
+
+/* UX correction: actions belong to the editorial workspace, not every screen. */
+.ui-context-actions{width:calc(100% - 64px);max-width:1440px;margin:12px auto 0;padding:0;display:flex;align-items:center;justify-content:flex-end;gap:10px;min-height:44px}
+.ui-context-actions[hidden]{display:none!important}
+.ui-context-actions #new-post{order:2}
+.ui-context-actions #refresh-content{order:1}
+@media(max-width:760px){
+ .ui-context-actions{width:calc(100% - 28px);margin:10px auto 0;min-height:42px;gap:8px}
+}
