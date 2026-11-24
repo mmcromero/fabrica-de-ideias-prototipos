@@ -902,6 +902,25 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     all('[data-new-format]').forEach(node=>node.addEventListener('click',()=>newDraft(node.dataset.newFormat)));
     $('new-post').addEventListener('click',()=>newDraft());
     $('editorial-create').addEventListener('click',()=>newDraft());
+    const mobileMenuToggle=$('mobile-main-menu-toggle');
+    const primaryNavigation=$('primary-navigation');
+    mobileMenuToggle.addEventListener('click',()=>{
+      const open=mobileMenuToggle.getAttribute('aria-expanded')!=='true';
+      mobileMenuToggle.setAttribute('aria-expanded',String(open));
+      primaryNavigation.dataset.open=String(open);
+    });
+    primaryNavigation.addEventListener('click',event=>{
+      if(event.target.closest('[data-view]')){
+        mobileMenuToggle.setAttribute('aria-expanded','false');
+        primaryNavigation.dataset.open='false';
+      }
+    });
+    document.addEventListener('keydown',event=>{
+      if(event.key==='Escape'){
+        mobileMenuToggle.setAttribute('aria-expanded','false');
+        primaryNavigation.dataset.open='false';
+      }
+    });
     $('resume-editor').addEventListener('click',()=>show('editor'));
     $('clear-editor').addEventListener('click',()=>newDraft());
     $('post-format').addEventListener('change',()=>{state.currentPreviewIndex=0;formatHint();renderSelection();});
