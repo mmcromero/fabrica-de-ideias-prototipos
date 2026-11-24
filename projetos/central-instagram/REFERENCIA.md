@@ -6,10 +6,10 @@
 - App Shell sem sidebar, com três destinos principais no cabeçalho: Caixa de entrada, Editorial e Configurações Meta.
 - Seletor global de conta no cabeçalho; não existe destino separado de Contas conectadas.
 - Caixa de entrada é destino direto, sem submenu.
-- Editorial possui submenu local abaixo do título de cada tela: Visão geral, Calendário, Criar publicação, Biblioteca, Revisão e envios e Histórico. Não existe submenu editorial no topo global.
+- Editorial possui submenu local abaixo do título de cada tela, usando o mesmo componente visual e espaçamento das abas de Configurações Meta: Visão geral, Calendário, Criar publicação, Biblioteca, Revisão e envios e Histórico. Não existe submenu editorial no topo global.
 - Configurações Meta possui abas internas: Conexão, Diagnósticos, Ferramentas e Atendimento.
 - A ação Adicionar conta aparece no cabeçalho da página Configurações Meta.
-- Cabeçalho compacto; submenus aparecem dentro da respectiva área, abaixo do título, com grade responsiva no mobile.
+- Cabeçalho compacto; título, ações contextuais e submenu seguem o mesmo alinhamento e ritmo vertical nas áreas Editorial e Configurações Meta. No mobile, as abas internas rolam horizontalmente.
 
 ## Correspondência com o produto
 A estrutura de Configurações Meta segue o padrão de abas locais documentado em `interface_ui.py` no produto real. O conteúdo deste protótipo é demonstrativo e não representa leitura de OAuth, permissões, diagnósticos, atendimento ou APIs reais.
