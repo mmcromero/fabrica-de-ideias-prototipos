@@ -26,23 +26,21 @@
         </div>
       </header>
       <span id="current-section" class="ui-sr-only" aria-live="polite">Visão geral</span>
-            <div class="ui-context-actions" aria-label="Ações da visão geral"><button id="refresh-content" class="btn quiet" type="button">Atualizar</button><button id="resume-editor" class="btn quiet" type="button" hidden>Continuar composição</button></div>
+            
       <div id="initial-skeleton" class="ui-initial-skeleton" role="status">Carregando dados fictícios…</div>
-      <nav class="ui-workspace-tabs" id="workspace-tabs" hidden aria-label="Navegação de Editorial">
-        <div class="ui-tabset" data-tabset="editorial">
-          <div class="ui-tab-links" role="tablist" aria-label="Editorial">
-            <button type="button" class="ui-tab" data-view="overview" role="tab">Visão geral</button>
-            <button type="button" class="ui-tab" data-view="calendar" role="tab">Calendário</button>
-            <button type="button" class="ui-tab" data-view="editor" role="tab">Criar publicação</button>
-            <button type="button" class="ui-tab" data-view="library" role="tab">Biblioteca</button>
-            <button type="button" class="ui-tab" data-view="approval" role="tab">Revisão e envios</button>
-            <button type="button" class="ui-tab" data-view="history" role="tab">Histórico</button>
-          </div>
+      <div class="ui-workspace-tabs" id="workspace-tabs" hidden data-tabs-ready="true" aria-label="Navegação do Editorial">
+        <div class="ui-local-tabs" role="tablist" aria-label="Editorial">
+          <button type="button" data-view="overview" role="tab" aria-selected="true">Visão geral</button>
+          <button type="button" data-view="calendar" role="tab" aria-selected="false">Calendário</button>
+          <button type="button" data-view="editor" role="tab" aria-selected="false">Criar publicação</button>
+          <button type="button" data-view="library" role="tab" aria-selected="false">Biblioteca</button>
+          <button type="button" data-view="approval" role="tab" aria-selected="false">Revisão e envios</button>
+          <button type="button" data-view="history" role="tab" aria-selected="false">Histórico</button>
         </div>
-      </nav>
+      </div>
 
       <section class="content" id="view-overview" data-panel="overview">
-        <div class="heading"><div><span class="eyebrow">SEU ESTÚDIO DE CONTEÚDO</span><h1>Visão geral</h1><p>Acompanhe sua agenda e continue suas publicações.</p></div></div>
+        <div class="heading horizontal overview-page-heading"><div><span class="eyebrow">SEU ESTÚDIO DE CONTEÚDO</span><h1>Visão geral</h1><p>Acompanhe sua agenda e continue suas publicações.</p></div><div class="overview-page-actions"><button id="refresh-content" class="btn quiet" type="button">Atualizar</button><button id="resume-editor" class="btn quiet" type="button" hidden>Continuar composição</button></div></div>
         <div class="metrics">
           <article class="metric"><span>Publicações registradas</span><strong id="count-all">0</strong><small>Conteúdo e histórico desta conta</small></article>
           <article class="metric"><span>Aguardando aprovação</span><strong id="count-draft">0</strong><small>Precisam de revisão</small></article>
