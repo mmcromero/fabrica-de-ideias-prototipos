@@ -216,3 +216,20 @@
 @media(max-width:760px){
  .ui-context-actions{width:calc(100% - 28px);margin:10px auto 0;min-height:42px;gap:8px}
 }
+
+/* UX pass 2 — global actions are dashboard-only; every other page owns its task actions. */
+.ui-context-actions{box-sizing:border-box}
+.ui-context-actions:not([hidden]){margin-bottom:12px}
+.ui-context-actions #new-post{min-height:44px}
+.ui-context-actions #refresh-content{min-height:44px}
+.ui-inbox-page .inbox-page-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ui-inbox-page .inbox-page-header #demo-refresh-inbox{min-height:44px;white-space:nowrap}
+.content>.heading{margin:0 auto 20px;max-width:1440px;gap:12px}
+.content>.heading h1{margin:0;font-size:clamp(22px,2vw,28px);line-height:1.2;letter-spacing:-.55px}
+.content>.heading p{margin:6px 0 0;max-width:68ch;line-height:1.5;color:var(--muted)}
+.content>.heading .eyebrow{margin:0 0 6px}
+@media(max-width:760px){
+ .ui-inbox-page .inbox-page-header{align-items:flex-start}
+ .ui-inbox-page .inbox-page-header #demo-refresh-inbox{min-height:44px}
+ .content>.heading{margin-bottom:16px}
+}
