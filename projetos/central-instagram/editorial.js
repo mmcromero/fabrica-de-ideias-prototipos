@@ -110,7 +110,7 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     document.body.dataset.editorView=view;
     // Ações globais são contextuais: não aparecem em Atendimento, Gestão ou no próprio editor.
     const contextActions=document.querySelector('.ui-context-actions');
-    if(contextActions) contextActions.hidden=!['overview','calendar','library','approval','history'].includes(view);
+    if(contextActions) contextActions.hidden=view!=='overview';
     $('resume-editor').hidden=view==='editor' || editorSignature()===editorClean;
     const panels=all('[data-panel]');
     UI.switchPanel(panels,$('view-'+view)).then(()=>{if(state.view===view)window.scrollTo({top:viewScroll.get(view)||0});});UI.closeMenu();
