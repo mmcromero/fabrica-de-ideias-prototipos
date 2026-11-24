@@ -104,7 +104,7 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     toast('Salvamento recusado: outra aba alterou esta publicação.','error');
   }
   function show(view, {fromHistory=false}={}) {
-    if (!['overview','library','editor','approval','calendar','history','messages','accounts','settings'].includes(view)) return;
+    if (!['overview','library','editor','approval','calendar','history','messages','settings'].includes(view)) return;
     if(state.view!==view)viewScroll.set(state.view,window.scrollY);
     state.view = view;
     document.body.dataset.editorView=view;
@@ -117,7 +117,7 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     all('[data-view]').forEach(node=>{
       const primary=node.dataset.primary;
       const active=primary
-        ? (primary==='editorial'?['overview','calendar','editor','library','approval','history'].includes(view):primary==='inbox'?view==='messages':['accounts','settings'].includes(view))
+        ? (primary==='editorial'?['overview','calendar','editor','library','approval','history'].includes(view):primary==='inbox'?view==='messages':view==='settings')
         : node.dataset.view===view;
       node.classList.toggle('active',active);
       if(active)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');
@@ -125,10 +125,11 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     });
     const tabsets=all('[data-tabset]');
     const editorialView=['overview','calendar','editor','library','approval','history'].includes(view);
-    tabsets.forEach(set=>{set.hidden=(set.dataset.tabset==='editorial'?!editorialView:!['accounts','settings'].includes(view));});
-    const createAction=$('editorial-create');
-    if(createAction)createAction.hidden=view==='editor';
-    $('current-section').textContent = ({overview:'Visão geral',library:'Biblioteca',editor:state.currentPostId?'Editar publicação':'Criar publicação',approval:'Revisão e envios',calendar:'Calendário',history:'Histórico',messages:'Caixa de entrada',accounts:'Contas e configurações',settings:'Contas e configurações'})[view];
+    tabsets.forEach(set=>{set.hidden=(set.dataset.tabset==='editorial'?!editorialView:view!=='settings');});
+    if(view==='settings')UI.tabs.select('demo-settings',document.querySelector('[data-ui-tab][aria-selected="true"]')?.dataset.uiTab||'connection');
+    all('[data-setting-tab]').forEach(node=>node.classList.toggle('active',node.dataset.settingTab===(document.querySelector('#demo-settings [data-ui-pane]:not([hidden])')?.dataset.uiPane||'connection'));
+    const accountHandle=$('settings-account-handle');if(accountHandle)accountHandle.textContent='@'+demoAccount;
+    $('current-section').textContent = ({overview:'Visão geral',library:'Biblioteca',editor:state.currentPostId?'Editar publicação':'Criar publicação',approval:'Revisão e envios',calendar:'Calendário',history:'Histórico',messages:'Caixa de entrada',settings:'Configurações Meta'})[view];
     if(!fromHistory && location.hash!=='#'+view)history.pushState(null,'','#'+view);
     render();
   }
@@ -205,7 +206,7 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     else if(state.view==='approval')renderApprovals();
     else if(state.view==='calendar')renderCalendar();
     else if(state.view==='history')renderHistory();
-    else if(state.view==='editor')renderSelection();else if(['messages','accounts','settings'].includes(state.view))renderDemoViews();
+    else if(state.view==='editor')renderSelection();else if(['messages','settings'].includes(state.view))renderDemoViews();
   }
   function empty(target,message) { clear(target); target.append(el('div','empty',message)); }
   function badge(status) { return el('span','chip '+status,STATUS[status] || 'Revisão necessária'); }
@@ -898,9 +899,9 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
       if(state.actionPending || state.busy)return UI.announce('Aguarde a conclusão da operação atual.');
       if(node.dataset.view==='editor')newDraft();else show(node.dataset.view);
     }));
+    all('[data-setting-tab]').forEach(node=>node.addEventListener('click',()=>UI.tabs.select('demo-settings',node.dataset.settingTab,{write:true})));
     all('[data-goto]').forEach(node=>node.addEventListener('click',()=>show(node.dataset.goto)));
     all('[data-new-format]').forEach(node=>node.addEventListener('click',()=>newDraft(node.dataset.newFormat)));
-    $('editorial-create').addEventListener('click',()=>newDraft());
     const mobileMenuToggle=$('mobile-main-menu-toggle');
     const primaryNavigation=$('primary-navigation');
     mobileMenuToggle.addEventListener('click',()=>{
@@ -1008,7 +1009,7 @@ function renderDemoViews(){
    detail.replaceChildren();const empty=el('div','inbox-empty-detail');empty.append(el('span','inbox-empty-icon','⌕'),el('strong','','Nenhuma conversa encontrada'),el('p','','Altere a busca ou o filtro para visualizar conversas.'));detail.append(empty);
   }
  }
- if(state.view==='accounts'){
+ if(false && state.view==='accounts'){
   const list=$('demo-accounts');list.replaceChildren();
   for(const acc of demoAccounts){const card=el('article','panel');card.append(el('h2','',acc.name),el('p','muted','@'+acc.user));const btn=el('button','btn primary',acc.user===demoAccount?'Conta ativa':'Selecionar conta');btn.disabled=acc.user===demoAccount;btn.addEventListener('click',async()=>{if(!UI.dirty.confirmLeave())return;demoAccount=acc.user;state.currentPostId=null;state.currentPostVersion=null;state.currentMediaIds=[];state.currentSlideCaptions={};$('post-caption').value='';editorClean=editorSignature();$('demo-account-select').value=acc.user;await refresh(true);renderDemoViews();toast('Conta fictícia selecionada.');});card.append(btn);list.append(card)}
  }
@@ -1023,7 +1024,7 @@ function renderDemoViews(){
 }  async function init() {
     wireEvents();wireDemo();
     const initial=location.hash.slice(1);
-    if(['overview','library','editor','approval','calendar','history','messages','accounts','settings'].includes(initial))state.view=initial;
+    if(['overview','library','editor','approval','calendar','history','messages','settings'].includes(initial))state.view=initial;
     editorClean=editorSignature();UI.dirty.register('editor',()=>editorSignature()!==editorClean);
     addEventListener('popstate',()=>show(location.hash.slice(1)||'overview',{fromHistory:true}));
     const load=async()=>{await refresh();formatHint();show(state.view,{fromHistory:true});UI.ready();};
