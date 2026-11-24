@@ -126,8 +126,8 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     const tabsets=all('[data-tabset]');
     const editorialView=['overview','calendar','editor','library','approval','history'].includes(view);
     tabsets.forEach(set=>{set.hidden=(set.dataset.tabset==='editorial'?!editorialView:view!=='settings');});
-    if(view==='settings')UI.tabs.select('demo-settings',document.querySelector('[data-ui-tab][aria-selected="true"]')?.dataset.uiTab||'connection');
-    all('[data-setting-tab]').forEach(node=>node.classList.toggle('active',node.dataset.settingTab===(document.querySelector('#demo-settings [data-ui-pane]:not([hidden])')?.dataset.uiPane||'connection'));
+    if(view==='settings')UI.tabs.select('demo-settings',document.querySelector('#view-settings [data-ui-tabs]')?.dataset.selectedTab||'connection');
+    all('[data-setting-tab]').forEach(node=>node.classList.toggle('active',node.dataset.settingTab===(document.querySelector('#view-settings [data-ui-pane]:not([hidden])')?.dataset.uiPane||'connection')));
     const accountHandle=$('settings-account-handle');if(accountHandle)accountHandle.textContent='@'+demoAccount;
     $('current-section').textContent = ({overview:'Visão geral',library:'Biblioteca',editor:state.currentPostId?'Editar publicação':'Criar publicação',approval:'Revisão e envios',calendar:'Calendário',history:'Histórico',messages:'Caixa de entrada',settings:'Configurações Meta'})[view];
     if(!fromHistory && location.hash!=='#'+view)history.pushState(null,'','#'+view);
@@ -1009,17 +1009,13 @@ function renderDemoViews(){
    detail.replaceChildren();const empty=el('div','inbox-empty-detail');empty.append(el('span','inbox-empty-icon','⌕'),el('strong','','Nenhuma conversa encontrada'),el('p','','Altere a busca ou o filtro para visualizar conversas.'));detail.append(empty);
   }
  }
- if(false && state.view==='accounts'){
-  const list=$('demo-accounts');list.replaceChildren();
-  for(const acc of demoAccounts){const card=el('article','panel');card.append(el('h2','',acc.name),el('p','muted','@'+acc.user));const btn=el('button','btn primary',acc.user===demoAccount?'Conta ativa':'Selecionar conta');btn.disabled=acc.user===demoAccount;btn.addEventListener('click',async()=>{if(!UI.dirty.confirmLeave())return;demoAccount=acc.user;state.currentPostId=null;state.currentPostVersion=null;state.currentMediaIds=[];state.currentSlideCaptions={};$('post-caption').value='';editorClean=editorSignature();$('demo-account-select').value=acc.user;await refresh(true);renderDemoViews();toast('Conta fictícia selecionada.');});card.append(btn);list.append(card)}
- }
+
 }function wireDemo(){
  $('demo-account-select').value=demoAccount;
  $('demo-account-select').addEventListener('change',async event=>{const next=event.target.value;if(!demoAccounts.some(acc=>acc.user===next))return;if(!UI.dirty.confirmLeave()){event.target.value=demoAccount;return;}demoAccount=next;state.currentPostId=null;state.currentPostVersion=null;state.currentMediaIds=[];state.currentSlideCaptions={};$('post-caption').value='';editorClean=editorSignature();$('demo-account-name').textContent=demoAccounts.find(a=>a.user===next).name;$('demo-account-handle').textContent='@'+next;document.querySelector('.ui-demo-avatar').textContent=demoAccounts.find(a=>a.user===next).name[0];await refresh(true);renderDemoViews();toast('Conta fictícia selecionada.');});
  $('demo-refresh-inbox').addEventListener('click',()=>toast('Atualização simulada. Nenhuma consulta à Meta.'));
  $('demo-inbox-search').addEventListener('input',()=>renderDemoViews());
  document.querySelectorAll('[data-inbox-filter]').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('[data-inbox-filter]').forEach(x=>x.classList.toggle('active',x===button));renderDemoViews();}));
- $('demo-add-account').addEventListener('click',()=>{const name=$('demo-name').value.trim();if(!name)return toast('Digite um nome fictício.','error');demoAccounts.push({name,user:'demo_'+(++demoSerial)});$('demo-name').value='';renderDemoViews();toast('Cadastro fictício criado.');});
  document.querySelectorAll('[data-demo-action]').forEach(b=>b.addEventListener('click',()=>toast(b.dataset.demoAction+' — simulação, sem conexão externa.')));
 }  async function init() {
     wireEvents();wireDemo();
