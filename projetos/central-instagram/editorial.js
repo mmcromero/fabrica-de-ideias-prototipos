@@ -128,7 +128,7 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     tabsets.forEach(set=>{set.hidden=(set.dataset.tabset==='editorial'?!editorialView:!['accounts','settings'].includes(view));});
     const createAction=$('editorial-create');
     if(createAction)createAction.hidden=view==='editor';
-    $('current-section').textContent = ({overview:'Visão geral',library:'Biblioteca',editor:state.currentPostId?'Editar publicação':'Criar publicação',approval:'Revisão e envios',calendar:'Calendário',history:'Histórico',messages:'Mensagens',accounts:'Contas',settings:'Configurações Meta'})[view];
+    $('current-section').textContent = ({overview:'Visão geral',library:'Biblioteca',editor:state.currentPostId?'Editar publicação':'Criar publicação',approval:'Revisão e envios',calendar:'Calendário',history:'Histórico',messages:'Caixa de entrada',accounts:'Contas e configurações',settings:'Contas e configurações'})[view];
     if(!fromHistory && location.hash!=='#'+view)history.pushState(null,'','#'+view);
     render();
   }
