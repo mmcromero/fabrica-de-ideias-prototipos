@@ -1,4 +1,4 @@
-# Central Instagram e Editorial — Protótipo UX 0.1.49
+# Central Instagram e Editorial — Protótipo UX 0.1.50
 
 **Referência de interface:** revisão de UX do protótipo após o lote de Caixa de entrada, alinhada às decisões do `CENTRAL-DESIGN-SYSTEM-001` e `UX-STD-001` do produto real (`mmcromero/instagram-automacoes`, branch `desenvolvimento`). O protótipo permanece um laboratório demonstrativo, não a fonte canônica do produto.
 
