@@ -3,21 +3,16 @@
 **Referência de interface:** revisão de UX do protótipo após o lote de Caixa de entrada, alinhada às decisões do `CENTRAL-DESIGN-SYSTEM-001` e `UX-STD-001` do produto real (`mmcromero/instagram-automacoes`, branch `desenvolvimento`). O protótipo permanece um laboratório demonstrativo, não a fonte canônica do produto.
 
 ## Padrões aplicados
-- App Shell sem sidebar: navegação principal no cabeçalho com Editorial, Caixa de entrada e Contas e configurações.
-- Seletor de conta no cabeçalho global.
-- Em telas estreitas, navegação principal recolhida em menu acessível por botão; seletor de conta permanece visível.
-- Navegação local por abas dentro de Editorial e de Contas e configurações.
-- Ação Nova publicação destacada no contexto Editorial, fora da lista de destinos.
-- Identificação da conta fora da sidebar; seletor global fictício no cabeçalho.
-- Breadcrumb compacto e título funcional único por tela.
-- Barra de ações globais restrita à Visão geral; cada outra tela apresenta ações próprias do contexto.
-- Caixa de entrada com uma única ação **Atualizar mensagens**, busca, filtros, lista e painel de conversa.
-- Hierarquia de títulos e espaçamento estrutural compartilhados.
-- Layout adaptativo; em mobile, menu principal abre painel suspenso com alvos de toque e fechamento por seleção ou Escape; seletor de conta permanece acessível.
-- A navegação e os controles são demonstrativos.
+- App Shell sem sidebar, com três destinos principais no cabeçalho: Caixa de entrada, Editorial e Configurações Meta.
+- Seletor global de conta no cabeçalho; não existe destino separado de Contas conectadas.
+- Caixa de entrada é destino direto, sem submenu.
+- Editorial possui abas internas: Visão geral, Calendário, Criar publicação, Biblioteca, Revisão e envios e Histórico.
+- Configurações Meta possui abas internas: Conexão, Diagnósticos, Ferramentas e Atendimento.
+- A ação Adicionar conta aparece no cabeçalho da página Configurações Meta.
+- Cabeçalho compacto e navegação interna adaptada para mobile.
 
-## Escopo da revisão atual
-A revisão reorganiza o shell, a hierarquia, as ações contextuais e a arquitetura de navegação. Editorial concentra Visão geral, Calendário, Biblioteca, Revisão e envios e Histórico em abas locais; Criar publicação é uma ação primária. Contas e configurações reúne Contas conectadas e Configurações Meta em abas locais. Não redesenha em profundidade o editor, seus campos, prévia, agenda, operações de publicação, APIs ou regras de negócio. As telas restantes devem ser avaliadas em uso navegável; ajustes específicos serão priorizados por tarefa e evidência, sem alterar o produto real por consequência.
+## Correspondência com o produto
+A estrutura de Configurações Meta segue o padrão de abas locais documentado em `interface_ui.py` no produto real. O conteúdo deste protótipo é demonstrativo e não representa leitura de OAuth, permissões, diagnósticos, atendimento ou APIs reais.
 
 ## Limites do protótipo
 Contas, mensagens, publicações, mídia, configurações, filtros e ações são fictícios. Não há conexão Meta, OAuth, credenciais, rede, n8n ou backend real. Nenhuma ação publica, exclui ou envia mensagens ao Instagram. O seletor alterna apenas perfis fictícios.
