@@ -1,9 +1,11 @@
-# Central Instagram e Editorial — Protótipo UX 0.1.47
+# Central Instagram e Editorial — Protótipo UX 0.1.48
 
 **Referência de interface:** revisão de UX do protótipo após o lote de Caixa de entrada, alinhada às decisões do `CENTRAL-DESIGN-SYSTEM-001` e `UX-STD-001` do produto real (`mmcromero/instagram-automacoes`, branch `desenvolvimento`). O protótipo permanece um laboratório demonstrativo, não a fonte canônica do produto.
 
 ## Padrões aplicados
-- App Shell com navegação agrupada em Editorial, Atendimento e Gestão.
+- Menu global reduzido a três destinos: Editorial, Caixa de entrada e Contas e configurações.
+- Navegação local por abas dentro de Editorial e de Contas e configurações.
+- Ação Nova publicação destacada no contexto Editorial, fora da lista de destinos.
 - Identificação da conta fora da sidebar; seletor global fictício no cabeçalho.
 - Breadcrumb compacto e título funcional único por tela.
 - Barra de ações globais restrita à Visão geral; cada outra tela apresenta ações próprias do contexto.
@@ -12,7 +14,7 @@
 - Layout adaptativo; a navegação e os controles são demonstrativos.
 
 ## Escopo da revisão atual
-A revisão reorganiza o shell, a hierarquia, as ações contextuais e os padrões compartilhados de página. Não redesenha em profundidade o editor, seus campos, prévia, agenda, operações de publicação, APIs ou regras de negócio. As telas restantes devem ser avaliadas em uso navegável; ajustes específicos serão priorizados por tarefa e evidência, sem alterar o produto real por consequência.
+A revisão reorganiza o shell, a hierarquia, as ações contextuais e a arquitetura de navegação. Editorial concentra Visão geral, Calendário, Biblioteca, Revisão e envios e Histórico em abas locais; Criar publicação é uma ação primária. Contas e configurações reúne Contas conectadas e Configurações Meta em abas locais. Não redesenha em profundidade o editor, seus campos, prévia, agenda, operações de publicação, APIs ou regras de negócio. As telas restantes devem ser avaliadas em uso navegável; ajustes específicos serão priorizados por tarefa e evidência, sem alterar o produto real por consequência.
 
 ## Limites do protótipo
 Contas, mensagens, publicações, mídia, configurações, filtros e ações são fictícios. Não há conexão Meta, OAuth, credenciais, rede, n8n ou backend real. Nenhuma ação publica, exclui ou envia mensagens ao Instagram. O seletor alterna apenas perfis fictícios.
