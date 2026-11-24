@@ -258,3 +258,11 @@ body[data-ui-page]{margin:0;background:var(--bg);color:var(--text);font-size:14p
  .ui-workspace-tabs{padding:0 8px}
  .ui-tab-links{overflow-x:auto;overscroll-behavior-x:contain}
 }
+
+/* Header navigation: hide duplicate primary action; maintain a single create entry point. */
+.ui-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.ui-context-actions{gap:10px}
+@media(max-width:480px){
+ .ui-tabset[data-tabset="editorial"]{align-items:stretch}
+ .ui-tabset[data-tabset="editorial"] .ui-tab-create{align-self:stretch;width:100%;min-height:44px}
+}
