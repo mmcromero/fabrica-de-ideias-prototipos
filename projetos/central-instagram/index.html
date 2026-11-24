@@ -26,7 +26,9 @@
         </div>
       </header>
       <span id="current-section" class="ui-sr-only" aria-live="polite">Visão geral</span>
-      <nav class="ui-workspace-tabs" id="workspace-tabs" aria-label="Navegação da área">
+            <div class="ui-context-actions" aria-label="Ações da visão geral"><button id="refresh-content" class="btn quiet" type="button">Atualizar</button><button id="resume-editor" class="btn quiet" type="button" hidden>Continuar composição</button></div>
+      <div id="initial-skeleton" class="ui-initial-skeleton" role="status">Carregando dados fictícios…</div>
+      <nav class="ui-workspace-tabs" id="workspace-tabs" hidden aria-label="Navegação da área">
         <div class="ui-tabset" data-tabset="editorial">
           <div class="ui-tab-links" role="tablist" aria-label="Editorial">
             <button type="button" class="ui-tab" data-view="overview" role="tab">Visão geral</button>
@@ -37,17 +39,9 @@
             <button type="button" class="ui-tab" data-view="history" role="tab">Histórico</button>
           </div>
         </div>
-        <div class="ui-tabset" data-tabset="settings" hidden>
-          <div class="ui-tab-links" role="tablist" aria-label="Configurações Meta">
-            <button type="button" class="ui-tab" data-setting-tab="connection" role="tab">Conexão</button>
-            <button type="button" class="ui-tab" data-setting-tab="diagnostics" role="tab">Diagnósticos</button>
-            <button type="button" class="ui-tab" data-setting-tab="tools" role="tab">Ferramentas</button>
-            <button type="button" class="ui-tab" data-setting-tab="automation" role="tab">Atendimento</button>
-          </div>
         </div>
       </nav>
-      <div class="ui-context-actions" aria-label="Ações da visão geral"><button id="refresh-content" class="btn quiet" type="button">Atualizar</button><button id="resume-editor" class="btn quiet" type="button" hidden>Continuar composição</button></div>
-      <div id="initial-skeleton" class="ui-initial-skeleton" role="status">Carregando dados fictícios…</div>
+
       <section class="content" id="view-overview" data-panel="overview">
         <div class="heading"><div><span class="eyebrow">SEU ESTÚDIO DE CONTEÚDO</span><h1>Visão geral</h1><p>Acompanhe sua agenda e continue suas publicações.</p></div></div>
         <div class="metrics">
