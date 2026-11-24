@@ -176,3 +176,33 @@ body[data-ui-page]{margin:0;background:var(--bg);color:var(--text);font-size:14p
 @media(min-width:640px){.inbox-message{padding:18px}.inbox-message-actions form{flex:0 1 auto}.inbox-message-actions button{min-width:110px}.inbox-message-details dl{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.panel-title:has(#refresh-inbox){flex-wrap:wrap;align-items:flex-start}#refresh-inbox{min-height:44px}}
 .inbox-message-actions .primary{background:var(--orange,#ff8e40);border-color:var(--orange,#ff8e40);color:#161b23}
+
+/* UX navigation concept: three global destinations + local section tabs. */
+.ui-primary-nav{display:grid;gap:8px;padding:0}
+.ui-primary-link{min-height:50px;font-size:14px!important;font-weight:700!important}
+.ui-primary-link .ui-nav-icon{font-size:19px!important}
+.ui-nav-groups{gap:0!important}
+.ui-workspace-tabs{min-height:60px;padding:0 clamp(18px,3vw,40px);border-bottom:1px solid var(--edge,#2b4051);display:flex;align-items:center;background:#101c28}
+.ui-workspace-tabs[hidden],.ui-tabset[hidden],.ui-tab-create[hidden]{display:none!important}
+.ui-tabset{width:100%;max-width:1450px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.ui-tab-links{display:flex;align-items:center;gap:5px;min-width:0;overflow-x:auto;scrollbar-width:thin}
+.ui-tab{position:relative;flex:0 0 auto;min-height:60px;padding:0 15px;border:0;background:transparent;color:#9fb1c0;font:inherit;font-size:13px;font-weight:650;white-space:nowrap;cursor:pointer}
+.ui-tab:hover{color:#fff;background:#ffffff08}
+.ui-tab.active,.ui-tab[aria-selected="true"]{color:#fff}
+.ui-tab.active::after,.ui-tab[aria-selected="true"]::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:3px;border-radius:3px 3px 0 0;background:var(--orange,#ff8e40)}
+.ui-tab-create{flex:0 0 auto;min-height:42px}
+@media(max-width:760px){
+ .ui-primary-nav{grid-template-columns:1fr;gap:5px}
+ .ui-primary-link{min-height:48px}
+ .ui-workspace-tabs{min-height:56px;padding:0 12px}
+ .ui-tabset{gap:8px}
+ .ui-tab-links{flex:1}
+ .ui-tab{min-height:56px;padding:0 11px;font-size:12px}
+ .ui-tab-create{min-height:40px;padding:8px 11px;font-size:12px}
+}
+@media(max-width:420px){
+ .ui-tabset[data-tabset="editorial"]{align-items:stretch;flex-direction:column;padding:8px 0;gap:4px}
+ .ui-tabset[data-tabset="editorial"] .ui-tab-links{width:100%}
+ .ui-tabset[data-tabset="editorial"] .ui-tab-create{align-self:flex-end}
+ .ui-workspace-tabs{min-height:0}
+}
