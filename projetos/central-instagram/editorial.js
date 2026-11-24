@@ -113,7 +113,20 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     if(contextActions) contextActions.hidden=view!=='overview';
     $('resume-editor').hidden=view==='editor' || editorSignature()===editorClean;
     const panels=all('[data-panel]');
-    UI.switchPanel(panels,$('view-'+view)).then(()=>{if(state.view===view)window.scrollTo({top:viewScroll.get(view)||0});});UI.closeMenu();
+    UI.switchPanel(panels,$('view-'+view)).then(()=>{
+      if(state.view!==view)return;
+      const editorialView=['overview','calendar','editor','library','approval','history'].includes(view);
+      const editorialNav=$('workspace-tabs');
+      if(editorialNav){
+        if(editorialView){
+          const activePanel=$('view-'+view);
+          const pageHeading=activePanel?.querySelector('.heading');
+          if(pageHeading && editorialNav.parentElement!==activePanel)pageHeading.after(editorialNav);
+          editorialNav.hidden=false;
+        }else editorialNav.hidden=true;
+      }
+      window.scrollTo({top:viewScroll.get(view)||0});
+    });UI.closeMenu();
     all('[data-view]').forEach(node=>{
       const primary=node.dataset.primary;
       const active=primary
@@ -123,15 +136,6 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
       if(active)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');
       if(node.matches('.ui-tab'))node.setAttribute('aria-selected',String(active));
     });
-    const editorialView=['overview','calendar','editor','library','approval','history'].includes(view);
-    const editorialNav=$('workspace-tabs');
-    if(editorialNav){
-      if(editorialView){
-        const activePanel=$('view-'+view),pageHeading=activePanel?.querySelector('.heading');
-        if(pageHeading)pageHeading.after(editorialNav);
-        editorialNav.hidden=false;
-      }else editorialNav.hidden=true;
-    }
     if(view==='settings')UI.tabs.select('demo-settings',document.querySelector('#view-settings [data-ui-tabs]')?.dataset.selectedTab||'connection');
     all('[data-setting-tab]').forEach(node=>node.classList.toggle('active',node.dataset.settingTab===(document.querySelector('#view-settings [data-ui-pane]:not([hidden])')?.dataset.uiPane||'connection')));
     const accountHandle=$('settings-account-handle');if(accountHandle)accountHandle.textContent='@'+demoAccount;
