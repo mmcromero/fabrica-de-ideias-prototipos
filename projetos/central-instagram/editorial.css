@@ -143,3 +143,66 @@
  .inbox-page-title{flex:1 1 100%}
  .inbox-page-header #demo-refresh-inbox{width:100%}
 }
+
+
+/* UX refresh 2026-11-24 — prototype mirrors the product's global shell and task-first inbox. */
+.ui-app-header.topbar{min-height:72px;height:auto;padding:12px 32px;background:#101c28}
+.ui-app-header .top-actions{display:flex;align-items:center;gap:18px}
+.demo-account-switch{display:flex;align-items:center;gap:10px;position:relative;margin:0;color:var(--text);font-size:12px}
+.ui-demo-avatar{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:linear-gradient(145deg,#a94b91,#f09443);color:white;font-weight:800;font-size:14px}
+.ui-demo-account-label{display:grid;gap:2px;min-width:100px}.ui-demo-account-label strong{font-size:12px}.ui-demo-account-label small{color:var(--muted);font-size:11px}
+.demo-account-switch select{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.demo-account-switch:focus-within{outline:2px solid var(--orange);outline-offset:4px;border-radius:8px}
+.ui-inbox-page{padding:22px 32px 36px;max-width:none}
+.ui-inbox-page .inbox-page-header{max-width:1440px;margin:0 auto 16px}
+.inbox-page-title h1{font-size:25px;letter-spacing:-.7px}
+.inbox-toolbar{max-width:1440px;margin:0 auto 14px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.inbox-search{display:flex;align-items:center;gap:9px;width:min(360px,100%);height:42px;padding:0 12px;border:1px solid var(--edge);border-radius:9px;background:#111e2b;color:var(--muted)}
+.inbox-search span{font-size:20px}.inbox-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:var(--text);font:inherit}.inbox-search input:focus-visible{outline:0}
+.inbox-filters{display:flex;gap:6px;flex-wrap:wrap}.inbox-filter{border:1px solid transparent;background:transparent;color:var(--muted);border-radius:8px;padding:9px 12px;font-size:12px;font-weight:650}.inbox-filter.active{background:#26394a;border-color:#3a5368;color:#fff}
+.inbox-workspace{max-width:1440px;min-height:480px;margin:0 auto;display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);border:1px solid var(--edge);border-radius:13px;overflow:hidden;background:var(--surface)}
+.inbox-list-panel{min-width:0;border-right:1px solid var(--edge);background:#111d29}
+.inbox-list-heading{height:52px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--edge);font-size:12px}
+.inbox-list-heading span{color:var(--muted);font-variant-numeric:tabular-nums}
+.inbox-conversation-list{display:grid;align-content:start}
+.inbox-conversation{width:100%;min-width:0;display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:11px;align-items:start;padding:15px 14px;text-align:left;border:0;border-bottom:1px solid #2b405188;border-radius:0;background:transparent;color:var(--text)}
+.inbox-conversation:hover{background:#1a2a39}.inbox-conversation.active{background:#223548;box-shadow:inset 3px 0 var(--orange)}
+.inbox-person-avatar{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:#35536a;color:#e7f2fa;font-size:13px;font-weight:800}
+.inbox-conversation:nth-child(2n) .inbox-person-avatar{background:#674c63}
+.inbox-conversation-copy{min-width:0;display:grid;gap:5px}
+.inbox-conversation-line{display:flex;align-items:center;gap:7px;min-width:0}.inbox-conversation-line strong{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inbox-conversation-copy p{margin:0;color:var(--muted);font-size:12px;line-height:1.45;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.inbox-conversation-meta{display:grid;justify-items:end;gap:8px;color:var(--muted);font-size:10px;white-space:nowrap}
+.inbox-unread-dot{width:7px;height:7px;border-radius:50%;background:var(--orange)}
+.inbox-status{font-size:10px;color:#b8c9d6;background:#2a3d4e;padding:4px 7px;border-radius:20px;white-space:nowrap}
+.inbox-status.pending{color:#ffd3a6;background:#4b382b}.inbox-status.done{color:#9be5c8;background:#1e443a}
+.inbox-detail-panel{min-width:0;display:flex;flex-direction:column;background:#152332}
+.inbox-detail-head{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--edge);min-height:72px}
+.inbox-detail-head .inbox-person-avatar{width:40px;height:40px;flex:0 0 40px}
+.inbox-detail-name{min-width:0;flex:1}.inbox-detail-name strong{display:block;font-size:13px}.inbox-detail-name small{color:var(--muted);font-size:11px}
+.inbox-detail-actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.inbox-detail-actions .btn{padding:8px 10px;font-size:11px}
+.inbox-thread{padding:24px;display:flex;flex-direction:column;gap:14px;flex:1;min-height:240px}
+.inbox-thread-date{text-align:center;color:#8ea4b7;font-size:10px;margin-bottom:4px}
+.inbox-bubble{max-width:min(78%,560px);padding:12px 14px;border-radius:4px 13px 13px 13px;background:#26394a;color:#f1f5f8;font-size:13px;line-height:1.55;align-self:start}
+.inbox-bubble time{display:block;color:#9db0c0;font-size:10px;margin-top:7px}
+.inbox-thread-note{margin-top:auto;padding:12px 18px;border-top:1px solid var(--edge);color:var(--muted);font-size:11px}
+.inbox-empty-detail{margin:auto;max-width:340px;padding:30px;text-align:center;color:var(--muted)}
+.inbox-empty-detail strong{display:block;color:var(--text);font-size:14px;margin:12px 0 7px}.inbox-empty-detail p{font-size:12px;line-height:1.6;margin:0}
+.inbox-empty-icon{display:grid;place-items:center;margin:auto;width:54px;height:54px;border:1px solid #40566a;border-radius:50%;font-size:25px;color:#b9ccdc}
+.inbox-no-results{padding:28px;text-align:center;color:var(--muted);font-size:12px}
+.inbox-source-note{max-width:1440px;margin:12px auto 0}
+@media(max-width:760px){
+ .ui-app-header.topbar{padding:10px 14px;min-height:64px;gap:8px}.ui-app-header .top-actions{gap:8px}.ui-app-header .prototype-version{display:none}
+ .demo-account-switch{flex:1;min-width:0}.ui-demo-account-label{flex:1}
+ .ui-inbox-page{padding:16px 14px 28px}.inbox-page-header{margin-bottom:12px}
+ .inbox-toolbar{align-items:stretch;gap:9px}.inbox-search{width:100%}.inbox-filters{width:100%;overflow-x:auto;flex-wrap:nowrap}.inbox-filter{flex:0 0 auto}
+ .inbox-workspace{grid-template-columns:minmax(0,1fr);min-height:0}
+ .inbox-list-panel{border-right:0;border-bottom:1px solid var(--edge)}
+ .inbox-list-heading{height:44px}
+ .inbox-conversation{padding:12px}
+ .inbox-detail-panel{min-height:300px}
+ .inbox-detail-head{padding:12px}.inbox-detail-actions{gap:5px}
+ .inbox-thread{padding:16px;min-height:180px}
+ .inbox-bubble{max-width:90%}
+}
+@media(max-width:380px){.ui-inbox-page .inbox-page-header{align-items:center}.inbox-page-title h1{font-size:22px}.inbox-detail-head{align-items:flex-start;flex-wrap:wrap}.inbox-detail-actions{width:100%;justify-content:flex-start}}
