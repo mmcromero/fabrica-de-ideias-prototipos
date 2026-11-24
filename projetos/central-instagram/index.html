@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#111c29">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'none'; form-action 'none'; base-uri 'none'">
-  <title>Central Editorial · Umdoislab</title>
+  <title>Central Instagram · Protótipo UX</title>
   <link rel="stylesheet" href="./editorial.css">
   <link rel="stylesheet" href="./interface-ui.css"><script src="./interface-ui.js" defer></script><script src="./editorial.js" defer></script>
 </head>
@@ -17,9 +17,9 @@
         <a class="brand ui-top-brand" href="../../" aria-label="Central Instagram — início"><span class="brand-icon">U<span class="dot">.</span></span><span><strong>CENTRAL INSTAGRAM</strong><small>Conteúdo e atendimento</small></span></a>
         <button class="ui-mobile-menu-toggle" id="mobile-main-menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation"><span aria-hidden="true">☰</span><span>Menu</span></button>
         <nav class="ui-primary-nav ui-top-navigation" id="primary-navigation" aria-label="Navegação principal">
-          <button type="button" class="nav-link ui-primary-link" data-view="overview" data-primary="editorial"><span class="ui-nav-icon">▣</span>Editorial</button>
           <button type="button" class="nav-link ui-primary-link" data-view="messages" data-primary="inbox"><span class="ui-nav-icon">◉</span>Caixa de entrada</button>
-          <button type="button" class="nav-link ui-primary-link" data-view="accounts" data-primary="management"><span class="ui-nav-icon">⚙</span>Contas e configurações</button>
+          <button type="button" class="nav-link ui-primary-link" data-view="overview" data-primary="editorial"><span class="ui-nav-icon">▣</span>Editorial</button>
+          <button type="button" class="nav-link ui-primary-link" data-view="settings" data-primary="settings"><span class="ui-nav-icon">⚙</span>Configurações Meta</button>
         </nav>
         <div class="top-actions">
           <label class="demo-account-switch"><span class="ui-demo-avatar" aria-hidden="true">A</span><span class="ui-demo-account-label"><strong id="demo-account-name">Ateliê Exemplo</strong><small id="demo-account-handle">@atelier_demo</small></span><span class="ui-account-chevron" aria-hidden="true">⌄</span><select id="demo-account-select" aria-label="Selecionar conta de demonstração"><option value="atelier_demo">Ateliê Exemplo · @atelier_demo</option><option value="loja_demo">Loja Exemplo · @loja_demo</option></select></label>
@@ -31,16 +31,18 @@
           <div class="ui-tab-links" role="tablist" aria-label="Editorial">
             <button type="button" class="ui-tab" data-view="overview" role="tab">Visão geral</button>
             <button type="button" class="ui-tab" data-view="calendar" role="tab">Calendário</button>
+            <button type="button" class="ui-tab" data-view="editor" role="tab">Criar publicação</button>
             <button type="button" class="ui-tab" data-view="library" role="tab">Biblioteca</button>
             <button type="button" class="ui-tab" data-view="approval" role="tab">Revisão e envios</button>
             <button type="button" class="ui-tab" data-view="history" role="tab">Histórico</button>
           </div>
-          <button type="button" class="btn primary ui-tab-create" id="editorial-create">+ Nova publicação</button>
         </div>
-        <div class="ui-tabset" data-tabset="management" hidden>
-          <div class="ui-tab-links" role="tablist" aria-label="Contas e configurações">
-            <button type="button" class="ui-tab" data-view="accounts" role="tab">Contas conectadas</button>
-            <button type="button" class="ui-tab" data-view="settings" role="tab">Configurações Meta</button>
+        <div class="ui-tabset" data-tabset="settings" hidden>
+          <div class="ui-tab-links" role="tablist" aria-label="Configurações Meta">
+            <button type="button" class="ui-tab" data-setting-tab="connection" role="tab">Conexão</button>
+            <button type="button" class="ui-tab" data-setting-tab="diagnostics" role="tab">Diagnósticos</button>
+            <button type="button" class="ui-tab" data-setting-tab="tools" role="tab">Ferramentas</button>
+            <button type="button" class="ui-tab" data-setting-tab="automation" role="tab">Atendimento</button>
           </div>
         </div>
       </nav>
@@ -126,7 +128,48 @@
   <div class="inbox-toolbar"><label class="inbox-search"><span aria-hidden="true">⌕</span><input id="demo-inbox-search" type="search" placeholder="Buscar conversa" aria-label="Buscar conversa"></label><div class="inbox-filters" role="group" aria-label="Filtrar conversas"><button type="button" class="inbox-filter active" data-inbox-filter="all">Todas</button><button type="button" class="inbox-filter" data-inbox-filter="pending">Aguardando</button><button type="button" class="inbox-filter" data-inbox-filter="human">Em atendimento</button></div></div>
   <div class="inbox-workspace"><section class="inbox-list-panel" aria-label="Conversas"><div class="inbox-list-heading"><strong>Conversas</strong><span id="demo-inbox-total">2</span></div><div id="demo-inbox" class="inbox-conversation-list"></div></section><section class="inbox-detail-panel" id="demo-inbox-detail" aria-label="Detalhes da conversa"><div class="inbox-empty-detail"><span class="inbox-empty-icon">◎</span><strong>Suas conversas, em um só lugar</strong><p>Selecione uma conversa para visualizar a mensagem e o estado do atendimento.</p></div></section></div>
   <details class="inbox-source-note"><summary>Sobre esta demonstração</summary><p>Conversas, filtros e ações são fictícios. Nenhuma consulta à Meta ou envio de mensagens acontece neste protótipo.</p></details>
-</section><section class="content hidden" id="view-accounts" data-panel="accounts"><div class="heading"><h1>Contas conectadas</h1><p>Alterne entre contas de demonstração.</p></div><div class="stack" id="demo-accounts"></div><details class="panel"><summary>Adicionar conta fictícia</summary><label class="field">Nome de exemplo<input id="demo-name" maxlength="40"></label><button id="demo-add-account" class="btn primary">Adicionar conta</button></details></section><section class="content hidden" id="view-settings" data-panel="settings"><div class="heading"><h1>Configurações Meta</h1><p>Conexão e diagnósticos simulados.</p></div><div data-ui-tabs="demo-settings"><div class="ui-local-tabs"><button id="demo-tab-connection" data-ui-tab="connection">Conexão</button><button id="demo-tab-diagnostics" data-ui-tab="diagnostics">Diagnósticos</button><button id="demo-tab-tools" data-ui-tab="tools">Ferramentas</button></div><section class="panel" id="demo-connection" data-ui-pane="connection"><h2>Conexão Meta</h2><p>Conta fictícia conectada. Nenhuma credencial é solicitada.</p><button class="btn primary" data-demo-action="Conexão Meta">Conectar Instagram pela Meta</button></section><section class="panel" id="demo-diagnostics" data-ui-pane="diagnostics"><h2>Diagnósticos</h2><p>Autorização: simulada · Webhook: não conectado</p><button class="btn" data-demo-action="Verificação de acesso">Verificar acesso Meta</button></section><section class="panel" id="demo-tools" data-ui-pane="tools"><h2>Ferramentas</h2><p>Integrações reais desativadas.</p><button class="btn" data-demo-action="Verificação de publicação">Verificar publicação</button></section></div></section></main>
+</section><section class="content hidden" id="view-settings" data-panel="settings">
+  <div class="heading horizontal settings-page-heading">
+    <div><span class="eyebrow">CONFIGURAÇÃO DA CONTA</span><h1>Configurações Meta</h1><p>Conexão e diagnósticos desta conta do Instagram.</p></div>
+    <button class="btn primary" type="button" data-demo-action="Adicionar conta">+ Adicionar conta</button>
+  </div>
+  <div data-ui-tabs="demo-settings" data-tabs-default="connection" class="settings-demo-tabs">
+    <div class="ui-local-tabs" aria-label="Configurações desta conta">
+      <button id="demo-tab-connection" data-ui-tab="connection">Conexão</button>
+      <button id="demo-tab-diagnostics" data-ui-tab="diagnostics">Diagnósticos</button>
+      <button id="demo-tab-tools" data-ui-tab="tools">Ferramentas</button>
+      <button id="demo-tab-automation" data-ui-tab="automation">Atendimento</button>
+    </div>
+    <section class="panel settings-pane" id="demo-connection" data-ui-pane="connection">
+      <h2>Conexão com o Instagram</h2>
+      <p>Conta: <strong id="settings-account-handle">@atelier_demo</strong> · ID: <span class="mono">DEMO-ATELIER-001</span></p>
+      <h3>Autorização da conta</h3>
+      <ul class="settings-status-list"><li>OAuth preparado: <strong>Simulação</strong></li><li>Conta verificada na Meta: <strong>Não verificado neste protótipo</strong></li></ul>
+      <div class="settings-inline-links"><button type="button" class="text-button" data-demo-action="Abrir Central em janela própria">Abrir Central em janela própria</button><button type="button" class="text-button" data-demo-action="Testar navegador e proxy">Testar navegador e proxy (sem Meta)</button></div>
+      <details class="settings-disclosure"><summary>Atualizar permissões da conta</summary><p>Esta ação é apenas demonstrativa. O protótipo não solicita nem renova permissões reais.</p><button class="btn quiet" type="button" data-demo-action="Atualizar permissões">Simular atualização</button></details>
+      <details class="settings-disclosure"><summary>Configuração necessária</summary><p>As credenciais e a autorização Meta não são acessadas neste laboratório.</p></details>
+      <p class="demo-disclaimer">Ambiente de demonstração · nenhum dado ou estado real da Meta é consultado.</p>
+    </section>
+    <section class="panel settings-pane" id="demo-diagnostics" data-ui-pane="diagnostics" hidden>
+      <h2>Diagnósticos</h2><p>Verificações locais de interface e conectividade simulada.</p>
+      <div class="settings-check-row"><span>Interface da Central</span><strong class="demo-state-ok">Disponível no protótipo</strong></div>
+      <div class="settings-check-row"><span>Autorização Meta</span><strong>Não consultada</strong></div>
+      <div class="settings-check-row"><span>Webhook de mensagens</span><strong>Não conectado neste laboratório</strong></div>
+      <button class="btn quiet" type="button" data-demo-action="Executar diagnósticos">Executar verificações demonstrativas</button>
+    </section>
+    <section class="panel settings-pane" id="demo-tools" data-ui-pane="tools" hidden>
+      <h2>Ferramentas</h2><p>Atalhos e verificações auxiliares da conta.</p>
+      <div class="settings-tool-list"><button class="btn quiet" type="button" data-demo-action="Testar navegador e proxy">Testar navegador e proxy</button><button class="btn quiet" type="button" data-demo-action="Verificar publicação">Verificar publicação</button></div>
+    </section>
+    <section class="panel settings-pane" id="demo-automation" data-ui-pane="automation" hidden>
+      <h2>Atendimento</h2><p>Configurações demonstrativas do fluxo de atendimento desta conta.</p>
+      <div class="settings-check-row"><span>Recebimento de mensagens</span><strong>Simulado</strong></div>
+      <div class="settings-check-row"><span>Respostas automáticas</span><strong>Desativadas</strong></div>
+      <div class="settings-check-row"><span>Integração externa</span><strong>Não conectada</strong></div>
+      <p class="demo-disclaimer">Nenhuma mensagem é recebida ou enviada por este protótipo.</p>
+    </section>
+  </div>
+</section></section></main>
   </div>
   <dialog id="media-dialog" class="dialog"><div class="dialog-head"><h2>Selecionar mídias</h2><button class="icon-button" id="close-media-dialog" aria-label="Fechar">×</button></div><div id="picker-grid" class="media-grid"></div><div class="dialog-actions"><button class="btn primary" id="apply-media-selection">Usar mídias selecionadas</button></div></dialog>
   <dialog id="preview-dialog" class="dialog preview-dialog" aria-labelledby="preview-dialog-title">
