@@ -12,13 +12,19 @@
 <body data-ui-loading="initial" data-ui-page="editorial">
   <a href="#principal" class="skip">Pular para conteúdo</a>
   <div class="shell">
-    <aside class="sidebar ui-sidebar"><div class="ui-sidebar-heading"><a class="brand" href="../../"><span class="brand-icon">U<span class="dot">.</span></span><span><strong>CENTRAL INSTAGRAM</strong><small>Conteúdo e atendimento</small></span></a><button class="ui-menu-toggle" type="button" aria-expanded="false" aria-controls="ui-navigation">Menu</button></div><div id="ui-navigation" class="ui-nav-groups"><nav class="ui-primary-nav" aria-label="Navegação principal">
-<button type="button" class="nav-link ui-primary-link" data-view="overview" data-primary="editorial"><span class="ui-nav-icon">▣</span>Editorial</button>
-<button type="button" class="nav-link ui-primary-link" data-view="messages" data-primary="inbox"><span class="ui-nav-icon">◉</span>Caixa de entrada</button>
-<button type="button" class="nav-link ui-primary-link" data-view="accounts" data-primary="management"><span class="ui-nav-icon">⚙</span>Contas e configurações</button>
-</nav></div></aside>
     <main id="principal" class="main" aria-busy="true">
-      <header class="topbar ui-app-header"><div class="crumb"><span class="ui-app-name">Central</span><span class="crumb-separator"> / </span><strong id="current-section" aria-current="page">Visão geral</strong></div><div class="top-actions"><label class="demo-account-switch"><span class="ui-demo-avatar" aria-hidden="true">A</span><span class="ui-demo-account-label"><strong id="demo-account-name">Ateliê Exemplo</strong><small id="demo-account-handle">@atelier_demo</small></span><select id="demo-account-select" aria-label="Selecionar conta de demonstração"><option value="atelier_demo">Ateliê Exemplo · @atelier_demo</option><option value="loja_demo">Loja Exemplo · @loja_demo</option></select></label><a class="prototype-version" href="../../">Protótipo UX · laboratório</a></div></header>
+      <header class="topbar ui-app-header">
+        <a class="brand ui-top-brand" href="../../" aria-label="Central Instagram — início"><span class="brand-icon">U<span class="dot">.</span></span><span><strong>CENTRAL INSTAGRAM</strong><small>Conteúdo e atendimento</small></span></a>
+        <button class="ui-mobile-menu-toggle" id="mobile-main-menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation"><span aria-hidden="true">☰</span><span>Menu</span></button>
+        <nav class="ui-primary-nav ui-top-navigation" id="primary-navigation" aria-label="Navegação principal">
+          <button type="button" class="nav-link ui-primary-link" data-view="overview" data-primary="editorial"><span class="ui-nav-icon">▣</span>Editorial</button>
+          <button type="button" class="nav-link ui-primary-link" data-view="messages" data-primary="inbox"><span class="ui-nav-icon">◉</span>Caixa de entrada</button>
+          <button type="button" class="nav-link ui-primary-link" data-view="accounts" data-primary="management"><span class="ui-nav-icon">⚙</span>Contas e configurações</button>
+        </nav>
+        <div class="top-actions">
+          <label class="demo-account-switch"><span class="ui-demo-avatar" aria-hidden="true">A</span><span class="ui-demo-account-label"><strong id="demo-account-name">Ateliê Exemplo</strong><small id="demo-account-handle">@atelier_demo</small></span><span class="ui-account-chevron" aria-hidden="true">⌄</span><select id="demo-account-select" aria-label="Selecionar conta de demonstração"><option value="atelier_demo">Ateliê Exemplo · @atelier_demo</option><option value="loja_demo">Loja Exemplo · @loja_demo</option></select></label>
+        </div>
+      </header>
       <nav class="ui-workspace-tabs" id="workspace-tabs" aria-label="Navegação da área">
         <div class="ui-tabset" data-tabset="editorial">
           <div class="ui-tab-links" role="tablist" aria-label="Editorial">
