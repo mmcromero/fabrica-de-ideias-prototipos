@@ -284,3 +284,19 @@ body[data-ui-page]{margin:0;background:var(--bg);color:var(--text);font-size:14p
  .settings-check-row{align-items:flex-start;flex-direction:column;gap:5px}
  .settings-check-row strong{text-align:left}
 }
+
+/* Editorial and Meta settings share one title/action and local-tab rhythm. */
+.content{padding-top:24px}
+.overview-page-heading,.settings-page-heading{align-items:center;margin-bottom:20px}
+.overview-page-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex:0 0 auto}
+.overview-page-actions .btn{min-height:44px}
+.ui-workspace-tabs{width:100%;max-width:none;margin:0 0 20px;padding:0;border:0;background:transparent}
+.ui-workspace-tabs[hidden]{display:none!important}
+.ui-workspace-tabs>.ui-local-tabs{display:grid;grid-auto-columns:minmax(0,1fr);grid-auto-flow:column;gap:4px;margin:0;padding:4px;border:1px solid var(--edge,#2b4051);border-radius:12px;background:var(--surface,#152231)}
+.ui-workspace-tabs>.ui-local-tabs button{min-width:0;min-height:44px;border:0;border-radius:8px;padding:8px 5px;background:transparent;color:var(--muted,#a3b5c5);font-weight:650;font-size:13px;cursor:pointer;white-space:normal}
+.ui-workspace-tabs>.ui-local-tabs button[aria-selected=true]{background:var(--surface2,#1b2b3a);color:var(--text,#f3f5f7);box-shadow:inset 0 -2px var(--orange,#ff8e40)}
+@media(max-width:760px){
+ .overview-page-heading{align-items:flex-start;flex-wrap:wrap}
+ .overview-page-actions{width:100%;justify-content:flex-start}
+ .ui-workspace-tabs>.ui-local-tabs{grid-auto-columns:minmax(112px,1fr);grid-auto-flow:column;overflow-x:auto}
+}
