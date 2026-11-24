@@ -1,9 +1,11 @@
-# Central Instagram e Editorial — Protótipo UX 0.1.48
+# Central Instagram e Editorial — Protótipo UX 0.1.49
 
 **Referência de interface:** revisão de UX do protótipo após o lote de Caixa de entrada, alinhada às decisões do `CENTRAL-DESIGN-SYSTEM-001` e `UX-STD-001` do produto real (`mmcromero/instagram-automacoes`, branch `desenvolvimento`). O protótipo permanece um laboratório demonstrativo, não a fonte canônica do produto.
 
 ## Padrões aplicados
-- Menu global reduzido a três destinos: Editorial, Caixa de entrada e Contas e configurações.
+- App Shell sem sidebar: navegação principal no cabeçalho com Editorial, Caixa de entrada e Contas e configurações.
+- Seletor de conta no cabeçalho global.
+- Em telas estreitas, navegação principal recolhida em menu acessível por botão; seletor de conta permanece visível.
 - Navegação local por abas dentro de Editorial e de Contas e configurações.
 - Ação Nova publicação destacada no contexto Editorial, fora da lista de destinos.
 - Identificação da conta fora da sidebar; seletor global fictício no cabeçalho.
@@ -11,7 +13,8 @@
 - Barra de ações globais restrita à Visão geral; cada outra tela apresenta ações próprias do contexto.
 - Caixa de entrada com uma única ação **Atualizar mensagens**, busca, filtros, lista e painel de conversa.
 - Hierarquia de títulos e espaçamento estrutural compartilhados.
-- Layout adaptativo; a navegação e os controles são demonstrativos.
+- Layout adaptativo; em mobile, menu principal abre painel suspenso com alvos de toque e fechamento por seleção ou Escape; seletor de conta permanece acessível.
+- A navegação e os controles são demonstrativos.
 
 ## Escopo da revisão atual
 A revisão reorganiza o shell, a hierarquia, as ações contextuais e a arquitetura de navegação. Editorial concentra Visão geral, Calendário, Biblioteca, Revisão e envios e Histórico em abas locais; Criar publicação é uma ação primária. Contas e configurações reúne Contas conectadas e Configurações Meta em abas locais. Não redesenha em profundidade o editor, seus campos, prévia, agenda, operações de publicação, APIs ou regras de negócio. As telas restantes devem ser avaliadas em uso navegável; ajustes específicos serão priorizados por tarefa e evidência, sem alterar o produto real por consequência.
