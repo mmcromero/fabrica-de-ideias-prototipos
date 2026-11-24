@@ -108,9 +108,6 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     if(state.view!==view)viewScroll.set(state.view,window.scrollY);
     state.view = view;
     document.body.dataset.editorView=view;
-    // Ações globais são contextuais: não aparecem em Atendimento, Gestão ou no próprio editor.
-    const contextActions=document.querySelector('.ui-context-actions');
-    if(contextActions) contextActions.hidden=view!=='overview';
     $('resume-editor').hidden=view==='editor' || editorSignature()===editorClean;
     const panels=all('[data-panel]');
     UI.switchPanel(panels,$('view-'+view)).then(()=>{
@@ -123,6 +120,7 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
           const pageHeading=activePanel?.querySelector('.heading');
           if(pageHeading && editorialNav.parentElement!==activePanel)pageHeading.after(editorialNav);
           editorialNav.hidden=false;
+          editorialNav.querySelectorAll('[data-view]').forEach(tab=>{const active=tab.dataset.view===view;tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;});
         }else editorialNav.hidden=true;
       }
       window.scrollTo({top:viewScroll.get(view)||0});
