@@ -123,9 +123,15 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
       if(active)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');
       if(node.matches('.ui-tab'))node.setAttribute('aria-selected',String(active));
     });
-    const tabsets=all('[data-tabset]');
     const editorialView=['overview','calendar','editor','library','approval','history'].includes(view);
-    tabsets.forEach(set=>{set.hidden=(set.dataset.tabset==='editorial'?!editorialView:view!=='settings');});
+    const editorialNav=$('workspace-tabs');
+    if(editorialNav){
+      if(editorialView){
+        const activePanel=$('view-'+view),pageHeading=activePanel?.querySelector('.heading');
+        if(pageHeading)pageHeading.after(editorialNav);
+        editorialNav.hidden=false;
+      }else editorialNav.hidden=true;
+    }
     if(view==='settings')UI.tabs.select('demo-settings',document.querySelector('#view-settings [data-ui-tabs]')?.dataset.selectedTab||'connection');
     all('[data-setting-tab]').forEach(node=>node.classList.toggle('active',node.dataset.settingTab===(document.querySelector('#view-settings [data-ui-pane]:not([hidden])')?.dataset.uiPane||'connection')));
     const accountHandle=$('settings-account-handle');if(accountHandle)accountHandle.textContent='@'+demoAccount;
