@@ -115,10 +115,19 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     const panels=all('[data-panel]');
     UI.switchPanel(panels,$('view-'+view)).then(()=>{if(state.view===view)window.scrollTo({top:viewScroll.get(view)||0});});UI.closeMenu();
     all('[data-view]').forEach(node=>{
-      const active=node.dataset.view===view;
+      const primary=node.dataset.primary;
+      const active=primary
+        ? (primary==='editorial'?['overview','calendar','editor','library','approval','history'].includes(view):primary==='inbox'?view==='messages':['accounts','settings'].includes(view))
+        : node.dataset.view===view;
       node.classList.toggle('active',active);
-      if (active) node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');
+      if(active)node.setAttribute('aria-current','page');else node.removeAttribute('aria-current');
+      if(node.matches('.ui-tab'))node.setAttribute('aria-selected',String(active));
     });
+    const tabsets=all('[data-tabset]');
+    const editorialView=['overview','calendar','editor','library','approval','history'].includes(view);
+    tabsets.forEach(set=>{set.hidden=(set.dataset.tabset==='editorial'?!editorialView:!['accounts','settings'].includes(view));});
+    const createAction=$('editorial-create');
+    if(createAction)createAction.hidden=view==='editor';
     $('current-section').textContent = ({overview:'Visão geral',library:'Biblioteca',editor:state.currentPostId?'Editar publicação':'Criar publicação',approval:'Revisão e envios',calendar:'Calendário',history:'Histórico',messages:'Mensagens',accounts:'Contas',settings:'Configurações Meta'})[view];
     if(!fromHistory && location.hash!=='#'+view)history.pushState(null,'','#'+view);
     render();
@@ -892,6 +901,7 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     all('[data-goto]').forEach(node=>node.addEventListener('click',()=>show(node.dataset.goto)));
     all('[data-new-format]').forEach(node=>node.addEventListener('click',()=>newDraft(node.dataset.newFormat)));
     $('new-post').addEventListener('click',()=>newDraft());
+    $('editorial-create').addEventListener('click',()=>newDraft());
     $('resume-editor').addEventListener('click',()=>show('editor'));
     $('clear-editor').addEventListener('click',()=>newDraft());
     $('post-format').addEventListener('change',()=>{state.currentPreviewIndex=0;formatHint();renderSelection();});
