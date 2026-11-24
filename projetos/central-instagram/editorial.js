@@ -900,7 +900,6 @@ async function api(path,{action,data={},file}={}){const d=demoStore();if(!action
     }));
     all('[data-goto]').forEach(node=>node.addEventListener('click',()=>show(node.dataset.goto)));
     all('[data-new-format]').forEach(node=>node.addEventListener('click',()=>newDraft(node.dataset.newFormat)));
-    $('new-post').addEventListener('click',()=>newDraft());
     $('editorial-create').addEventListener('click',()=>newDraft());
     const mobileMenuToggle=$('mobile-main-menu-toggle');
     const primaryNavigation=$('primary-navigation');
